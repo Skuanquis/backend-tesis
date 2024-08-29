@@ -67,7 +67,7 @@ const getUsuarios = (callback) => {
 
 const updateUsuario = (id, usuarioData, callback) => {
     const { nombre, paterno, materno, fecha_nacimiento, estado, password, id_rol } = usuarioData;  // Incluir 'id_rol' en la desestructuramaternoón
-    console.log("El modelo: ", usuarioData, "id_usuario: ", id)
+    //console.log("El modelo: ", usuarioData, "id_usuario: ", id)
     const sql = password 
         ? `UPDATE usuario SET nombre = ?, paterno = ?, materno = ?, fecha_nacimiento = ?, password = ?, estado = ?, id_rol = ? WHERE id_usuario = ?`
         : `UPDATE usuario SET nombre = ?, paterno = ?, materno = ?, fecha_nacimiento = ?, estado = ?, id_rol = ? WHERE id_usuario = ?`;

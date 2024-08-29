@@ -31,7 +31,7 @@ const loginUser = (req, res) => {
 };
 
 const getUserInfo = (req, res) => {
-    console.log(req.user)
+    //console.log(req.user)
     const userId = req.user.id;
     //console.log("user: ",userId)
     userModel.getUserById(userId, (err, user) => {
@@ -97,11 +97,11 @@ const updateUserPassword = (req, res) => {
 
 const createUser = async (req, res) => {
     let userData = req.body;
-    console.log(userData);
+    //console.log(userData);
     try {
         const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
         userData.password = hashedPassword;
-        console.log(userData)
+        //console.log(userData)
         userModel.createUser(userData, (err, results) => {
             if (err) {
                 res.status(500).send({ error: 'Error al registrar al usuario' });
@@ -137,7 +137,7 @@ const getUserById = (req, res) => {
 const updateUsuario = async (req, res) => {
     const id = req.params.id;
     const usuarioData = req.body;
-    console.log("El controller: ", id, usuarioData)
+    //console.log("El controller: ", id, usuarioData)
     if (usuarioData.password) {
         try {
             const hashedPassword = await bcrypt.hash(usuarioData.password, 10);

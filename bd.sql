@@ -160,7 +160,7 @@ CREATE TABLE examenes_especiales_orina (
     id_examen_orina INT,
 	FOREIGN KEY (id_examen_orina) REFERENCES examen_orina(id_examen_orina)
 );
-
+--
 CREATE TABLE examen_hematologico (
     id_examen_hematologico INT NOT NULL PRIMARY KEY,
     grupo_sanguineo VARCHAR(5),
@@ -345,7 +345,7 @@ VALUES ( , '', '', '', );
 
 -- Insert para la tabla biometria_hematica
 INSERT INTO biometria_hematica (id_biometria_hematica, globulos_rojos, globulos_blancos, hemoglobina, hematocrito, ves, id_examen_hematologico) 
-VALUES ( , '', '', '', '', '', );
+VALUES ( 1, '3.424.000', '10.800', '10.2', '32', '22', 1);
 
 -- Insert para la tabla recuento_diferencial_hematico
 INSERT INTO recuento_diferencial_hematico (id_recuento_diferencial_hematico, cayados_relativo, cayados_absoluto, linfocitos_relativo, linfocitos_absoluto, eosinofilos_relativo, eosinofilos_absoluto, basofilos_relativo, basofilos_absoluto, segmentados_relativo, segmentados_absoluto, monocitos_relativo, monocitos_absoluto, recuento_plaquetas, recuento_reticulos, id_examen_hematologico) 
