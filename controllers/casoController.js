@@ -262,6 +262,137 @@ const actualizarMotivoConsulta = (req, res) => {
     });
 };
 
+const obtenerExamenFisicoGeneral = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenFisicoGeneral(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenFisicoGeneral = (req, res) => {
+    const { id_examen_fisico_general } = req.params;
+    //console.log("controller: ", req.body)
+    casoModel.actualizarExamenFisicoGeneral(id_examen_fisico_general, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen físico general actualizado correctamente' });
+    });
+};
+
+const obtenerExamenFisicoSegmentario = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenFisicoSegmentario(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenFisicoSegmentario = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    console.log("modelo: ",req.body)
+    casoModel.actualizarExamenFisicoSegmentario(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen físico segmentario actualizado correctamente' });
+    });
+};
+
+const obtenerExamenPiel = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenPiel(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenPiel = (req, res) => {
+    const { id_examen_piel } = req.params;
+    casoModel.actualizarExamenPiel(id_examen_piel, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen de piel actualizado correctamente' });
+    });
+};
+
+const obtenerExamenCirculatorio = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenCirculatorio(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenCirculatorio = (req, res) => {
+    const { id_examen_circulatorio } = req.params;
+    casoModel.actualizarExamenCirculatorio(id_examen_circulatorio, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen circulatorio actualizado correctamente' });
+    });
+};
+
+const obtenerExamenRespiratorio = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenRespiratorio(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenRespiratorio = (req, res) => {
+    const { id_examen_respiratorio } = req.params;
+    casoModel.actualizarExamenRespiratorio(id_examen_respiratorio, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen respiratorio actualizado correctamente' });
+    });
+};
+
+const obtenerExamenViaAerea = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenViaAerea(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenViaAerea = (req, res) => {
+    const { id_examen_via_aerea } = req.params;
+    casoModel.actualizarExamenViaAerea(id_examen_via_aerea, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen vía aérea actualizado correctamente' });
+    });
+};
+
+const obtenerExamenPsicologico = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenPsicologico(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenPsicologico = (req, res) => {
+    const { id_examen_psicologico } = req.params;
+    casoModel.actualizarExamenPsicologico(id_examen_psicologico, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen psicológico actualizado correctamente' });
+    });
+};
+
+const obtenerExamenObstetrico = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenObstetrico(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+// Actualizar examen obstétrico
+const actualizarExamenObstetrico = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarExamenObstetrico(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen obstétrico actualizado correctamente' });
+    });
+};
+
 module.exports = {
     listarCasosClinicos,
     cambiarEstadoCaso,
@@ -290,5 +421,21 @@ module.exports = {
     agregarMotivoConsulta,
     eliminarMotivoConsulta,
     obtenerPuntaje,
-    actualizarMotivoConsulta
+    actualizarMotivoConsulta,
+    obtenerExamenFisicoGeneral,
+    actualizarExamenFisicoGeneral,
+    obtenerExamenFisicoSegmentario,
+    actualizarExamenFisicoSegmentario,
+    obtenerExamenPiel,
+    actualizarExamenPiel,
+    obtenerExamenCirculatorio,
+    actualizarExamenCirculatorio,
+    obtenerExamenRespiratorio,
+    actualizarExamenRespiratorio,
+    obtenerExamenViaAerea,
+    actualizarExamenViaAerea,
+    obtenerExamenPsicologico,
+    actualizarExamenPsicologico,
+    obtenerExamenObstetrico,
+    actualizarExamenObstetrico,
 };

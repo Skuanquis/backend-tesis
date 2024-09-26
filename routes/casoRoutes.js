@@ -58,4 +58,35 @@ router.get('/puntaje/:id_historia_clinica', casoController.obtenerPuntaje);
 
 router.put('/motivos_consulta/:id', casoController.actualizarMotivoConsulta);
 
+router.get('/examen_fisico_general/:id_historia_clinica', casoController.obtenerExamenFisicoGeneral);
+
+router.put('/examen_fisico_general/:id_examen_fisico_general', casoController.actualizarExamenFisicoGeneral);
+
+router.get('/examen_fisico_segmentario/:id_historia_clinica', casoController.obtenerExamenFisicoSegmentario);
+
+router.put('/examen_fisico_segmentario/:id_historia_clinica', casoController.actualizarExamenFisicoSegmentario);
+
+router.get('/examen_piel/:id_historia_clinica', casoController.obtenerExamenPiel);
+
+router.put('/examen_piel/:id_examen_piel', casoController.actualizarExamenPiel);
+
+router.get('/examen_circulatorio/:id_historia_clinica', casoController.obtenerExamenCirculatorio);
+
+router.put('/examen_circulatorio/:id_examen_circulatorio', casoController.actualizarExamenCirculatorio);
+
+router.get('/examen_respiratorio/:id_historia_clinica', casoController.obtenerExamenRespiratorio);
+
+router.put('/examen_respiratorio/:id_examen_respiratorio', casoController.actualizarExamenRespiratorio);
+
+router.get('/examen_via_aerea/:id_historia_clinica', casoController.obtenerExamenViaAerea);
+
+router.put('/examen_via_aerea/:id_examen_via_aerea', casoController.actualizarExamenViaAerea);
+
+router.get('/examen_psicologico/:id_historia_clinica', casoController.obtenerExamenPsicologico);
+
+router.put('/examen_psicologico/:id_examen_psicologico', casoController.actualizarExamenPsicologico);
+
+router.get('/examen_obstetrico/:id_historia_clinica', casoController.obtenerExamenObstetrico);
+
+router.put('/examen_obstetrico/:id_historia_clinica', casoController.actualizarExamenObstetrico);
 module.exports = router;

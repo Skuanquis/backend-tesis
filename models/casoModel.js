@@ -269,6 +269,144 @@ const actualizarMotivoConsulta = (id_motivo_consulta, data, callback) => {
     db.query(sql, [data.motivo, id_motivo_consulta], callback);
 };
 
+const obtenerExamenFisicoGeneral = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_fisico_general WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenFisicoGeneral = (id_historia_clinica, data, callback) => {
+    //console.log("modelo: ",data)
+    const sql = `
+        UPDATE examen_fisico_general 
+        SET descripcion = ?, pa = ?, fc = ?, fr = ?, temperatura = ?, saturacion = ?, peso = ?, talla = ?, imc = ?, 
+            feed_examen_fisico = ?, puntaje_examen_fisico = ? 
+        WHERE id_historia_clinica = ?`;
+    const values = [
+        data.descripcion, data.pa, data.fc, data.fr, data.temperatura, data.saturacion, data.peso, 
+        data.talla, data.imc, data.feed_examen_fisico, data.puntaje_examen_fisico, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenFisicoSegmentario = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_fisico_segmentario WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenFisicoSegmentario = (id_historia_clinica, data, callback) => {
+
+    const sql = `
+        UPDATE examen_fisico_segmentario 
+        SET cabeza = ?, feed_cabeza = ?, puntaje_cabeza = ?, cuello = ?, feed_cuello = ?, puntaje_cuello = ?, 
+            torax = ?, feed_torax = ?, puntaje_torax = ?, corazon = ?, feed_corazon = ?, puntaje_corazon = ?, 
+            mamas = ?, feed_mamas = ?, puntaje_mamas = ?, abdomen = ?, feed_abdomen = ?, puntaje_abdomen = ?, 
+            genitourinario = ?, feed_genitourinario = ?, puntaje_genitourinario = ?, extremidades = ?, 
+            feed_extremidades = ?, puntaje_extremidades = ?, neurologico = ?, feed_neurologico = ?, 
+            puntaje_neurologico = ? 
+        WHERE id_historia_clinica = ?`;
+    
+    const values = [
+        data.cabeza, data.feed_cabeza, data.puntaje_cabeza, data.cuello, data.feed_cuello, data.puntaje_cuello,
+        data.torax, data.feed_torax, data.puntaje_torax, data.corazon, data.feed_corazon, data.puntaje_corazon,
+        data.mamas, data.feed_mamas, data.puntaje_mamas, data.abdomen, data.feed_abdomen, data.puntaje_abdomen,
+        data.genitourinario, data.feed_genitourinario, data.puntaje_genitourinario, data.extremidades,
+        data.feed_extremidades, data.puntaje_extremidades, data.neurologico, data.feed_neurologico,
+        data.puntaje_neurologico, id_historia_clinica
+    ];
+    
+    db.query(sql, values, callback);
+    
+};
+
+const obtenerExamenPiel = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_piel WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenPiel = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_piel 
+        SET descripcion = ?, feed_examen_piel = ?, puntaje_examen_piel = ? 
+        WHERE id_historia_clinica = ?`;
+    const values = [data.descripcion, data.feed_examen_piel, data.puntaje_examen_piel, id_historia_clinica];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenCirculatorio = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_circulatorio WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenCirculatorio = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_circulatorio 
+        SET descripcion = ?, feed_examen_circulatorio = ?, puntaje_examen_circulatorio = ? 
+        WHERE id_historia_clinica = ?`;
+    const values = [data.descripcion, data.feed_examen_circulatorio, data.puntaje_examen_circulatorio, id_historia_clinica];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenRespiratorio = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_respiratorio WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenRespiratorio = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_respiratorio 
+        SET descripcion = ?, feed_examen_respiratorio = ?, puntaje_examen_respiratorio = ? 
+        WHERE id_historia_clinica = ?`;
+    const values = [data.descripcion, data.feed_examen_respiratorio, data.puntaje_examen_respiratorio, id_historia_clinica];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenViaAerea = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_via_aerea WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenViaAerea = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_via_aerea 
+        SET descripcion = ?, feed_examen_via_aerea = ?, puntaje_examen_via_aerea = ? 
+        WHERE id_historia_clinica = ?`;
+    const values = [data.descripcion, data.feed_examen_via_aerea, data.puntaje_examen_via_aerea, id_historia_clinica];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenPsicologico = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM examen_psicologico WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenPsicologico = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_psicologico 
+        SET descripcion = ?, feed_examen_psicologico = ?, puntaje_examen_psicologico = ? 
+        WHERE id_historia_clinica = ?`;
+    const values = [data.descripcion, data.feed_examen_psicologico, data.puntaje_examen_psicologico, id_historia_clinica];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenObstetrico = (id_historia_clinica, callback) => {
+    const sql = 'SELECT * FROM examen_obstetrico WHERE id_historia_clinica = ?';
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenObstetrico = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_obstetrico 
+        SET presentacion = ?, dorso = ?, afu = ?, fcf = ?, paf = ?, monitorizacion = ?, dilatacion = ?, 
+            borramiento = ?, membranas = ?, plano = ?, au = ?, pelvis = ?, vp = ?, feed_examen_obstetrico = ?, 
+            puntaje_examen_obstetrico = ?
+        WHERE id_historia_clinica = ?`;
+    const values = [
+        data.presentacion, data.dorso, data.afu, data.fcf, data.paf, data.monitorizacion,
+        data.dilatacion, data.borramiento, data.membranas, data.plano, data.au, 
+        data.pelvis, data.vp, data.feed_examen_obstetrico, data.puntaje_examen_obstetrico, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
 
 module.exports = {
     obtenerCasosClinicos,
@@ -298,5 +436,21 @@ module.exports = {
     agregarMotivoConsulta,
     eliminarMotivoConsulta,
     obtenerPuntaje,
-    actualizarMotivoConsulta
+    actualizarMotivoConsulta,
+    obtenerExamenFisicoGeneral,
+    actualizarExamenFisicoGeneral,
+    obtenerExamenFisicoSegmentario,
+    actualizarExamenFisicoSegmentario,
+    obtenerExamenPiel,
+    actualizarExamenPiel,
+    obtenerExamenCirculatorio,
+    actualizarExamenCirculatorio,
+    obtenerExamenRespiratorio,
+    actualizarExamenRespiratorio,
+    obtenerExamenViaAerea,
+    actualizarExamenViaAerea,
+    obtenerExamenPsicologico,
+    actualizarExamenPsicologico,
+    obtenerExamenObstetrico,
+    actualizarExamenObstetrico
 };
