@@ -164,7 +164,7 @@ const obtenerAntecedentesPatologicos = (id_historia_clinica, callback) => {
 };
 
 const actualizarAntecedentesPatologicos = (id_antecedente_patologico, data, callback) => {
-    console.log("patologicos: ", data)
+    //console.log("patologicos: ", data)
     const sql = `
         UPDATE antecedentes_patologicos 
         SET alergias = ?, cirugias = ?, enfermedades_congenitas = ?, enfermedades_infancia = ?, 
@@ -214,6 +214,7 @@ const obtenerAnamnesisSistemas = (id_historia_clinica, callback) => {
 };
 
 const actualizarAnamnesisSistemas = (id_anamnesis_sistemas, data, callback) => {
+    //console.log("puntaje: ", data)
     const sql = `
         UPDATE anamnesis_sistemas 
         SET tegumentario = ?, feed_tegumentario = ?, puntaje_tegumentario = ?, 
@@ -259,7 +260,7 @@ const eliminarMotivoConsulta = (id_motivo_consulta, callback) => {
 };
 
 const obtenerPuntaje = (id_historia_clinica, callback) => {
-    const sql = `SELECT codigo, valor FROM valor_puntaje WHERE id_historia_clinica = ?`;
+    const sql = `SELECT codigo, valor FROM valor_puntaje WHERE id_historia_clinica = ? ORDER BY codigo`;
     db.query(sql, [id_historia_clinica], callback);
 };
 

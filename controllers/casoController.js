@@ -166,7 +166,7 @@ const obtenerAntecedentesPatologicos = (req, res) => {
 
 const actualizarAntecedentesPatologicos = (req, res) => {
     const { id } = req.params;
-    console.log(req.body)
+    //console.log(req.body)
     casoModel.actualizarAntecedentesPatologicos(id, req.body, (err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json({ message: 'Antecedentes patológicos actualizados correctamente' });
@@ -215,6 +215,7 @@ const obtenerAnamnesisSistemas = (req, res) => {
 
 const actualizarAnamnesisSistemas = (req, res) => {
     const { id } = req.params;
+    //console.log("puntaje controller: ", req.body)
     casoModel.actualizarAnamnesisSistemas(id, req.body, (err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json({ message: 'Anamnesis por sistemas actualizada correctamente' });
@@ -230,7 +231,7 @@ const obtenerMotivosConsulta = (req, res) => {
 };
 
 const agregarMotivoConsulta = (req, res) => {
-    console.log("Controller: ",req.body)
+    //console.log("Controller: ",req.body)
     casoModel.agregarMotivoConsulta(req.body, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(201).json({ id_motivo_consulta: result.insertId, message: 'Motivo de consulta agregado correctamente' });
