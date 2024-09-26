@@ -2,25 +2,27 @@ const db = require('../db/db');
 
 const getListaHistoriasClinicas = (callback) => {
     const sql = `SELECT 
-                    h.id_historia_clinica,
-                    h.descripcion,
-                    h.historia_enfermedad_actual
+                    hc.id_historia_clinica,
+                    hc.descripcion,
+                    hc.historia_enfermedad_actual
                 FROM 
-                    paciente p
+                    historia_clinica hc
                 JOIN 
-                    historia_clinica h ON p.id_paciente = h.id_paciente`;
+                    caso_clinico cc ON hc.id_caso_clinico = cc.id_caso_clinico
+                JOIN 
+                    paciente p ON cc.id_paciente = p.id_paciente`;
     db.query(sql, callback);
 };
 
-const getInfoHistoria = (id_historia_clinica, callback) => {
+const getInfoHistoriaFemenino = (id_historia_clinica, callback) => {
     const sql = `SELECT 
                     p.id_paciente,
                     p.paterno,
                     p.materno,
                     p.nombre,
-                    p.ci,
-                    p.edad,
-                    p.fecha_nacimiento,
+                    YEAR(CURDATE()) - YEAR(p.fecha_nacimiento) AS edad, 
+                    p.peso,
+                    p.talla,
                     p.sexo,
                     hc.id_historia_clinica,
                     hc.descripcion,
@@ -33,29 +35,108 @@ const getInfoHistoria = (id_historia_clinica, callback) => {
                     ag.abortos,
                     ag.cesarias,
                     ag.cpn,
-                    ap.app,
-                    ap.afp,
                     ap.alergias,
                     ap.cirugias,
+                    ap.enfermedades_congenitas,
+                    ap.enfermedades_infancia,
+                    ap.enfermedades_adolescencia,
+                    ap.enfermedades_adulto,
+                    ap.traumas,
+                    ap.intoxicaciones,
+                    ap.hospitalizaciones,
+                    ap.enfermedades,
+                    ap.transfusiones,
+                    ap.patologia_asociada,
+                    anp.antecedentes_nacimiento,
+                    anp.habitos,
+                    anp.factores_de_riesgo,
+                    af.padre,
+                    af.madre,
+                    af.hermanos,
+                    af.hijos,
+                    af.conyugue,
                     mc.motivo
                 FROM 
-                    paciente p
+                    historia_clinica hc
                 JOIN 
-                    historia_clinica hc ON p.id_paciente = hc.id_paciente
+                    caso_clinico cc ON hc.id_caso_clinico = cc.id_caso_clinico
                 JOIN 
+                    paciente p ON cc.id_paciente = p.id_paciente
+                LEFT JOIN 
                     antecedentes_gineco_obstetricos ag ON hc.id_historia_clinica = ag.id_historia_clinica
-                JOIN 
+                LEFT JOIN 
                     antecedentes_patologicos ap ON hc.id_historia_clinica = ap.id_historia_clinica
-                JOIN 
+                LEFT JOIN 
+                    antecedentes_no_patologicos anp ON hc.id_historia_clinica = anp.id_historia_clinica
+                LEFT JOIN 
+                    antecedentes_familiares af ON hc.id_historia_clinica = af.id_historia_clinica
+                LEFT JOIN 
                     motivo_consulta mc ON hc.id_historia_clinica = mc.id_historia_clinica
                 WHERE 
-                    p.id_paciente = ?;
+                    hc.id_historia_clinica = ?;
    
     `;
 
     db.query(sql, [id_historia_clinica], callback)
 }
 
+const getInfoHistoriaMasculino = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    p.id_paciente,
+                    p.paterno,
+                    p.materno,
+                    p.nombre,
+                    YEAR(CURDATE()) - YEAR(p.fecha_nacimiento) AS edad,
+                    p.peso,
+                    p.talla,
+                    p.sexo,
+                    hc.id_historia_clinica,
+                    hc.descripcion,
+                    hc.historia_enfermedad_actual,
+                    ap.alergias,
+                    ap.cirugias,
+                    ap.enfermedades_congenitas,
+                    ap.enfermedades_infancia,
+                    ap.enfermedades_adolescencia,
+                    ap.enfermedades_adulto,
+                    ap.traumas,
+                    ap.intoxicaciones,
+                    ap.hospitalizaciones,
+                    ap.enfermedades,
+                    ap.transfusiones,
+                    ap.patologia_asociada,
+                    anp.antecedentes_nacimiento,
+                    anp.habitos,
+                    anp.factores_de_riesgo,
+                    af.padre,
+                    af.madre,
+                    af.hermanos,
+                    af.hijos,
+                    af.conyugue,
+                    mc.motivo
+                FROM 
+                    historia_clinica hc
+                JOIN 
+                    caso_clinico cc ON hc.id_caso_clinico = cc.id_caso_clinico
+                JOIN 
+                    paciente p ON cc.id_paciente = p.id_paciente
+                LEFT JOIN 
+                    antecedentes_gineco_obstetricos ag ON hc.id_historia_clinica = ag.id_historia_clinica
+                LEFT JOIN 
+                    antecedentes_patologicos ap ON hc.id_historia_clinica = ap.id_historia_clinica
+                LEFT JOIN 
+                    antecedentes_no_patologicos anp ON hc.id_historia_clinica = anp.id_historia_clinica
+                LEFT JOIN 
+                    antecedentes_familiares af ON hc.id_historia_clinica = af.id_historia_clinica
+                LEFT JOIN 
+                    motivo_consulta mc ON hc.id_historia_clinica = mc.id_historia_clinica
+                WHERE 
+                    hc.id_historia_clinica = ?;
+   
+    `;
+
+    db.query(sql, [id_historia_clinica], callback)
+}
 
 const getExamenFisicoGeneral = (id_historia_clinica, callback) => {
     const sql = `SELECT 
@@ -499,9 +580,167 @@ const getExamenImagenPrueba = (id_historia_clinica, callback) => {
     db.query(sql, [id_historia_clinica], callback)
 }
 
+const getAnamnesisTegumentario = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.tegumentario
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisCardiovascular = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.cardiovascular
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisGastrointestinal = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.gastrointestinal
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisGenitourinario = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.genitourinario
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisRespiratorio = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.respiratorio
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+           `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisNeurologico = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.neurologico
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisLocomotor = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.locomotor
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisEndocrino = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.endocrino
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisHematico = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.hematico
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getAnamnesisPsiquiatrico = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            ans.psiquiatrico
+        FROM 
+            anamnesis_sistemas ans
+        JOIN 
+            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getDiagnosticosDiferencialesPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT d.id_diferencial, dd.diagnostico, d.categoria
+        FROM diferencial d
+        JOIN diagnostico_diferencia dd ON d.id_diferencial = dd.id_diferencial
+        WHERE d.id_historia_clinica = ?
+    `;
+    
+    db.query(sql, [id_historia_clinica], (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+
+        // Organizar los resultados de manera dinámica en un JSON
+        const response = results.reduce((acc, row) => {
+            if (!acc[row.categoria]) {
+                acc[row.categoria] = { diagnosticos: [] };
+            }
+            acc[row.categoria].diagnosticos.push(row.diagnostico);
+            return acc;
+        }, {});
+
+        callback(null, response);
+    });
+};
+
+
 module.exports = {
     getListaHistoriasClinicas,
-    getInfoHistoria,
+    getInfoHistoriaFemenino,
+    getInfoHistoriaMasculino,   
     getExamenFisicoGeneral,
     getExamenFisicoSegmentario,
     getExamenFisicoSegmentarioCabeza,
@@ -527,4 +766,15 @@ module.exports = {
     getExamenSerologiaSanguinea,
     getExamenElectrolitosSanquineos,
     getExamenImagenPrueba,
+    getAnamnesisTegumentario,
+    getAnamnesisRespiratorio,
+    getAnamnesisPsiquiatrico,
+    getAnamnesisNeurologico,
+    getAnamnesisLocomotor,
+    getAnamnesisHematico,
+    getAnamnesisGenitourinario,
+    getAnamnesisGastrointestinal,
+    getAnamnesisEndocrino,
+    getAnamnesisCardiovascular,
+    getDiagnosticosDiferencialesPorHistoriaClinica
 };

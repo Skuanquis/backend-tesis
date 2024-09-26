@@ -1,4 +1,5 @@
 const historiaModel = require('../models/historiaModel');
+const pacienteModel = require('../models/pacienteModel');
 
 const getListaHistoriasClinicas = (req, res) =>{
     historiaModel.getListaHistoriasClinicas((err, pacientes) => {
@@ -9,14 +10,33 @@ const getListaHistoriasClinicas = (req, res) =>{
     })
 };
 
-const getInfoHistoria = (req, res) =>{
-    const id_historia_clinica = req.params.id
-    historiaModel.getInfoHistoria(id_historia_clinica, (err, pacientes) => {
+function sendResponse(res) {
+    return (err, pacientes) => {
         if (err) {
-            return res.status(500).send({ error:'Error al cargar los pacientes'});
+            return res.status(500).send({ error: 'Error al cargar los datos de la historia clínica' });
         }
         res.status(200).send(pacientes);
-    })
+    }
+}
+
+const getInfoHistoria = (req, res) =>{
+    const id_historia_clinica = req.params.id
+    
+    pacienteModel.getSexoPaciente(id_historia_clinica, (err, result) => {
+        if (err || result.length === 0) {
+            return res.status(500).send({ error: 'Error al obtener el sexo del paciente' });
+        }
+
+        const sexo = result[0].sexo;
+        //console.log(sexo)
+        if (sexo === 'femenino') {
+            historiaModel.getInfoHistoriaFemenino(id_historia_clinica, sendResponse(res));
+        } else if (sexo === 'masculino') {
+            historiaModel.getInfoHistoriaMasculino(id_historia_clinica, sendResponse(res));
+        } else {
+            res.status(500).send({ error: 'Sexo del paciente no definido correctamente' });
+        }
+    });
 };
 
 const getExamenFisicoGeneral = (req, res) => {
@@ -259,6 +279,117 @@ const getExamenImagenPrueba = (req, res) => {
     })
 }
 
+const getAnamnesisCardiovascular = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisCardiovascular(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisEndocrino = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisEndocrino(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisGastrointestinal = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisGastrointestinal(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisGenitourinario = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisGenitourinario(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisHematico = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisHematico(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisLocomotor = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisLocomotor(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisNeurologico = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisNeurologico(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisPsiquiatrico = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisPsiquiatrico(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisRespiratorio = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisRespiratorio(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getAnamnesisTegumentario = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getAnamnesisTegumentario(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getDiagnosticosDiferencialesPorHistoriaClinica = (req, res) => {
+    const id_historia_clinica = req.params.id; // Obtener el id_historia_clinica desde los parámetros de la URL
+    historiaModel.getDiagnosticosDiferencialesPorHistoriaClinica(id_historia_clinica, (err, results) => {
+        if (err) {
+            return res.status(500).send({ error: 'Error al obtener los diagnósticos diferenciales' });
+        }
+        res.status(200).json(results);
+    });
+};
+
+
 module.exports = {
     getListaHistoriasClinicas,
     getInfoHistoria,
@@ -285,5 +416,16 @@ module.exports = {
     getExamenHemostaseaSanguinea,
     getExamenSerologiaSanguinea,
     getExamenElectrolitosSanquineos,
-    getExamenImagenPrueba
+    getExamenImagenPrueba,
+    getAnamnesisTegumentario,
+    getAnamnesisRespiratorio,
+    getAnamnesisPsiquiatrico,
+    getAnamnesisNeurologico,
+    getAnamnesisLocomotor,
+    getAnamnesisHematico,
+    getAnamnesisGenitourinario,
+    getAnamnesisGastrointestinal,
+    getAnamnesisEndocrino,
+    getAnamnesisCardiovascular,
+    getDiagnosticosDiferencialesPorHistoriaClinica
 };

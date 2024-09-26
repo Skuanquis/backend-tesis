@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const pacienteRoutes = require('./routes/pacienteRoutes');  
 const historiaRoutes = require('./routes/historiaRoutes');  
-const userRoutes = require('./routes/userRoutes');  
+const simulacionRoutes = require('./routes/simulacionRoutes');
+const userRoutes = require('./routes/userRoutes');
+const casoRoutes = require('./routes/casoRoutes');  
 
 const app = express();
 const port = 3000;
@@ -15,6 +17,8 @@ app.use(bodyParser.urlencoded({ extended: true}));
 
 app.use('/api', pacienteRoutes);
 app.use('/api', historiaRoutes);
+app.use('/api', simulacionRoutes);
+app.use('/api', casoRoutes);
 app.use('/api', userRoutes);
 
 app.listen(port, () => {

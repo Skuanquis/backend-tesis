@@ -24,7 +24,7 @@ const loginUser = (req, res) => {
         }
         //console.log(user)
         const accessToken = jwt.sign({ id: user.id_usuario, username: user.username, role: user.role }, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '1h',
+            expiresIn: '2h',
         });
         res.status(200).send({ accessToken });
     });

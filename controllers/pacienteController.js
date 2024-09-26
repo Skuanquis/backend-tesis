@@ -18,7 +18,17 @@ const getPacienteHistoria = (req, res) =>{
     })
 };
 
+const getSexoPaciente = (req, res) =>{
+    pacienteModel.getSexoPaciente((err, pacientes) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al cargar los pacientes'});
+        }
+        res.status(200).send(pacientes);
+    })
+};
+
 module.exports = {
     getListaPacientes,
-    getPacienteHistoria
+    getPacienteHistoria,
+    getSexoPaciente
 };

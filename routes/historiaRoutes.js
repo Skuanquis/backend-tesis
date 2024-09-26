@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const historiaController = require('../controllers/historiaController');
-//const authenticateToken = require('../middlewares/authMiddlewares');
+const authenticateToken = require('../middlewares/authMiddlewares');
 
 router.get('/historias', historiaController.getListaHistoriasClinicas);
 
@@ -54,5 +54,27 @@ router.get('/laboratorio-serologia-sanguinea/:id', historiaController.getExamenS
 router.get('/laboratorio-electrolitos-sanguineos/:id', historiaController.getExamenElectrolitosSanquineos);
 
 router.get('/imagen', historiaController.getExamenImagenPrueba);
+
+router.get('/anamnesis-tegumentario/:id', historiaController.getAnamnesisTegumentario);
+
+router.get('/anamnesis-cardiovascular/:id', historiaController.getAnamnesisCardiovascular);
+
+router.get('/anamnesis-endocrino/:id', historiaController.getAnamnesisEndocrino);
+
+router.get('/anamnesis-gastrointestinal/:id', historiaController.getAnamnesisGastrointestinal);
+
+router.get('/anamnesis-genitourinario/:id', historiaController.getAnamnesisGenitourinario);
+
+router.get('/anamnesis-hematico/:id', historiaController.getAnamnesisHematico);
+
+router.get('/anamnesis-locomotor/:id', historiaController.getAnamnesisLocomotor);
+
+router.get('/anamnesis-neurologico/:id', historiaController.getAnamnesisNeurologico);
+
+router.get('/anamnesis-psquiatrico/:id', historiaController.getAnamnesisPsiquiatrico);
+
+router.get('/anamnesis-respiratorio/:id', historiaController.getAnamnesisRespiratorio);
+
+router.get('/diferencial/diagnosticos/:id', authenticateToken, historiaController.getDiagnosticosDiferencialesPorHistoriaClinica);
 
 module.exports = router;
