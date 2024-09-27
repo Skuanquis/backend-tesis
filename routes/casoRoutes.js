@@ -102,6 +102,12 @@ router.get('/diagnosticos_diferenciales/:id_historia_clinica', casoController.ob
 
 router.put('/diagnosticos_diferenciales/:id_historia_clinica', casoController.actualizarDiagnosticosDiferenciales);
 
+router.get('/categoria_medicamento', casoController.obtenerCategoriasMedicamentos);
 
+router.get('/medicamento/:id_categoria_medicamento', casoController.obtenerMedicamentosPorCategoria);
+
+router.get('/medicamentos_suministrados/:id_historia_clinica', casoController.obtenerMedicamentosSuministradosPorHistoriaClinica);
+
+router.put('/medicamentos_suministrados/:id_historia_clinica', casoController.actualizarMedicamentosSuministrados);
 
 module.exports = router;

@@ -544,6 +544,120 @@ const actualizarDiagnosticosDiferenciales = (id_historia_clinica, data, callback
     });
 };
 
+const obtenerCategoriasMedicamentos = (callback) => {
+    const sql = 'SELECT * FROM categoria_medicamento';
+    db.query(sql, callback);
+};
+
+const obtenerMedicamentosPorCategoria = (id_categoria_medicamento, callback) => {
+    const sql = 'SELECT * FROM medicamento WHERE id_categoria_medicamento = ?';
+    db.query(sql, [id_categoria_medicamento], callback);
+};
+
+const obtenerMedicamentosSuministradosPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT ms.*, m.nombre, m.descripcion
+        FROM medicamentos_suministrados ms
+        JOIN medicamento m ON ms.id_medicamento = m.id_medicamento
+        WHERE ms.id_historia_clinica = ?
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarMedicamentosSuministrados = (id_historia_clinica, data, callback) => {
+    const sqlSelect = `
+        SELECT id_medicamentos_suministrados, id_medicamento
+        FROM medicamentos_suministrados
+        WHERE id_historia_clinica = ?
+    `;
+    db.query(sqlSelect, [id_historia_clinica], (err, results) => {
+        if (err) return callback(err);
+
+        const existingMedicamentos = results;
+        const existingIds = existingMedicamentos.map(m => m.id_medicamento);
+        const newIds = data.map(m => m.id_medicamento);
+        const idsToDelete = existingIds.filter(id => !newIds.includes(id));
+        const medsToInsert = data.filter(m => !existingIds.includes(m.id_medicamento));
+        const medsToUpdate = data.filter(m => existingIds.includes(m.id_medicamento));
+        db.beginTransaction(err => {
+            if (err) return callback(err);
+
+            let deletePromise = Promise.resolve();
+            if (idsToDelete.length > 0) {
+                const sqlDelete = `
+                    DELETE FROM medicamentos_suministrados
+                    WHERE id_historia_clinica = ? AND id_medicamento IN (?)
+                `;
+                deletePromise = new Promise((resolve, reject) => {
+                    db.query(sqlDelete, [id_historia_clinica, idsToDelete], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            let insertPromise = Promise.resolve();
+            if (medsToInsert.length > 0) {
+                const sqlInsert = `
+                    INSERT INTO medicamentos_suministrados (id_medicamento, id_historia_clinica, feed_medicamento_diferencial, puntaje_medicamento_diferencial)
+                    VALUES ?
+                `;
+                const values = medsToInsert.map(medicamento => [
+                    medicamento.id_medicamento,
+                    id_historia_clinica,
+                    medicamento.feed_medicamento_diferencial,
+                    medicamento.puntaje_medicamento_diferencial,
+                ]);
+                insertPromise = new Promise((resolve, reject) => {
+                    db.query(sqlInsert, [values], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            let updatePromises = [];
+            medsToUpdate.forEach(medicamento => {
+                const sqlUpdate = `
+                    UPDATE medicamentos_suministrados
+                    SET feed_medicamento_diferencial = ?, puntaje_medicamento_diferencial = ?
+                    WHERE id_historia_clinica = ? AND id_medicamento = ?
+                `;
+                updatePromises.push(new Promise((resolve, reject) => {
+                    db.query(sqlUpdate, [
+                        medicamento.feed_medicamento_diferencial,
+                        medicamento.puntaje_medicamento_diferencial,
+                        id_historia_clinica,
+                        medicamento.id_medicamento
+                    ], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                }));
+            });
+
+            Promise.all([deletePromise, insertPromise, ...updatePromises])
+                .then(() => {
+                    db.commit(err => {
+                        if (err) {
+                            return db.rollback(() => {
+                                callback(err);
+                            });
+                        }
+                        callback(null);
+                    });
+                })
+                .catch(err => {
+                    db.rollback(() => {
+                        callback(err);
+                    });
+                });
+        });
+    });
+};
+
+
+
 module.exports = {
     obtenerCasosClinicos,
     cambiarEstadoCaso,
@@ -595,4 +709,8 @@ module.exports = {
     obtenerDiagnosticosPorCategoria,
     obtenerDiagnosticosDiferencialesPorHistoriaClinica,
     actualizarDiagnosticosDiferenciales,
+    obtenerCategoriasMedicamentos,
+    obtenerMedicamentosPorCategoria,
+    obtenerMedicamentosSuministradosPorHistoriaClinica,
+    actualizarMedicamentosSuministrados
 };

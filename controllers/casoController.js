@@ -439,6 +439,37 @@ const actualizarDiagnosticosDiferenciales = (req, res) => {
         res.status(200).json({ message: 'Diagnósticos diferenciales actualizados correctamente' });
     });
 };
+
+const obtenerCategoriasMedicamentos = (req, res) => {
+    casoModel.obtenerCategoriasMedicamentos((err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerMedicamentosPorCategoria = (req, res) => {
+    const { id_categoria_medicamento } = req.params;
+    casoModel.obtenerMedicamentosPorCategoria(id_categoria_medicamento, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerMedicamentosSuministradosPorHistoriaClinica = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerMedicamentosSuministradosPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarMedicamentosSuministrados = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarMedicamentosSuministrados(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Medicamentos suministrados actualizados correctamente' });
+    });
+};
 module.exports = {
     listarCasosClinicos,
     cambiarEstadoCaso,
@@ -490,4 +521,8 @@ module.exports = {
     obtenerDiagnosticosPorCategoria,
     obtenerDiagnosticosDiferencialesPorHistoriaClinica,
     actualizarDiagnosticosDiferenciales,
+    obtenerCategoriasMedicamentos,
+    obtenerMedicamentosPorCategoria,
+    obtenerMedicamentosSuministradosPorHistoriaClinica,
+    actualizarMedicamentosSuministrados
 };
