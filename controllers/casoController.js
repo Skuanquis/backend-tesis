@@ -393,6 +393,52 @@ const actualizarExamenObstetrico = (req, res) => {
     });
 };
 
+const obtenerSignosVitales = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerSignosVitales(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarSignosVitales = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarSignosVitales(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Signos vitales actualizados correctamente' });
+    });
+};
+
+const obtenerCategoriasDiferenciales = (req, res) => {
+    casoModel.obtenerCategoriasDiferenciales((err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerDiagnosticosPorCategoria = (req, res) => {
+    const { id_categoria_diferencial } = req.params;
+    casoModel.obtenerDiagnosticosPorCategoria(id_categoria_diferencial, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerDiagnosticosDiferencialesPorHistoriaClinica = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerDiagnosticosDiferencialesPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarDiagnosticosDiferenciales = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarDiagnosticosDiferenciales(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Diagnósticos diferenciales actualizados correctamente' });
+    });
+};
 module.exports = {
     listarCasosClinicos,
     cambiarEstadoCaso,
@@ -438,4 +484,10 @@ module.exports = {
     actualizarExamenPsicologico,
     obtenerExamenObstetrico,
     actualizarExamenObstetrico,
+    obtenerSignosVitales,
+    actualizarSignosVitales,
+    obtenerCategoriasDiferenciales,
+    obtenerDiagnosticosPorCategoria,
+    obtenerDiagnosticosDiferencialesPorHistoriaClinica,
+    actualizarDiagnosticosDiferenciales,
 };

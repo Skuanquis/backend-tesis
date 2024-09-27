@@ -89,4 +89,19 @@ router.put('/examen_psicologico/:id_examen_psicologico', casoController.actualiz
 router.get('/examen_obstetrico/:id_historia_clinica', casoController.obtenerExamenObstetrico);
 
 router.put('/examen_obstetrico/:id_historia_clinica', casoController.actualizarExamenObstetrico);
+
+router.get('/signos_vitales/:id_historia_clinica', casoController.obtenerSignosVitales);
+
+router.put('/signos_vitales/:id_historia_clinica', casoController.actualizarSignosVitales);
+
+router.get('/categoria_diferencial', casoController.obtenerCategoriasDiferenciales);
+
+router.get('/diagnostico/:id_categoria_diferencial', casoController.obtenerDiagnosticosPorCategoria);
+
+router.get('/diagnosticos_diferenciales/:id_historia_clinica', casoController.obtenerDiagnosticosDiferencialesPorHistoriaClinica);
+
+router.put('/diagnosticos_diferenciales/:id_historia_clinica', casoController.actualizarDiagnosticosDiferenciales);
+
+
+
 module.exports = router;

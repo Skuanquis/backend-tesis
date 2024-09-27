@@ -408,6 +408,142 @@ const actualizarExamenObstetrico = (id_historia_clinica, data, callback) => {
     db.query(sql, values, callback);
 };
 
+const obtenerSignosVitales = (id_historia_clinica, callback) => {
+    const sql = 'SELECT * FROM signos_vitales WHERE id_historia_clinica = ?';
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarSignosVitales = (id_historia_clinica, data, callback) => {
+    //console.log(data)
+    const sql = `
+        UPDATE signos_vitales 
+        SET frecuencia_cardiaca = ?, saturacion = ?, presion_sanguinea_sistole = ?, 
+            presion_sanguinea_distole = ?, temperatura = ?, feed_signos_vitales = ?, 
+            puntaje_signos_vitales = ? 
+        WHERE id_historia_clinica = ?
+    `;
+    const values = [
+        data.frecuencia_cardiaca, data.saturacion, data.presion_sanguinea_sistole,
+        data.presion_sanguinea_distole, data.temperatura, data.feed_signos_vitales,
+        data.puntaje_signos_vitales, id_historia_clinica
+    ];
+
+    db.query(sql, values, callback);
+};
+
+const obtenerCategoriasDiferenciales = (callback) => {
+    const sql = `SELECT * FROM categoria_diferencial`;
+    db.query(sql, callback);
+};
+
+const obtenerDiagnosticosPorCategoria = (id_categoria_diferencial, callback) => {
+    const sql = `SELECT * FROM diagnostico WHERE id_categoria_diferencial = ?`;
+    db.query(sql, [id_categoria_diferencial], callback);
+};
+
+const obtenerDiagnosticosDiferencialesPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT dd.*, d.nombre, d.descripcion 
+        FROM diagnosticos_diferenciales dd 
+        JOIN diagnostico d ON dd.id_diagnostico = d.id_diagnostico 
+        WHERE dd.id_historia_clinica = ?
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarDiagnosticosDiferenciales = (id_historia_clinica, data, callback) => {
+    const sqlSelect = `
+        SELECT id_diagnosticos_diferenciales, id_diagnostico
+        FROM diagnosticos_diferenciales
+        WHERE id_historia_clinica = ?
+    `;
+    db.query(sqlSelect, [id_historia_clinica], (err, results) => {
+        if (err) return callback(err);
+
+        const existingDiagnosticos = results;
+        const existingIds = existingDiagnosticos.map(d => d.id_diagnostico);
+        const newIds = data.map(d => d.id_diagnostico);
+        const idsToDelete = existingIds.filter(id => !newIds.includes(id));
+        const diagnosToInsert = data.filter(d => !existingIds.includes(d.id_diagnostico));
+        const diagnosToUpdate = data.filter(d => existingIds.includes(d.id_diagnostico));
+
+        db.beginTransaction(err => {
+            if (err) return callback(err);
+
+            let deletePromise = Promise.resolve();
+            if (idsToDelete.length > 0) {
+                const sqlDelete = `
+                    DELETE FROM diagnosticos_diferenciales
+                    WHERE id_historia_clinica = ? AND id_diagnostico IN (?)
+                `;
+                deletePromise = new Promise((resolve, reject) => {
+                    db.query(sqlDelete, [id_historia_clinica, idsToDelete], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            let insertPromise = Promise.resolve();
+            if (diagnosToInsert.length > 0) {
+                const sqlInsert = `
+                    INSERT INTO diagnosticos_diferenciales (id_diagnostico, id_historia_clinica, feed_diagnostico_diferencial, puntaje_diagnostico_diferencial)
+                    VALUES ?
+                `;
+                const values = diagnosToInsert.map(diagnostico => [
+                    diagnostico.id_diagnostico,
+                    id_historia_clinica,
+                    diagnostico.feed_diagnostico_diferencial,
+                    diagnostico.puntaje_diagnostico_diferencial,
+                ]);
+                insertPromise = new Promise((resolve, reject) => {
+                    db.query(sqlInsert, [values], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            let updatePromises = [];
+            diagnosToUpdate.forEach(diagnostico => {
+                const sqlUpdate = `
+                    UPDATE diagnosticos_diferenciales
+                    SET feed_diagnostico_diferencial = ?, puntaje_diagnostico_diferencial = ?
+                    WHERE id_historia_clinica = ? AND id_diagnostico = ?
+                `;
+                updatePromises.push(new Promise((resolve, reject) => {
+                    db.query(sqlUpdate, [
+                        diagnostico.feed_diagnostico_diferencial,
+                        diagnostico.puntaje_diagnostico_diferencial,
+                        id_historia_clinica,
+                        diagnostico.id_diagnostico
+                    ], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                }));
+            });
+
+            Promise.all([deletePromise, insertPromise, ...updatePromises])
+                .then(() => {
+                    db.commit(err => {
+                        if (err) {
+                            return db.rollback(() => {
+                                callback(err);
+                            });
+                        }
+                        callback(null);
+                    });
+                })
+                .catch(err => {
+                    db.rollback(() => {
+                        callback(err);
+                    });
+                });
+        });
+    });
+};
+
 module.exports = {
     obtenerCasosClinicos,
     cambiarEstadoCaso,
@@ -452,5 +588,11 @@ module.exports = {
     obtenerExamenPsicologico,
     actualizarExamenPsicologico,
     obtenerExamenObstetrico,
-    actualizarExamenObstetrico
+    actualizarExamenObstetrico,
+    obtenerSignosVitales,
+    actualizarSignosVitales,
+    obtenerCategoriasDiferenciales,
+    obtenerDiagnosticosPorCategoria,
+    obtenerDiagnosticosDiferencialesPorHistoriaClinica,
+    actualizarDiagnosticosDiferenciales,
 };
