@@ -766,6 +766,7 @@ const obtenerExamenFisicoOrina = (id_historia_clinica, callback) => {
 
 // Actualizar el examen físico de orina
 const actualizarExamenFisicoOrina = (id_historia_clinica, data, callback) => {
+    //console.log(data)
     const sql = `
         UPDATE examen_fisico_orina 
         SET color = ?, aspecto = ?, volumen = ?, feed_examen_fisico_orina = ?, puntaje_examen_fisico_orina = ?
@@ -787,17 +788,18 @@ const obtenerSedimentoUrinario = (id_historia_clinica, callback) => {
 };
 
 const actualizarSedimentoUrinario = (id_historia_clinica, data, callback) => {
+    //console.log(data)
     const sql = `
         UPDATE sedimento_urinario 
         SET hematies = ?, leucocitos = ?, piocitos = ?, celulas_epiteliales = ?, celulas_renales = ?, 
             cilindro_cereo = ?, cilindros_hialianos = ?, cilindros_granulosos = ?, cilindros_leucocitarios = ?, 
-            flora_bacteriana = ?, cristales = ?, filamento_mucoso = ?, hifas = ?, levaduras = ?, otros = ?, 
+            cilindros_eritrocitarios = ?, flora_bacteriana = ?, cristales = ?, filamento_mucoso = ?, hifas = ?, levaduras = ?, otros = ?, 
             feed_examen_sedimento_urinario = ?, puntaje_examen_sedimento_urinario = ?
         WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
     const values = [
         data.hematies, data.leucocitos, data.piocitos, data.celulas_epiteliales, data.celulas_renales,
         data.cilindro_cereo, data.cilindros_hialianos, data.cilindros_granulosos, data.cilindros_leucocitarios,
-        data.flora_bacteriana, data.cristales, data.filamento_mucoso, data.hifas, data.levaduras, data.otros,
+        data.cilindros_eritrocitarios, data.flora_bacteriana, data.cristales, data.filamento_mucoso, data.hifas, data.levaduras, data.otros,
         data.feed_examen_sedimento_urinario, data.puntaje_examen_sedimento_urinario, id_historia_clinica
     ];
     db.query(sql, values, callback);
@@ -914,15 +916,15 @@ const actualizarRecuentoDiferencialHematico = (id_examen_hematologico, data, cal
         SET cayados_relativo = ?, cayados_absoluto = ?, linfocitos_relativo = ?, linfocitos_absoluto = ?, 
             eosinofilos_relativo = ?, eosinofilos_absoluto = ?, basofilos_relativo = ?, basofilos_absoluto = ?, 
             segmentados_relativo = ?, segmentados_absoluto = ?, monocitos_relativo = ?, monocitos_absoluto = ?, 
-            recuento_plaquetas = ?, recuento_reticulos = ?, feed_recueto_diferencial_hematico = ?, 
-            puntaje_recueto_diferencial_hematico = ?
+            recuento_plaquetas = ?, recuento_reticulos = ?, feed_recuento_diferencial_hematico = ?, 
+            puntaje_recuento_diferencial_hematico = ?
         WHERE id_examen_hematologico = ?`;
     const values = [
         data.cayados_relativo, data.cayados_absoluto, data.linfocitos_relativo, data.linfocitos_absoluto,
         data.eosinofilos_relativo, data.eosinofilos_absoluto, data.basofilos_relativo, data.basofilos_absoluto,
         data.segmentados_relativo, data.segmentados_absoluto, data.monocitos_relativo, data.monocitos_absoluto,
-        data.recuento_plaquetas, data.recuento_reticulos, data.feed_recueto_diferencial_hematico, 
-        data.puntaje_recueto_diferencial_hematico, id_examen_hematologico
+        data.recuento_plaquetas, data.recuento_reticulos, data.feed_recuento_diferencial_hematico, 
+        data.puntaje_recuento_diferencial_hematico, id_examen_hematologico
     ];
     db.query(sql, values, callback);
 };

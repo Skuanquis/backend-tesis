@@ -559,20 +559,14 @@ CREATE TABLE subespecialidad (
 	nombre VARCHAR(128)
 );
 
-CREATE TABLE consulta_subespecialidad (
-    id_consulta_subespecialidad INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_subespecialidad INT,
-    descripcion TEXT,
-    FOREIGN KEY (id_subespecialidad) REFERENCES subespecialidad(id_subespecialidad)
-);
-
 CREATE TABLE consulta_externa (
     id_consulta_externa INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_consulta_subespecialidad INT,
+    id_subespecialidad INT,
     id_historia_clinica INT,
-	feed_consulta_subespecialidad TEXT,
-    puntaje_consulta_subespecialidad VARCHAR(2),
-    FOREIGN KEY (id_consulta_subespecialidad) REFERENCES consulta_subespecialidad(id_consulta_subespecialidad),
+    descripcion TEXT,
+	feed_subeid_subespecialidad TEXT,
+    puntaje_subeid_subespecialidad VARCHAR(2),
+    FOREIGN KEY (id_subespecialidad) REFERENCES subeid_subespecialidad(id_subespecialidad),
     FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
 
