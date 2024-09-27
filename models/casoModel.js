@@ -656,7 +656,362 @@ const actualizarMedicamentosSuministrados = (id_historia_clinica, data, callback
     });
 };
 
+const obtenerSubespecialidades = (callback) => {
+    const sql = `SELECT id_subespecialidad, nombre FROM subespecialidad ORDER BY nombre`;
+    db.query(sql, callback);
+};
 
+const obtenerSubespecialidadesPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT se.id_subespecialidad, se.nombre, ce.descripcion, ce.feed_subespecialidad, ce.puntaje_subespecialidad
+        FROM subespecialidad se
+        INNER JOIN consulta_externa ce ON se.id_subespecialidad = ce.id_subespecialidad
+        WHERE ce.id_historia_clinica = ?
+        ORDER BY se.nombre
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarSubespecialidades = (id_historia_clinica, subsData, callback) => {
+    db.beginTransaction(err => {
+        if (err) {
+            return callback(err);
+        }
+        const selectSql = 'SELECT id_subespecialidad FROM consulta_externa WHERE id_historia_clinica = ?';
+        db.query(selectSql, [id_historia_clinica], (err, results) => {
+            if (err) {
+                return db.rollback(() => {
+                    callback(err);
+                });
+            }
+            const existingIds = results.map(row => row.id_subespecialidad);
+            const subsDataIds = subsData.map(sub => sub.id_subespecialidad);
+            const idsToInsert = subsDataIds.filter(id => !existingIds.includes(id));
+            const idsToUpdate = subsDataIds.filter(id => existingIds.includes(id));
+            const idsToDelete = existingIds.filter(id => !subsDataIds.includes(id));
+            const tasks = [];
+
+            if (idsToDelete.length > 0) {
+                tasks.push((cb) => {
+                    const deleteSql = 'DELETE FROM consulta_externa WHERE id_historia_clinica = ? AND id_subespecialidad IN (?)';
+                    db.query(deleteSql, [id_historia_clinica, idsToDelete], cb);
+                });
+            }
+
+            idsToUpdate.forEach(id_subespecialidad => {
+                const sub = subsData.find(s => s.id_subespecialidad === id_subespecialidad);
+                tasks.push((cb) => {
+                    const updateSql = 'UPDATE consulta_externa SET descripcion = ?, feed_subespecialidad = ?, puntaje_subespecialidad = ? WHERE id_historia_clinica = ? AND id_subespecialidad = ?';
+                    const params = [sub.descripcion, sub.feedback, sub.score, id_historia_clinica, id_subespecialidad];
+                    db.query(updateSql, params, cb);
+                });
+            });
+
+            if (idsToInsert.length > 0) {
+                tasks.push((cb) => {
+                    const insertSubs = subsData.filter(sub => idsToInsert.includes(sub.id_subespecialidad));
+                    const insertValues = insertSubs.map(sub => [
+                        sub.id_subespecialidad,
+                        id_historia_clinica,
+                        sub.descripcion,
+                        sub.feedback,
+                        sub.score
+                    ]);
+
+                    const insertSql = 'INSERT INTO consulta_externa (id_subespecialidad, id_historia_clinica, descripcion, feed_subespecialidad, puntaje_subespecialidad) VALUES ?';
+                    db.query(insertSql, [insertValues], cb);
+                });
+            }
+
+            executeTasks(tasks, (err) => {
+                if (err) {
+                    return db.rollback(() => {
+                        callback(err);
+                    });
+                }
+                db.commit((err) => {
+                    if (err) {
+                        return db.rollback(() => {
+                            callback(err);
+                        });
+                    }
+                    callback(null);
+                });
+            });
+        });
+    });
+};
+function executeTasks(tasks, finalCallback) {
+    let index = 0;
+
+    function next(err) {
+        if (err || index === tasks.length) {
+            return finalCallback(err);
+        }
+        const task = tasks[index++];
+        task(next);
+    }
+
+    next();
+}
+
+const obtenerExamenFisicoOrina = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT efo.* 
+        FROM examen_fisico_orina efo 
+        JOIN examen_orina eo ON efo.id_examen_orina = eo.id_examen_orina 
+        WHERE eo.id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+// Actualizar el examen físico de orina
+const actualizarExamenFisicoOrina = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_fisico_orina 
+        SET color = ?, aspecto = ?, volumen = ?, feed_examen_fisico_orina = ?, puntaje_examen_fisico_orina = ?
+        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
+    const values = [
+        data.color, data.aspecto, data.volumen, data.feed_examen_fisico_orina,
+        data.puntaje_examen_fisico_orina, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerSedimentoUrinario = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT su.* 
+        FROM sedimento_urinario su 
+        JOIN examen_orina eo ON su.id_examen_orina = eo.id_examen_orina 
+        WHERE eo.id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarSedimentoUrinario = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE sedimento_urinario 
+        SET hematies = ?, leucocitos = ?, piocitos = ?, celulas_epiteliales = ?, celulas_renales = ?, 
+            cilindro_cereo = ?, cilindros_hialianos = ?, cilindros_granulosos = ?, cilindros_leucocitarios = ?, 
+            flora_bacteriana = ?, cristales = ?, filamento_mucoso = ?, hifas = ?, levaduras = ?, otros = ?, 
+            feed_examen_sedimento_urinario = ?, puntaje_examen_sedimento_urinario = ?
+        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
+    const values = [
+        data.hematies, data.leucocitos, data.piocitos, data.celulas_epiteliales, data.celulas_renales,
+        data.cilindro_cereo, data.cilindros_hialianos, data.cilindros_granulosos, data.cilindros_leucocitarios,
+        data.flora_bacteriana, data.cristales, data.filamento_mucoso, data.hifas, data.levaduras, data.otros,
+        data.feed_examen_sedimento_urinario, data.puntaje_examen_sedimento_urinario, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenQuimicoUrinario = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT equ.* 
+        FROM examen_quimico_urinario equ 
+        JOIN examen_orina eo ON equ.id_examen_orina = eo.id_examen_orina 
+        WHERE eo.id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenQuimicoUrinario = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_quimico_urinario 
+        SET ph = ?, densidad = ?, proteinas = ?, sangre = ?, glucosa = ?, cetonas = ?, 
+            urobilinogeno = ?, bilirrubina = ?, pigmentos_biliares = ?, nitritos = ?, leucocitos = ?, 
+            feed_examen_quimico_urinario = ?, puntaje_examen_quimico_urinario = ?
+        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
+    const values = [
+        data.ph, data.densidad, data.proteinas, data.sangre, data.glucosa, data.cetonas, 
+        data.urobilinogeno, data.bilirrubina, data.pigmentos_biliares, data.nitritos, data.leucocitos, 
+        data.feed_examen_quimico_urinario, data.puntaje_examen_quimico_urinario, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenEspecialOrina = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT eeo.* 
+        FROM examenes_especiales_orina eeo 
+        JOIN examen_orina eo ON eeo.id_examen_orina = eo.id_examen_orina 
+        WHERE eo.id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenEspecialOrina = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examenes_especiales_orina 
+        SET proteurinaria = ?, creatinuria = ?, microalbuminuria = ?, clearence_creatinina = ?, 
+            feed_examen_especial_orina = ?, puntaje_examen_especial_orina = ?
+        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
+    const values = [
+        data.proteurinaria, data.creatinuria, data.microalbuminuria, data.clearence_creatinina, 
+        data.feed_examen_especial_orina, data.puntaje_examen_especial_orina, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerExamenHematologico = (id_historia_clinica, callback) => {
+    const sql = 'SELECT * FROM examen_hematologico WHERE id_historia_clinica = ?';
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarExamenHematologico = (id_historia_clinica, data, callback) => {
+    const sql = `
+        UPDATE examen_hematologico 
+        SET grupo_sanguineo = ?, factor_rh = ?, observaciones = ?, 
+            feed_examen_hematologico = ?, puntaje_examen_hematologico = ?
+        WHERE id_historia_clinica = ?`;
+    const values = [
+        data.grupo_sanguineo, data.factor_rh, data.observaciones, 
+        data.feed_examen_hematologico, data.puntaje_examen_hematologico, id_historia_clinica
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerBiometriaHematica = (id_examen_hematologico, callback) => {
+    const sql = 'SELECT * FROM biometria_hematica WHERE id_examen_hematologico = ?';
+    db.query(sql, [id_examen_hematologico], callback);
+};
+
+const actualizarBiometriaHematica = (id_examen_hematologico, data, callback) => {
+    const sql = `
+        UPDATE biometria_hematica 
+        SET globulos_rojos = ?, globulos_blancos = ?, hemoglobina = ?, hematocrito = ?, 
+            ves = ?, feed_examen_biometria_hematica = ?, puntaje_examen_biometria_hematica = ?
+        WHERE id_examen_hematologico = ?`;
+    const values = [
+        data.globulos_rojos, data.globulos_blancos, data.hemoglobina, data.hematocrito,
+        data.ves, data.feed_examen_biometria_hematica, data.puntaje_examen_biometria_hematica, id_examen_hematologico
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerIndicesEritrocitarios = (id_examen_hematologico, callback) => {
+    const sql = 'SELECT * FROM indices_eritrocitarios_hematico WHERE id_examen_hematologico = ?';
+    db.query(sql, [id_examen_hematologico], callback);
+};
+
+const actualizarIndicesEritrocitarios = (id_examen_hematologico, data, callback) => {
+    const sql = `
+        UPDATE indices_eritrocitarios_hematico 
+        SET vcm = ?, hbcm = ?, chbcm = ?, 
+            feed_indices_eritrocitarios = ?, puntaje_indices_eritrocitarios = ?
+        WHERE id_examen_hematologico = ?`;
+    const values = [
+        data.vcm, data.hbcm, data.chbcm, 
+        data.feed_indices_eritrocitarios, data.puntaje_indices_eritrocitarios, id_examen_hematologico
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerRecuentoDiferencialHematico = (id_examen_hematologico, callback) => {
+    const sql = 'SELECT * FROM recuento_diferencial_hematico WHERE id_examen_hematologico = ?';
+    db.query(sql, [id_examen_hematologico], callback);
+};
+
+const actualizarRecuentoDiferencialHematico = (id_examen_hematologico, data, callback) => {
+    const sql = `
+        UPDATE recuento_diferencial_hematico 
+        SET cayados_relativo = ?, cayados_absoluto = ?, linfocitos_relativo = ?, linfocitos_absoluto = ?, 
+            eosinofilos_relativo = ?, eosinofilos_absoluto = ?, basofilos_relativo = ?, basofilos_absoluto = ?, 
+            segmentados_relativo = ?, segmentados_absoluto = ?, monocitos_relativo = ?, monocitos_absoluto = ?, 
+            recuento_plaquetas = ?, recuento_reticulos = ?, feed_recueto_diferencial_hematico = ?, 
+            puntaje_recueto_diferencial_hematico = ?
+        WHERE id_examen_hematologico = ?`;
+    const values = [
+        data.cayados_relativo, data.cayados_absoluto, data.linfocitos_relativo, data.linfocitos_absoluto,
+        data.eosinofilos_relativo, data.eosinofilos_absoluto, data.basofilos_relativo, data.basofilos_absoluto,
+        data.segmentados_relativo, data.segmentados_absoluto, data.monocitos_relativo, data.monocitos_absoluto,
+        data.recuento_plaquetas, data.recuento_reticulos, data.feed_recueto_diferencial_hematico, 
+        data.puntaje_recueto_diferencial_hematico, id_examen_hematologico
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerHemostasiaSanguinea = (id_examen_sanguineo, callback) => {
+    const sql = 'SELECT * FROM hemostasia_sanguinea WHERE id_examen_sanguineo = ?';
+    db.query(sql, [id_examen_sanguineo], callback);
+};
+
+const actualizarHemostasiaSanguinea = (id_examen_sanguineo, data, callback) => {
+    const sql = `
+        UPDATE hemostasia_sanguinea 
+        SET tiempo_coagulacion = ?, tiempo_sangria = ?, tiempo_protrombina = ?, 
+            actividad_protrombinica = ?, inr = ?, tiempo_control = ?, 
+            tiempo_tromboplastina_parcial = ?, dimero_d = ?, fibrinogeno = ?, 
+            feed_hemostasia_sanguinea = ?, puntaje_hemostasia_sanguinea = ?
+        WHERE id_examen_sanguineo = ?`;
+    const values = [
+        data.tiempo_coagulacion, data.tiempo_sangria, data.tiempo_protrombina, 
+        data.actividad_protrombinica, data.inr, data.tiempo_control, 
+        data.tiempo_tromboplastina_parcial, data.dimero_d, data.fibrinogeno, 
+        data.feed_hemostasia_sanguinea, data.puntaje_hemostasia_sanguinea, id_examen_sanguineo
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerSerologiaSanguinea = (id_examen_sanguineo, callback) => {
+    const sql = 'SELECT * FROM serologia_sanguinea WHERE id_examen_sanguineo = ?';
+    db.query(sql, [id_examen_sanguineo], callback);
+};
+
+const actualizarSerologiaSanguinea = (id_examen_sanguineo, data, callback) => {
+    const sql = `
+        UPDATE serologia_sanguinea 
+        SET proteina_c = ?, factor_reumatico = ?, rpr_sifilis = ?, 
+            prueba_sifilis = ?, prueba_vih_sida = ?, prueba_hepatitis_b = ?, 
+            feed_serologia_sanguinea = ?, puntaje_serologia_sanguinea = ?
+        WHERE id_examen_sanguineo = ?`;
+    const values = [
+        data.proteina_c, data.factor_reumatico, data.rpr_sifilis, 
+        data.prueba_sifilis, data.prueba_vih_sida, data.prueba_hepatitis_b, 
+        data.feed_serologia_sanguinea, data.puntaje_serologia_sanguinea, id_examen_sanguineo
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerElectrolitosSanguineos = (id_examen_sanguineo, callback) => {
+    const sql = 'SELECT * FROM electrolitos_sanguineos WHERE id_examen_sanguineo = ?';
+    db.query(sql, [id_examen_sanguineo], callback);
+};
+
+const actualizarElectrolitosSanguineos = (id_examen_sanguineo, data, callback) => {
+    const sql = `
+        UPDATE electrolitos_sanguineos 
+        SET calcio = ?, sodio = ?, potasio = ?, cloro = ?, fosforo = ?, magnesio = ?, 
+            feed_electrolitos_sanguineos = ?, puntaje_electrolitos_sanguineos = ?
+        WHERE id_examen_sanguineo = ?`;
+    const values = [
+        data.calcio, data.sodio, data.potasio, data.cloro, data.fosforo, data.magnesio,
+        data.feed_electrolitos_sanguineos, data.puntaje_electrolitos_sanguineos, id_examen_sanguineo
+    ];
+    db.query(sql, values, callback);
+};
+
+const obtenerQuimicaSanguinea = (id_examen_sanguineo, callback) => {
+    const sql = 'SELECT * FROM quimica_sanguinea WHERE id_examen_sanguineo = ?';
+    db.query(sql, [id_examen_sanguineo], callback);
+};
+
+const actualizarQuimicaSanguinea = (id_examen_sanguineo, data, callback) => {
+    const sql = `
+        UPDATE quimica_sanguinea 
+        SET glicemia = ?, creatinina = ?, nitrogeno_ureico = ?, urea = ?, acido_urico = ?, 
+            bilirrubina_total = ?, bilirrubina_directa = ?, bilirrubina_indirecta = ?, transaminasa_gpt = ?, 
+            transaminasa_got = ?, lactato_deshidrogenasa = ?, fosfatasa_alcalina = ?, proteinas_totales = ?, 
+            albumina = ?, globulina = ?, relacion_alb_glo = ?, colesterol_total = ?, trigliceridos = ?, 
+            hdl_colesterol = ?, ldl_colesterol = ?, vldl_colesterol = ?, glicemia_rn = ?, 
+            hemoglobina_glicosilada = ?, feed_quimica_sanguinea = ?, puntaje_quimica_sanguinea = ?
+        WHERE id_examen_sanguineo = ?`;
+    const values = [
+        data.glicemia, data.creatinina, data.nitrogeno_ureico, data.urea, data.acido_urico,
+        data.bilirrubina_total, data.bilirrubina_directa, data.bilirrubina_indirecta, data.transaminasa_gpt,
+        data.transaminasa_got, data.lactato_deshidrogenasa, data.fosfatasa_alcalina, data.proteinas_totales,
+        data.albumina, data.globulina, data.relacion_alb_glo, data.colesterol_total, data.trigliceridos,
+        data.hdl_colesterol, data.ldl_colesterol, data.vldl_colesterol, data.glicemia_rn,
+        data.hemoglobina_glicosilada, data.feed_quimica_sanguinea, data.puntaje_quimica_sanguinea, id_examen_sanguineo
+    ];
+    db.query(sql, values, callback);
+};
 
 module.exports = {
     obtenerCasosClinicos,
@@ -712,5 +1067,34 @@ module.exports = {
     obtenerCategoriasMedicamentos,
     obtenerMedicamentosPorCategoria,
     obtenerMedicamentosSuministradosPorHistoriaClinica,
-    actualizarMedicamentosSuministrados
+    actualizarMedicamentosSuministrados,
+    obtenerSubespecialidades,
+    obtenerSubespecialidadesPorHistoriaClinica,
+    actualizarSubespecialidades,
+    
+    obtenerExamenFisicoOrina, 
+    actualizarExamenFisicoOrina,
+    obtenerSedimentoUrinario, 
+    actualizarSedimentoUrinario,
+    obtenerExamenQuimicoUrinario, 
+    actualizarExamenQuimicoUrinario,
+    obtenerExamenEspecialOrina,
+    actualizarExamenEspecialOrina,
+    obtenerExamenHematologico,
+    actualizarExamenHematologico,
+    obtenerIndicesEritrocitarios,
+    actualizarIndicesEritrocitarios,
+    obtenerRecuentoDiferencialHematico,
+    actualizarRecuentoDiferencialHematico,
+    obtenerHemostasiaSanguinea,
+    actualizarHemostasiaSanguinea,
+    obtenerSerologiaSanguinea,
+    actualizarSerologiaSanguinea,
+    obtenerElectrolitosSanguineos,
+    actualizarElectrolitosSanguineos,
+    obtenerQuimicaSanguinea,
+    actualizarQuimicaSanguinea,
+    obtenerBiometriaHematica,
+    actualizarBiometriaHematica
+
 };

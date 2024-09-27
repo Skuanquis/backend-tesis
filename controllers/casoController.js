@@ -470,6 +470,227 @@ const actualizarMedicamentosSuministrados = (req, res) => {
         res.status(200).json({ message: 'Medicamentos suministrados actualizados correctamente' });
     });
 };
+
+const obtenerSubespecialidades = (req, res) => {
+    casoModel.obtenerSubespecialidades((err, subespecialidades) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(subespecialidades);
+    });
+};
+
+const obtenerSubespecialidadesPorHistoriaClinica = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerSubespecialidadesPorHistoriaClinica(id_historia_clinica, (err, subespecialidades) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(subespecialidades);
+    });
+};
+
+const actualizarSubespecialidades = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    const subsData = req.body; 
+
+    casoModel.actualizarSubespecialidades(id_historia_clinica, subsData, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Subespecialidades actualizadas correctamente' });
+    });
+};
+
+const obtenerExamenFisicoOrina = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenFisicoOrina(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenFisicoOrina = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarExamenFisicoOrina(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen físico de orina actualizado correctamente' });
+    });
+};
+
+const obtenerSedimentoUrinario = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerSedimentoUrinario(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarSedimentoUrinario = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarSedimentoUrinario(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen de sedimento urinario actualizado correctamente' });
+    });
+};
+
+const obtenerExamenQuimicoUrinario = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenQuimicoUrinario(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenQuimicoUrinario = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarExamenQuimicoUrinario(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen químico urinario actualizado correctamente' });
+    });
+};
+
+const obtenerExamenEspecialOrina = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenEspecialOrina(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenEspecialOrina = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarExamenEspecialOrina(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen especial de orina actualizado correctamente' });
+    });
+};
+
+const obtenerExamenHematologico = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerExamenHematologico(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarExamenHematologico = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarExamenHematologico(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Examen hematológico actualizado correctamente' });
+    });
+};
+
+const obtenerBiometriaHematica = (req, res) => {
+    const { id_examen_hematologico } = req.params;
+    casoModel.obtenerBiometriaHematica(id_examen_hematologico, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarBiometriaHematica = (req, res) => {
+    const { id_examen_hematologico } = req.params;
+    casoModel.actualizarBiometriaHematica(id_examen_hematologico, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Biometría hemática actualizada correctamente' });
+    });
+};
+
+const obtenerIndicesEritrocitarios = (req, res) => {
+    const { id_examen_hematologico } = req.params;
+    casoModel.obtenerIndicesEritrocitarios(id_examen_hematologico, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarIndicesEritrocitarios = (req, res) => {
+    const { id_examen_hematologico } = req.params;
+    casoModel.actualizarIndicesEritrocitarios(id_examen_hematologico, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Biometría hemática actualizada correctamente' });
+    });
+};
+
+const obtenerRecuentoDiferencialHematico = (req, res) => {
+    const { id_examen_hematologico } = req.params;
+    casoModel.obtenerRecuentoDiferencialHematico(id_examen_hematologico, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarRecuentoDiferencialHematico = (req, res) => {
+    const { id_examen_hematologico } = req.params;
+    casoModel.actualizarRecuentoDiferencialHematico(id_examen_hematologico, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Recuento diferencial hemático actualizado correctamente' });
+    });
+};
+
+const obtenerHemostasiaSanguinea = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.obtenerHemostasiaSanguinea(id_examen_sanguineo, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarHemostasiaSanguinea = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.actualizarHemostasiaSanguinea(id_examen_sanguineo, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Hemostasia sanguínea actualizada correctamente' });
+    });
+};
+
+const obtenerSerologiaSanguinea = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.obtenerSerologiaSanguinea(id_examen_sanguineo, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarSerologiaSanguinea = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.actualizarSerologiaSanguinea(id_examen_sanguineo, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Serología sanguínea actualizada correctamente' });
+    });
+};
+
+const obtenerElectrolitosSanguineos = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.obtenerElectrolitosSanguineos(id_examen_sanguineo, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarElectrolitosSanguineos = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.actualizarElectrolitosSanguineos(id_examen_sanguineo, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Electrolitos sanguíneos actualizados correctamente' });
+    });
+};
+
+const obtenerQuimicaSanguinea = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.obtenerQuimicaSanguinea(id_examen_sanguineo, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarQuimicaSanguinea = (req, res) => {
+    const { id_examen_sanguineo } = req.params;
+    casoModel.actualizarQuimicaSanguinea(id_examen_sanguineo, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Química sanguínea actualizada correctamente' });
+    });
+};
+
+
+
+
 module.exports = {
     listarCasosClinicos,
     cambiarEstadoCaso,
@@ -524,5 +745,34 @@ module.exports = {
     obtenerCategoriasMedicamentos,
     obtenerMedicamentosPorCategoria,
     obtenerMedicamentosSuministradosPorHistoriaClinica,
-    actualizarMedicamentosSuministrados
+    actualizarMedicamentosSuministrados,
+    obtenerSubespecialidades,
+    obtenerSubespecialidadesPorHistoriaClinica,
+    actualizarSubespecialidades,
+
+    obtenerExamenFisicoOrina, 
+    actualizarExamenFisicoOrina,
+    obtenerSedimentoUrinario, 
+    actualizarSedimentoUrinario,
+    obtenerExamenQuimicoUrinario, 
+    actualizarExamenQuimicoUrinario,
+    obtenerExamenEspecialOrina,
+    actualizarExamenEspecialOrina,
+    obtenerExamenHematologico,
+    actualizarExamenHematologico,
+    obtenerIndicesEritrocitarios,
+    actualizarIndicesEritrocitarios,
+    obtenerRecuentoDiferencialHematico,
+    actualizarRecuentoDiferencialHematico,
+    obtenerHemostasiaSanguinea,
+    actualizarHemostasiaSanguinea,
+    obtenerSerologiaSanguinea,
+    actualizarSerologiaSanguinea,
+    obtenerElectrolitosSanguineos,
+    actualizarElectrolitosSanguineos,
+    obtenerQuimicaSanguinea,
+    actualizarQuimicaSanguinea,
+    obtenerBiometriaHematica,
+    actualizarBiometriaHematica
+
 };
