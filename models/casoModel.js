@@ -1015,6 +1015,111 @@ const actualizarQuimicaSanguinea = (id_examen_sanguineo, data, callback) => {
     db.query(sql, values, callback);
 };
 
+
+const obtenerCategoriasImagenologia = (callback) => {
+    const sql = 'SELECT * FROM categoria_imagenologia ORDER BY nombre';
+    db.query(sql, callback);
+};
+
+const obtenerImagenesPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT img.*, cat.nombre AS categoria_nombre
+        FROM imagenologia img
+        INNER JOIN categoria_imagenologia cat ON img.id_categoria_imagenologia = cat.id_categoria_imagenologia
+        WHERE img.id_historia_clinica = ?
+        ORDER BY cat.nombre
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarImagenes = (id_historia_clinica, imagenesData, callback) => {
+    console.log("modelo: ",imagenesData)
+    db.beginTransaction(err => {
+        if (err) return callback(err);
+        const sqlGetExisting = 'SELECT id_imagenologia FROM imagenologia WHERE id_historia_clinica = ?';
+        db.query(sqlGetExisting, [id_historia_clinica], (err, results) => {
+            if (err) {
+                return db.rollback(() => callback(err));
+            }
+            const existingIds = results.map(row => row.id_imagenologia);
+            const imagenesDataIds = imagenesData.map(img => img.id_imagenologia).filter(id => id);
+
+            const idsToInsert = imagenesData.filter(img => !img.id_imagenologia);
+            const idsToUpdate = imagenesData.filter(img => img.id_imagenologia && existingIds.includes(img.id_imagenologia));
+            const idsToDelete = existingIds.filter(id => !imagenesDataIds.includes(id));
+            const tasks = [];
+            if (idsToDelete.length > 0) {
+                tasks.push(cb => {
+                    const sqlDelete = 'DELETE FROM imagenologia WHERE id_imagenologia IN (?)';
+                    db.query(sqlDelete, [idsToDelete], cb);
+                });
+            }
+            idsToUpdate.forEach(img => {
+                tasks.push(cb => {
+                    const sqlUpdate = `
+                            UPDATE imagenologia
+                            SET interpretacion = ?, feed_imagenologia = ?, puntaje_imagenologia = ?, path = ?, nombre = ?, id_categoria_imagenologia = ?
+                            WHERE id_imagenologia = ?
+                        `;
+                        const params = [
+                            img.interpretacion,
+                            img.feed_imagenologia,
+                            img.puntaje_imagenologia,
+                            img.path,
+                            img.nombre,
+                            img.id_categoria_imagenologia,
+                            img.id_imagenologia
+                        ];
+                    db.query(sqlUpdate, params, cb);
+                });
+            });
+            idsToInsert.forEach(img => {
+                tasks.push(cb => {
+                    const sqlInsert = `
+                        INSERT INTO imagenologia (id_categoria_imagenologia, id_historia_clinica, interpretacion, path, feed_imagenologia, puntaje_imagenologia)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `;
+                    const params = [
+                        img.id_categoria_imagenologia,
+                        id_historia_clinica,
+                        img.interpretacion,
+                        img.path,
+                        img.feed_imagenologia,
+                        img.puntaje_imagenologia
+                    ];
+                    db.query(sqlInsert, params, cb);
+                });
+            });
+
+            executeTasks(tasks, (err) => {
+                if (err) {
+                    return db.rollback(() => callback(err));
+                }
+                db.commit(err => {
+                    if (err) {
+                        return db.rollback(() => callback(err));
+                    }
+                    callback(null);
+                });
+            });
+        });
+    });
+};
+
+function executeTasks(tasks, finalCallback) {
+    let index = 0;
+
+    function next(err) {
+        if (err || index === tasks.length) {
+            return finalCallback(err);
+        }
+        const task = tasks[index++];
+        task(next);
+    }
+
+    next();
+}
+
 module.exports = {
     obtenerCasosClinicos,
     cambiarEstadoCaso,
@@ -1097,6 +1202,8 @@ module.exports = {
     obtenerQuimicaSanguinea,
     actualizarQuimicaSanguinea,
     obtenerBiometriaHematica,
-    actualizarBiometriaHematica
-
+    actualizarBiometriaHematica,
+    obtenerCategoriasImagenologia,
+    obtenerImagenesPorHistoriaClinica,
+    actualizarImagenes,
 };

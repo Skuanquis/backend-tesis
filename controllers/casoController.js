@@ -688,6 +688,51 @@ const actualizarQuimicaSanguinea = (req, res) => {
     });
 };
 
+const obtenerCategoriasImagenologia = (req, res) => {
+    casoModel.obtenerCategoriasImagenologia((err, data) => {
+        if (err) {
+            res.status(500).json({ error: 'Error al obtener las categorías de imagenología' });
+        } else {
+            res.json(data);
+        }
+    });
+};
+
+const obtenerImagenesPorHistoriaClinica = (req, res) => {
+    //console.log(req.params.id_historia_clinica)
+    const id_historia_clinica = req.params.id_historia_clinica;
+
+    casoModel.obtenerImagenesPorHistoriaClinica(id_historia_clinica, (err, data) => {
+        if (err) {
+            res.status(500).json({ error: 'Error al obtener las imágenes' });
+        } else {
+            res.json(data);
+        }
+    });
+};
+
+const actualizarImagenes = (req, res) => {
+    const id_historia_clinica = req.params.id_historia_clinica;
+    ///console.log(id_historia_clinica)
+    const imagenesData = req.body.imagenesData;
+
+    casoModel.actualizarImagenes(id_historia_clinica, imagenesData, (err) => {
+        if (err) {
+            res.status(500).json({ error: 'Error al actualizar las imágenes' });
+        } else {
+            res.json({ message: 'Imágenes actualizadas correctamente' });
+        }
+    });
+};
+
+const cargarImagen = (req, res) => {
+    const file = req.file;
+    if (!file) {
+        return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
+    }
+    const filePath = `/uploads/${file.filename}`;
+    res.json({ path: filePath });
+};
 
 
 
@@ -773,6 +818,10 @@ module.exports = {
     obtenerQuimicaSanguinea,
     actualizarQuimicaSanguinea,
     obtenerBiometriaHematica,
-    actualizarBiometriaHematica
+    actualizarBiometriaHematica,
+    obtenerCategoriasImagenologia,
+    obtenerImagenesPorHistoriaClinica,
+    actualizarImagenes,
+    cargarImagen,
 
 };

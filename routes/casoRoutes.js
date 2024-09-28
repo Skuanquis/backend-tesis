@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const casoController = require('../controllers/casoController');
+const multer = require('multer');
+const path = require('path');
 
 router.get('/casos', casoController.listarCasosClinicos);
 
@@ -121,29 +123,73 @@ router.get('/examen_fisico_orina/:id_historia_clinica', casoController.obtenerEx
 router.put('/examen_fisico_orina/:id_historia_clinica', casoController.actualizarExamenFisicoOrina);
 
 router.get('/examen_fisico_orina/:id_historia_clinica', casoController.obtenerExamenFisicoOrina);
+
 router.put('/examen_fisico_orina/:id_historia_clinica', casoController.actualizarExamenFisicoOrina);
+
 router.get('/sedimento_urinario/:id_historia_clinica', casoController.obtenerSedimentoUrinario);
+
 router.put('/sedimento_urinario/:id_historia_clinica', casoController.actualizarSedimentoUrinario);
+
 router.get('/examen_quimico_urinario/:id_historia_clinica', casoController.obtenerExamenQuimicoUrinario);
+
 router.put('/examen_quimico_urinario/:id_historia_clinica', casoController.actualizarExamenQuimicoUrinario);
+
 router.get('/examen_especial_orina/:id_historia_clinica', casoController.obtenerExamenEspecialOrina);
+
 router.put('/examen_especial_orina/:id_historia_clinica', casoController.actualizarExamenEspecialOrina);
+
 router.get('/examen_hematologico/:id_historia_clinica', casoController.obtenerExamenHematologico);
+
 router.put('/examen_hematologico/:id_historia_clinica', casoController.actualizarExamenHematologico);
+
 router.get('/biometria_hematica/:id_examen_hematologico', casoController.obtenerBiometriaHematica);
+
 router.put('/biometria_hematica/:id_examen_hematologico', casoController.actualizarBiometriaHematica);
+
 router.get('/indices_eritrocitarios/:id_examen_hematologico', casoController.obtenerIndicesEritrocitarios);
+
 router.put('/indices_eritrocitarios/:id_examen_hematologico', casoController.actualizarIndicesEritrocitarios);
+
 router.get('/recuento_diferencial_hematico/:id_examen_hematologico', casoController.obtenerRecuentoDiferencialHematico);
+
 router.put('/recuento_diferencial_hematico/:id_examen_hematologico', casoController.actualizarRecuentoDiferencialHematico);
+
 router.get('/hemostasia_sanguinea/:id_examen_sanguineo', casoController.obtenerHemostasiaSanguinea);
+
 router.put('/hemostasia_sanguinea/:id_examen_sanguineo', casoController.actualizarHemostasiaSanguinea);
+
 router.get('/serologia_sanguinea/:id_examen_sanguineo', casoController.obtenerSerologiaSanguinea);
+
 router.put('/serologia_sanguinea/:id_examen_sanguineo', casoController.actualizarSerologiaSanguinea);
+
 router.get('/electrolitos_sanguineos/:id_examen_sanguineo', casoController.obtenerElectrolitosSanguineos);
+
 router.put('/electrolitos_sanguineos/:id_examen_sanguineo', casoController.actualizarElectrolitosSanguineos);
+
 router.get('/quimica_sanguinea/:id_examen_sanguineo', casoController.obtenerQuimicaSanguinea);
+
 router.put('/quimica_sanguinea/:id_examen_sanguineo', casoController.actualizarQuimicaSanguinea);
+
+router.get('/categorias_imagenologia', casoController.obtenerCategoriasImagenologia);
+
+router.get('/imagenes/:id_historia_clinica', casoController.obtenerImagenesPorHistoriaClinica);
+
+router.post('/imagenes/:id_historia_clinica', casoController.actualizarImagenes);
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads/'); 
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+});
+const upload = multer({ storage: storage });
+
+
+router.post('/upload_imagen', upload.single('imagen'), casoController.cargarImagen);
 
 
 module.exports = router;
