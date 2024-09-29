@@ -49,6 +49,8 @@ const obtenerTiempoSimulacion = (id_realiza_simulacion, callback) => {
 };
 
 const registrarAccion = (id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, callback) => {
+    //
+    console.log(id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion)
     const sql = `
         INSERT INTO accion_simulacion (id_simulacion, descripcion, tipo_accion, accion_time, puntaje, retroalimentacion) 
         VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?);
@@ -68,11 +70,20 @@ const obtenerAcciones = (id_simulacion, callback) => {
     });
 };
 
+const eliminarAccion = (id_simulacion, descripcion, callback) => {
+    const sql = `
+        DELETE FROM accion_simulacion 
+        WHERE id_simulacion = ? AND descripcion = ?;
+    `;
+    db.query(sql, [id_simulacion, descripcion], callback);
+};
+
 module.exports = {
     comenzarSimulacion,
     marcarSimulacionIncompleta,
     finalizarSimulacion,
     obtenerTiempoSimulacion,
     registrarAccion,
-    obtenerAcciones
+    obtenerAcciones,
+    eliminarAccion  
 };

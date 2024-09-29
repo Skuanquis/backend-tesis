@@ -828,10 +828,23 @@ const getAnamnesisPsiquiatrico = (id_historia_clinica, callback) => {
 
 const getDiagnosticosDiferencialesPorHistoriaClinica = (id_historia_clinica, callback) => {
     const sql = `
-        SELECT d.id_diferencial, dd.diagnostico, d.categoria
-        FROM diferencial d
-        JOIN diagnostico_diferencia dd ON d.id_diferencial = dd.id_diferencial
-        WHERE d.id_historia_clinica = ?
+        SELECT 
+            cd.categoria, 
+            d.nombre AS diagnostico,
+            dd.feed_diagnostico_diferencial,
+            dd.puntaje_diagnostico_diferencial,
+            vp.rubrica
+        FROM 
+            diagnosticos_diferenciales dd
+        JOIN 
+            diagnostico d ON dd.id_diagnostico = d.id_diagnostico
+        JOIN 
+            categoria_diferencial cd ON d.id_categoria_diferencial = cd.id_categoria_diferencial
+        LEFT JOIN 
+            valor_puntaje vp ON dd.id_historia_clinica = vp.id_historia_clinica 
+                             AND dd.puntaje_diagnostico_diferencial = vp.codigo
+        WHERE 
+            dd.id_historia_clinica = ?;
     `;
     
     db.query(sql, [id_historia_clinica], (err, results) => {
@@ -839,12 +852,58 @@ const getDiagnosticosDiferencialesPorHistoriaClinica = (id_historia_clinica, cal
             return callback(err, null);
         }
 
-        // Organizar los resultados de manera dinámica en un JSON
         const response = results.reduce((acc, row) => {
             if (!acc[row.categoria]) {
                 acc[row.categoria] = { diagnosticos: [] };
             }
-            acc[row.categoria].diagnosticos.push(row.diagnostico);
+            acc[row.categoria].diagnosticos.push({
+                nombre: row.diagnostico,
+                feed: row.feed_diagnostico_diferencial,
+                rubrica: row.rubrica,
+                puntaje: row.puntaje_diagnostico_diferencial
+            });
+            return acc;
+        }, {});
+
+        callback(null, response);
+    });
+}
+
+const obtenerMedicamentosSuministradosPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT 
+            cm.categoria, 
+            m.nombre AS medicamento,
+            ms.feed_medicamento_diferencial,
+            ms.puntaje_medicamento_diferencial,
+            vp.rubrica
+        FROM 
+            medicamentos_suministrados ms
+        JOIN 
+            medicamento m ON ms.id_medicamento = m.id_medicamento
+        JOIN 
+            categoria_medicamento cm ON m.id_categoria_medicamento = cm.id_categoria_medicamento
+        LEFT JOIN 
+            valor_puntaje vp ON ms.id_historia_clinica = vp.id_historia_clinica 
+                             AND ms.puntaje_medicamento_diferencial = vp.codigo
+        WHERE 
+            ms.id_historia_clinica = ?;
+    `;
+    
+    db.query(sql, [id_historia_clinica], (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+        const response = results.reduce((acc, row) => {
+            if (!acc[row.categoria]) {
+                acc[row.categoria] = { medicamentos: [] };
+            }
+            acc[row.categoria].medicamentos.push({
+                nombre: row.medicamento,
+                feed: row.feed_medicamento_diferencial,
+                rubrica: row.rubrica,
+                puntaje: row.puntaje_medicamento_diferencial
+            });
             return acc;
         }, {});
 
@@ -892,5 +951,6 @@ module.exports = {
     getAnamnesisGastrointestinal,
     getAnamnesisEndocrino,
     getAnamnesisCardiovascular,
-    getDiagnosticosDiferencialesPorHistoriaClinica
+    getDiagnosticosDiferencialesPorHistoriaClinica,
+    obtenerMedicamentosSuministradosPorHistoriaClinica
 };

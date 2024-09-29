@@ -50,6 +50,7 @@ const obtenerTiempoSimulacion = (req, res) => {
 
 const registrarAccion = (req, res) => {
     const { id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion } = req.body;
+    //console.log("controller: ",req.body)
 
     simulacionModel.registrarAccion(id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, (err, result) => {
         if (err) {
@@ -74,6 +75,21 @@ const obtenerAcciones = (req, res) => {
     });
 };
 
+const eliminarAccion = (req, res) => {
+    const { id_simulacion, descripcion } = req.body;
+
+    simulacionModel.eliminarAccion(id_simulacion, descripcion, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Acción eliminada correctamente' });
+        } else {
+            res.status(404).json({ message: 'Acción no encontrada' });
+        }
+    });
+};
 
 module.exports = {
     comenzarSimulacion,
@@ -81,5 +97,6 @@ module.exports = {
     finalizarSimulacion,
     obtenerTiempoSimulacion,
     registrarAccion,
-    obtenerAcciones
+    obtenerAcciones,
+    eliminarAccion  
 }

@@ -388,6 +388,13 @@ const getDiagnosticosDiferencialesPorHistoriaClinica = (req, res) => {
     });
 };
 
+const obtenerMedicamentosSuministrados = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    historiaModel.obtenerMedicamentosSuministradosPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
 
 module.exports = {
     getListaHistoriasClinicas,
@@ -426,5 +433,6 @@ module.exports = {
     getAnamnesisGastrointestinal,
     getAnamnesisEndocrino,
     getAnamnesisCardiovascular,
-    getDiagnosticosDiferencialesPorHistoriaClinica
+    getDiagnosticosDiferencialesPorHistoriaClinica,
+    obtenerMedicamentosSuministrados
 };

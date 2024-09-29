@@ -75,6 +75,8 @@ router.get('/anamnesis-psiquiatrico/:id', historiaController.getAnamnesisPsiquia
 
 router.get('/anamnesis-respiratorio/:id', historiaController.getAnamnesisRespiratorio);
 
-router.get('/diferencial/diagnosticos/:id', authenticateToken, historiaController.getDiagnosticosDiferencialesPorHistoriaClinica);
+router.get('/diferencial/diagnosticos/:id', historiaController.getDiagnosticosDiferencialesPorHistoriaClinica);
+
+router.get('/medicamentos/:id_historia_clinica', historiaController.obtenerMedicamentosSuministrados);
 
 module.exports = router;

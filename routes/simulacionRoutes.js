@@ -15,4 +15,6 @@ router.post('/simulacion/registrar-accion', authenticateToken, simulacionControl
 
 router.get('/simulacion/:id/acciones', authenticateToken, simulacionController.obtenerAcciones);
 
+router.delete('/accion/eliminar', simulacionController.eliminarAccion);
+
 module.exports = router;
