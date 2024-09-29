@@ -41,7 +41,7 @@ const getInfoHistoriaFemenino = (id_historia_clinica, callback) => {
                     ap.enfermedades_infancia,
                     ap.enfermedades_adolescencia,
                     ap.enfermedades_adulto,
-                    ap.traumas,
+                    ap.traumatismos,
                     ap.intoxicaciones,
                     ap.hospitalizaciones,
                     ap.enfermedades,
@@ -99,7 +99,7 @@ const getInfoHistoriaMasculino = (id_historia_clinica, callback) => {
                     ap.enfermedades_infancia,
                     ap.enfermedades_adolescencia,
                     ap.enfermedades_adulto,
-                    ap.traumas,
+                    ap.traumatismos,
                     ap.intoxicaciones,
                     ap.hospitalizaciones,
                     ap.enfermedades,
@@ -140,21 +140,27 @@ const getInfoHistoriaMasculino = (id_historia_clinica, callback) => {
 
 const getExamenFisicoGeneral = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.descripcion,
-            e.pa,
-            e.fc,
-            e.fr,
-            e.temperatura,
-            e.saturacion,
-            e.peso,
-            e.talla,
-            e.imc
-        FROM 
-            examen_fisico_general e
-        JOIN 
-            historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
-        WHERE 
-            hc.id_historia_clinica = ?;
+                    e.descripcion,
+                    e.pa,
+                    e.fc,
+                    e.fr,
+                    e.temperatura,
+                    e.saturacion,
+                    e.peso,
+                    e.talla,
+                    e.imc,
+                    e.feed_examen_fisico,
+                    e.puntaje_examen_fisico,
+                    vp.rubrica
+                FROM 
+                    examen_fisico_general e
+                JOIN 
+                    historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+                LEFT JOIN 
+                    valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                                    AND e.puntaje_examen_fisico = vp.codigo
+                WHERE 
+                    hc.id_historia_clinica = ?;
         `;
 
     db.query(sql, [id_historia_clinica], callback)
@@ -184,127 +190,172 @@ const getExamenFisicoSegmentario = (id_historia_clinica, callback) => {
 
 const getExamenFisicoSegmentarioCabeza = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.cabeza
+            e.cabeza,
+            e.feed_cabeza,
+            e.puntaje_cabeza,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_cabeza = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioCuello = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.cuello
+            e.cuello,
+            e.feed_cuello,
+            e.puntaje_cuello,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_cuello = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioTorax = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.torax
+            e.torax,
+            e.feed_torax,
+            e.puntaje_torax,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_torax = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioCorazon = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.corazon
+            e.corazon,
+            e.feed_corazon,
+            e.puntaje_corazon,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_corazon = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioMamas = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.mamas
+            e.mamas,
+            e.feed_mamas,
+            e.puntaje_mamas,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_mamas = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioAbdomen = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.abdomen
+            e.abdomen,
+            e.feed_abdomen,
+            e.puntaje_abdomen,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_abdomen = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioGenitourinario = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.genitourinario
+            e.genitourinario,
+            e.feed_genitourinario,
+            e.puntaje_genitourinario,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_genitourinario = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioExtremidades = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.extremidades
+            e.extremidades,
+            e.feed_extremidades,
+            e.puntaje_extremidades,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_extremidades = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getExamenFisicoSegmentarioNeurologico = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            e.neurologico
+            e.neurologico,
+            e.feed_neurologico,
+            e.puntaje_neurologico,
+            vp.rubrica
         FROM 
             examen_fisico_segmentario e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_neurologico = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
@@ -323,15 +374,20 @@ const getExamenObstetrico = (id_historia_clinica, callback) => {
             e.plano,
             e.au,
             e.pelvis,
-            e.vp
+            e.vp,
+            e.feed_examen_obstetrico,
+            vp.rubrica,
+            e.puntaje_examen_obstetrico
         FROM 
             examen_obstetrico e
         JOIN 
             historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_examen_obstetrico = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
-
     db.query(sql, [id_historia_clinica], callback)
 }
 
@@ -582,11 +638,17 @@ const getExamenImagenPrueba = (id_historia_clinica, callback) => {
 
 const getAnamnesisTegumentario = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.tegumentario
+            ans.tegumentario,
+            ans.feed_tegumentario,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_tegumentario = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -595,24 +657,36 @@ const getAnamnesisTegumentario = (id_historia_clinica, callback) => {
 
 const getAnamnesisCardiovascular = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.cardiovascular
-        FROM 
-            anamnesis_sistemas ans
-        JOIN 
-            historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
-        WHERE 
-            hc.id_historia_clinica = ?;
+                    ans.cardiovascular,
+                    ans.feed_cardiovascular,
+                    vp.rubrica,
+                    vp.codigo
+                FROM 
+                    anamnesis_sistemas ans
+                JOIN 
+                    historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+                LEFT JOIN 
+                    valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                                    AND ans.puntaje_cardiovascular = vp.codigo
+                WHERE 
+                    hc.id_historia_clinica = ?;
         `
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getAnamnesisGastrointestinal = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.gastrointestinal
+            ans.gastrointestinal,
+            ans.feed_gastrointestinal,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_gastrointestinal = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -621,11 +695,17 @@ const getAnamnesisGastrointestinal = (id_historia_clinica, callback) => {
 
 const getAnamnesisGenitourinario = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.genitourinario
+            ans.genitourinario,
+            ans.feed_genitourinario,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_genitourinario = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -634,24 +714,36 @@ const getAnamnesisGenitourinario = (id_historia_clinica, callback) => {
 
 const getAnamnesisRespiratorio = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.respiratorio
+            ans.respiratorio,
+            ans.feed_respiratorio,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_respiratorio = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
-           `
+        `
     db.query(sql, [id_historia_clinica], callback)
 }
 
 const getAnamnesisNeurologico = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.neurologico
+            ans.neurologico,
+            ans.feed_neurologico,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_neurologico = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -660,11 +752,17 @@ const getAnamnesisNeurologico = (id_historia_clinica, callback) => {
 
 const getAnamnesisLocomotor = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.locomotor
+            ans.locomotor,
+            ans.feed_locomotor,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_locomotor = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -673,11 +771,17 @@ const getAnamnesisLocomotor = (id_historia_clinica, callback) => {
 
 const getAnamnesisEndocrino = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.endocrino
+            ans.endocrino,
+            ans.feed_endocrino,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_endocrino = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -686,11 +790,17 @@ const getAnamnesisEndocrino = (id_historia_clinica, callback) => {
 
 const getAnamnesisHematico = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.hematico
+            ans.hematico,
+            ans.feed_hematico,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_hematico = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `
@@ -699,11 +809,17 @@ const getAnamnesisHematico = (id_historia_clinica, callback) => {
 
 const getAnamnesisPsiquiatrico = (id_historia_clinica, callback) => {
     const sql = `SELECT 
-            ans.psiquiatrico
+            ans.psiquiatrico,
+            ans.feed_psiquiatrico,
+            vp.rubrica,
+            vp.codigo
         FROM 
             anamnesis_sistemas ans
         JOIN 
             historia_clinica hc ON ans.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND ans.puntaje_psiquiatrico = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `

@@ -28,7 +28,6 @@ const getInfoHistoria = (req, res) =>{
         }
 
         const sexo = result[0].sexo;
-        //console.log(sexo)
         if (sexo === 'femenino') {
             historiaModel.getInfoHistoriaFemenino(id_historia_clinica, sendResponse(res));
         } else if (sexo === 'masculino') {

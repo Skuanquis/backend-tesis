@@ -71,7 +71,7 @@ router.get('/anamnesis-locomotor/:id', historiaController.getAnamnesisLocomotor)
 
 router.get('/anamnesis-neurologico/:id', historiaController.getAnamnesisNeurologico);
 
-router.get('/anamnesis-psquiatrico/:id', historiaController.getAnamnesisPsiquiatrico);
+router.get('/anamnesis-psiquiatrico/:id', historiaController.getAnamnesisPsiquiatrico);
 
 router.get('/anamnesis-respiratorio/:id', historiaController.getAnamnesisRespiratorio);
 

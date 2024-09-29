@@ -49,10 +49,9 @@ const obtenerTiempoSimulacion = (req, res) => {
 };
 
 const registrarAccion = (req, res) => {
-    const { id_simulacion, id_categoria_decision, descripcion, tipo_accion } = req.body;
-    //console.log(req.body)
+    const { id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion } = req.body;
 
-    simulacionModel.registrarAccion(id_simulacion, id_categoria_decision, descripcion, tipo_accion, (err, result) => {
+    simulacionModel.registrarAccion(id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, (err, result) => {
         if (err) {
             return res.status(500).send({ error: 'Error al registrar la acción' });
         }

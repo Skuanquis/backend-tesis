@@ -1,18 +1,23 @@
 const db = require('../db/db');
 
-const comenzarSimulacion = (id, simulacionData, callback) => {
-    const sql = `INSERT INTO realiza_simulación (id_usuario, id_paciente, estado)
-                 VALUES (?, ?, ?);`;
+const comenzarSimulacion = (id_usuario, simulacionData, callback) => {
+    const sqlSimulacion = `INSERT INTO simulacion (id_paciente) VALUES (?);`;
     const { id_paciente, estado } = simulacionData;
-    db.query(sql, [id, id_paciente, estado], (err, results) => {
+
+    db.query(sqlSimulacion, [id_paciente], (err, results) => {
         if (err) {
             return callback(err);
         }
-        db.query('SELECT LAST_INSERT_ID() as id_realiza_simulacion', (err, res) => {
+        
+        const id_simulacion = results.insertId;
+
+        const sqlRealizaSimulacion = `INSERT INTO realiza_simulación (id_simulacion, id_usuario, estado) VALUES (?, ?, ?);`;
+        db.query(sqlRealizaSimulacion, [id_simulacion, id_usuario, estado], (err, results) => {
             if (err) {
                 return callback(err);
             }
-            callback(null, res[0].id_realiza_simulacion);
+
+            callback(null, results.insertId);
         });
     });
 };
@@ -43,26 +48,25 @@ const obtenerTiempoSimulacion = (id_realiza_simulacion, callback) => {
     });
 };
 
-const registrarAccion = (id_realiza_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, callback) => {
+const registrarAccion = (id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, callback) => {
     const sql = `
-        INSERT INTO accion_simulacion (id_realiza_simulacion, descripcion, tipo_accion, accion_time, puntaje, retroalimentacion) 
+        INSERT INTO accion_simulacion (id_simulacion, descripcion, tipo_accion, accion_time, puntaje, retroalimentacion) 
         VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?);
     `;
-    db.query(sql, [id_realiza_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion], callback);
+    db.query(sql, [id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion], callback);
 };
 
-const obtenerAcciones = (id_realiza_simulacion, callback) => {
+const obtenerAcciones = (id_simulacion, callback) => {
     const sql = `SELECT descripcion, tipo_accion, TIME(accion_time) AS hora_accion, puntaje, retroalimentacion 
                  FROM accion_simulacion 
-                 WHERE id_realiza_simulacion = ?`;
-    db.query(sql, [id_realiza_simulacion], (err, results) => {
+                 WHERE id_simulacion = ?`;
+    db.query(sql, [id_simulacion], (err, results) => {
         if (err) {
             return callback(err);
         }
         callback(null, results);
     });
 };
-
 
 module.exports = {
     comenzarSimulacion,

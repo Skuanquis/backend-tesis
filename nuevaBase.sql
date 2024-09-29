@@ -599,29 +599,31 @@ CREATE TABLE valor_puntaje (
 
 CREATE TABLE simulacion (
     id_simulacion INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_paciente INT,
+    FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente)
     
 );
 
 CREATE TABLE realiza_simulación (
     id_realiza_simulacion INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_paciente INT,
+    id_simulacion INT,
     id_usuario INT,
     fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_fin TIMESTAMP NULL,
     estado VARCHAR(20),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-    FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente)
+    FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion)
 );
 
 CREATE TABLE accion_simulacion (
     id_accion INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_realiza_simulacion INT,
+    id_simulacion INT,
     descripcion TEXT,
     tipo_accion VARCHAR(255), 
     accion_time TIMESTAMP,
     puntaje INT, 
     retroalimentacion TEXT, 
-    FOREIGN KEY (id_realiza_simulacion) REFERENCES realiza_simulacion(id_realiza_simulacion)
+    FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion)
 );
 
 
