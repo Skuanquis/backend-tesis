@@ -27,8 +27,26 @@ const getSexoPaciente = (req, res) =>{
     })
 };
 
+const obtenerCategoriasSimulacionConsultaExterna = (req, res) => {
+    pacienteModel.obtenerCategoriasSimulacionConsultaExterna((err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPacientesFiltrados = (req, res) => {
+    const { categoria, dificultad } = req.query;
+
+    pacienteModel.obtenerPacientesFiltrados(categoria, dificultad, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
 module.exports = {
     getListaPacientes,
     getPacienteHistoria,
-    getSexoPaciente
+    getSexoPaciente,
+    obtenerCategoriasSimulacionConsultaExterna,
+    obtenerPacientesFiltrados
 };

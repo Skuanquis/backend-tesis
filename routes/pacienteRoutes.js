@@ -9,4 +9,8 @@ router.get('/pacientes', pacienteController.getPacienteHistoria);
 
 router.get('/sexo-paciente', pacienteController.getSexoPaciente);
 
+router.get('/categorias-consulta', pacienteController.obtenerCategoriasSimulacionConsultaExterna);
+
+router.get('/pacientes-filtrados', pacienteController.obtenerPacientesFiltrados);
+
 module.exports = router;
