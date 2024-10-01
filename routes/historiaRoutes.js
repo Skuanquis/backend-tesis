@@ -79,4 +79,8 @@ router.get('/diferencial/diagnosticos/:id', historiaController.getDiagnosticosDi
 
 router.get('/medicamentos/:id_historia_clinica', historiaController.obtenerMedicamentosSuministrados);
 
+router.get('/consulta-externa/:id_historia_clinica', historiaController.obtenerSubespecialidades);
+
+router.get('/imagenologia/:id', historiaController.obtenerImagenologiaPorHistoriaClinica);
+
 module.exports = router;

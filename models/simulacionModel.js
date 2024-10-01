@@ -78,6 +78,22 @@ const eliminarAccion = (id_simulacion, descripcion, callback) => {
     db.query(sql, [id_simulacion, descripcion], callback);
 };
 
+
+const obtenerMensajes = (id_caso_clinico, callback) => {
+    const sql = `SELECT 
+                    ms.id_mensajes_simulacion,
+                    ms.titulo,
+                    ms.descripcion,
+                    ms.tiempo AS tiempo_mensaje,
+                    cc.id_caso_clinico
+                FROM 
+                    mensajes_simulacion ms
+                JOIN 
+                    caso_clinico cc ON ms.id_caso_clinico = cc.id_caso_clinico
+                WHERE 
+                    cc.id_caso_clinico = ?;`;
+    db.query(sql, [id_caso_clinico], callback);
+}
 module.exports = {
     comenzarSimulacion,
     marcarSimulacionIncompleta,
@@ -85,5 +101,6 @@ module.exports = {
     obtenerTiempoSimulacion,
     registrarAccion,
     obtenerAcciones,
-    eliminarAccion  
+    eliminarAccion,
+    obtenerMensajes
 };

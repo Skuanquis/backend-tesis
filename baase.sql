@@ -396,7 +396,7 @@ CREATE TABLE accion_simulacion (
     descripcion TEXT,
     tipo_accion VARCHAR(20), 
     accion_time TIMESTAMP,
-    FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion)c 
+    FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion) 
 );
 
 --tabla para gestionar los tipos de puntuacion que existiran (aun no tengo esta tabla bien definida por carencia de ideas)

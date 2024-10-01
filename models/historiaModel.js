@@ -395,18 +395,22 @@ const getExamenFisicoOrina = (id_historia_clinica, callback) => {
     const sql = `SELECT 
             efo.color,
             efo.aspecto,
-            efo.volumen
+            efo.volumen,
+            vp.rubrica,
+            efo.puntaje_examen_fisico_orina AS puntaje,
+            efo.feed_examen_fisico_orina AS feed
         FROM 
             examen_fisico_orina efo
         JOIN 
             examen_orina eo ON efo.id_examen_orina = eo.id_examen_orina
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eo.id_historia_clinica AND vp.codigo = efo.puntaje_examen_fisico_orina 
         WHERE 
             eo.id_historia_clinica = ?;
     `;
 
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
-
 
 const getExamenSedimentoUrinario = (id_historia_clinica, callback) => {
     const sql = `SELECT 
@@ -419,23 +423,27 @@ const getExamenSedimentoUrinario = (id_historia_clinica, callback) => {
             su.cilindros_hialianos,
             su.cilindros_granulosos,
             su.cilindros_leucocitarios,
-            su.cilindros_eritrocitarios,
             su.flora_bacteriana,
             su.cristales,
+            su.filamento_mucoso,
             su.hifas,
             su.levaduras,
-            su.otros
+            su.otros,
+            vp.rubrica,
+            su.puntaje_examen_sedimento_urinario AS puntaje,
+            su.feed_examen_sedimento_urinario AS feed
         FROM 
             sedimento_urinario su
         JOIN 
             examen_orina eo ON su.id_examen_orina = eo.id_examen_orina
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eo.id_historia_clinica AND vp.codigo = su.puntaje_examen_sedimento_urinario 
         WHERE 
             eo.id_historia_clinica = ?;
     `;
 
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
-
 
 const getExamenQuimicoUrinario = (id_historia_clinica, callback) => {
     const sql = `SELECT 
@@ -449,33 +457,42 @@ const getExamenQuimicoUrinario = (id_historia_clinica, callback) => {
             equ.bilirrubina,
             equ.pigmentos_biliares,
             equ.nitritos,
-            equ.leucocitos
+            equ.leucocitos,
+            vp.rubrica,
+            equ.puntaje_examen_quimico_urinario AS puntaje,
+            equ.feed_examen_quimico_urinario AS feed
         FROM 
             examen_quimico_urinario equ
         JOIN 
             examen_orina eo ON equ.id_examen_orina = eo.id_examen_orina
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eo.id_historia_clinica AND vp.codigo = equ.puntaje_examen_quimico_urinario
         WHERE 
             eo.id_historia_clinica = ?;
         `;
 
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
-
 
 const getExamenesEspecialesOrina = (id_historia_clinica, callback) => {
     const sql = `SELECT 
             eeo.proteurinaria,
             eeo.creatinuria,
             eeo.microalbuminuria,
-            eeo.clearence_creatinina
+            eeo.clearence_creatinina,
+            vp.rubrica,
+            eeo.puntaje_examen_especial_orina AS puntaje,
+            eeo.feed_examen_especial_orina AS feed
         FROM 
             examenes_especiales_orina eeo
         JOIN 
             examen_orina eo ON eeo.id_examen_orina = eo.id_examen_orina
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eo.id_historia_clinica AND vp.codigo = eeo.puntaje_examen_especial_orina
         WHERE 
             eo.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenBiometriaHematica = (id_historia_clinica, callback) => {
@@ -484,18 +501,23 @@ const getExamenBiometriaHematica = (id_historia_clinica, callback) => {
             bh.globulos_blancos,
             bh.hemoglobina,
             bh.hematocrito,
-            bh.ves
+            bh.ves,
+            vp.rubrica,
+            bh.puntaje_examen_biometria_hematica AS puntaje,
+            bh.feed_examen_biometria_hematica AS feed
         FROM 
             biometria_hematica bh
         JOIN 
             examen_hematologico eh ON bh.id_examen_hematologico = eh.id_examen_hematologico
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eh.id_historia_clinica AND vp.codigo = bh.puntaje_examen_biometria_hematica 
         WHERE 
             eh.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
-const getExamenRecuentoDiferencialHematico= (id_historia_clinica, callback) => {
+const getExamenRecuentoDiferencialHematico = (id_historia_clinica, callback) => {
     const sql = `SELECT 
             rdh.cayados_relativo,
             rdh.cayados_absoluto,
@@ -510,30 +532,40 @@ const getExamenRecuentoDiferencialHematico= (id_historia_clinica, callback) => {
             rdh.monocitos_relativo,
             rdh.monocitos_absoluto,
             rdh.recuento_plaquetas,
-            rdh.recuento_reticulos
+            rdh.recuento_reticulos,
+            vp.rubrica,
+            rdh.puntaje_recuento_diferencial_hematico AS puntaje,
+            rdh.feed_recuento_diferencial_hematico AS feed
         FROM 
             recuento_diferencial_hematico rdh
         JOIN 
             examen_hematologico eh ON rdh.id_examen_hematologico = eh.id_examen_hematologico
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eh.id_historia_clinica AND vp.codigo = rdh.puntaje_recuento_diferencial_hematico
         WHERE 
             eh.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenIndiceEritrocitario = (id_historia_clinica, callback) => {
     const sql = `SELECT 
             ieh.vcm,
             ieh.hbcm,
-            ieh.chbcm
+            ieh.chbcm,
+            vp.rubrica,
+            ieh.puntaje_indices_eritrocitarios AS puntaje,
+            ieh.feed_indices_eritrocitarios AS feed
         FROM 
             indices_eritrocitarios_hematico ieh
         JOIN 
             examen_hematologico eh ON ieh.id_examen_hematologico = eh.id_examen_hematologico
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = eh.id_historia_clinica AND vp.codigo = ieh.puntaje_indices_eritrocitarios
         WHERE 
             eh.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenQuimicoSanguineo = (id_historia_clinica, callback) => {
@@ -560,15 +592,20 @@ const getExamenQuimicoSanguineo = (id_historia_clinica, callback) => {
             qs.ldl_colesterol,
             qs.vldl_colesterol,
             qs.glicemia_rn,
-            qs.hemoglobina_glicosilada
+            qs.hemoglobina_glicosilada,
+            vp.rubrica,
+            qs.puntaje_quimica_sanguinea AS puntaje,
+            qs.feed_quimica_sanguinea AS feed
         FROM 
             quimica_sanguinea qs
         JOIN 
             examen_sanguineo es ON qs.id_examen_sanguineo = es.id_examen_sanguineo
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = es.id_historia_clinica AND vp.codigo = qs.puntaje_quimica_sanguinea
         WHERE 
             es.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenHemostaseaSanguinea = (id_historia_clinica, callback) => {
@@ -581,15 +618,20 @@ const getExamenHemostaseaSanguinea = (id_historia_clinica, callback) => {
             hs.tiempo_control,
             hs.tiempo_tromboplastina_parcial,
             hs.dimero_d,
-            hs.fibrinogeno
+            hs.fibrinogeno,
+            vp.rubrica,
+            hs.puntaje_hemostasia_sanguinea AS puntaje,
+            hs.feed_hemostasia_sanguinea AS feed
         FROM 
             hemostasia_sanguinea hs
         JOIN 
             examen_sanguineo es ON hs.id_examen_sanguineo = es.id_examen_sanguineo
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = es.id_historia_clinica AND vp.codigo = hs.puntaje_hemostasia_sanguinea
         WHERE 
             es.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenSerologiaSanguinea = (id_historia_clinica, callback) => {
@@ -599,15 +641,20 @@ const getExamenSerologiaSanguinea = (id_historia_clinica, callback) => {
             ss.rpr_sifilis,
             ss.prueba_sifilis,
             ss.prueba_vih_sida,
-            ss.prueba_hepatitis_b
+            ss.prueba_hepatitis_b,
+            vp.rubrica,
+            ss.puntaje_serologia_sanguinea AS puntaje,
+            ss.feed_serologia_sanguinea AS feed
         FROM 
             serologia_sanguinea ss
         JOIN 
             examen_sanguineo es ON ss.id_examen_sanguineo = es.id_examen_sanguineo
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = es.id_historia_clinica AND vp.codigo = ss.puntaje_serologia_sanguinea
         WHERE 
             es.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenElectrolitosSanquineos = (id_historia_clinica, callback) => {
@@ -617,15 +664,20 @@ const getExamenElectrolitosSanquineos = (id_historia_clinica, callback) => {
             esa.potasio,
             esa.cloro,
             esa.fosforo,
-            esa.magnesio
+            esa.magnesio,
+            vp.rubrica,
+            esa.puntaje_electrolitos_sanguineos AS puntaje,
+            esa.feed_electrolitos_sanguineos AS feed
         FROM 
             electrolitos_sanguineos esa
         JOIN 
             examen_sanguineo es ON es.id_examen_sanguineo = esa.id_examen_sanguineo
+        LEFT JOIN
+            valor_puntaje vp ON vp.id_historia_clinica = es.id_historia_clinica AND vp.codigo = esa.puntaje_electrolitos_sanguineos
         WHERE 
             es.id_historia_clinica = ?;
         `;
-    db.query(sql, [id_historia_clinica], callback)
+    db.query(sql, [id_historia_clinica], callback);
 }
 
 const getExamenImagenPrueba = (id_historia_clinica, callback) => {
@@ -911,6 +963,125 @@ const obtenerMedicamentosSuministradosPorHistoriaClinica = (id_historia_clinica,
     });
 };
 
+const obtenerSubespecialidades = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT 
+            s.nombre AS subespecialidad,
+            ce.descripcion,
+            ce.feed_subespecialidad,
+            ce.puntaje_subespecialidad,
+            vp.rubrica
+        FROM 
+            consulta_externa ce
+        JOIN 
+            subespecialidad s ON ce.id_subespecialidad = s.id_subespecialidad
+        LEFT JOIN 
+            valor_puntaje vp ON ce.id_historia_clinica = vp.id_historia_clinica 
+                             AND ce.puntaje_subespecialidad = vp.codigo
+        WHERE 
+            ce.id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const getImagenologiasByHistoria = (id_historia_clinica, callback) => {
+    const sql = `
+      SELECT 
+        img.id_imagenologia,
+        img.nombre,
+        img.interpretacion,
+        img.path,
+        img.feed_imagenologia,
+        img.puntaje_imagenologia,
+        img.id_categoria_imagenologia,
+        cat.nombre AS categoria_nombre
+      FROM 
+        imagenologia img
+      JOIN 
+        categoria_imagenologia cat ON img.id_categoria_imagenologia = cat.id_categoria_imagenologia
+      WHERE 
+        img.id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+  };
+  
+const getImagenologiaByCategoria = (id_historia_clinica, id_categoria_imagenologia, callback) => {
+    const sql = `
+      SELECT 
+        img.id_imagenologia,
+        img.nombre,
+        img.interpretacion,
+        img.path,
+        img.feed_imagenologia,
+        img.puntaje_imagenologia,
+        img.id_categoria_imagenologia,
+        cat.nombre AS categoria_nombre
+      FROM 
+        imagenologia img
+      JOIN 
+        categoria_imagenologia cat ON img.id_categoria_imagenologia = cat.id_categoria_imagenologia
+      WHERE 
+        img.id_historia_clinica = ? AND img.id_categoria_imagenologia = ?;
+    `;
+    db.query(sql, [id_historia_clinica, id_categoria_imagenologia], callback);
+  };
+
+const getAllCategoriasImagenologia = (callback) => {
+    const sql = `
+      SELECT 
+        id_categoria_imagenologia,
+        nombre
+      FROM 
+        categoria_imagenologia;
+    `;
+    db.query(sql, callback);
+  };
+
+const obtenerImagenologiaPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT 
+            ci.nombre AS categoria, 
+            i.nombre AS nombre_imagen,
+            i.path,
+            i.puntaje_imagenologia,
+            i.feed_imagenologia,
+            vp.rubrica,
+            i.interpretacion
+        FROM 
+            imagenologia i
+        JOIN 
+            categoria_imagenologia ci ON i.id_categoria_imagenologia = ci.id_categoria_imagenologia
+        LEFT JOIN 
+            valor_puntaje vp ON i.id_historia_clinica = vp.id_historia_clinica 
+                             AND i.puntaje_imagenologia = vp.codigo
+        WHERE 
+            i.id_historia_clinica = ?;
+    `;
+    
+    db.query(sql, [id_historia_clinica], (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+        
+        const response = results.reduce((acc, row) => {
+            if (!acc[row.categoria]) {
+                acc[row.categoria] = {};
+            }
+            acc[row.categoria] = {
+                nombre: row.nombre_imagen,
+                path: row.path,
+                puntaje: row.puntaje_imagenologia,
+                feed: row.feed_imagenologia,
+                rubrica: row.rubrica,
+                interpretacion: row.interpretacion
+            };
+            return acc;
+        }, {});
+
+        callback(null, response);
+    });
+};
+
 
 module.exports = {
     getListaHistoriasClinicas,
@@ -952,5 +1123,10 @@ module.exports = {
     getAnamnesisEndocrino,
     getAnamnesisCardiovascular,
     getDiagnosticosDiferencialesPorHistoriaClinica,
-    obtenerMedicamentosSuministradosPorHistoriaClinica
+    obtenerMedicamentosSuministradosPorHistoriaClinica,
+    obtenerSubespecialidades,
+    getImagenologiasByHistoria,
+    getImagenologiaByCategoria,
+    getAllCategoriasImagenologia,
+    obtenerImagenologiaPorHistoriaClinica
 };

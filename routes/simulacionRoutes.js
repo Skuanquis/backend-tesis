@@ -17,4 +17,6 @@ router.get('/simulacion/:id/acciones', authenticateToken, simulacionController.o
 
 router.delete('/accion/eliminar', simulacionController.eliminarAccion);
 
+router.get('/mensajes/:id', simulacionController.obtenerMensajes);
+
 module.exports = router;

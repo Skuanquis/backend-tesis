@@ -40,12 +40,6 @@ CREATE TABLE caso_clinico (
     FOREIGN KEY (id_categoria_simulacion) REFERENCES categoria_simulacion(id_categoria_simulacion)
 );
 
-
-CREATE TABLE categoria_simulacion (
-    id_categoria_simulacion INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombre varchar(100)
-);
-
 CREATE TABLE historia_clinica (
   id_historia_clinica int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   descripcion text DEFAULT NULL,
@@ -53,6 +47,13 @@ CREATE TABLE historia_clinica (
   id_caso_clinico int(11) DEFAULT NULL,
   FOREIGN KEY (id_caso_clinico) REFERENCES caso_clinico(id_caso_clinico)
 );
+
+
+CREATE TABLE categoria_simulacion (
+    id_categoria_simulacion INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nombre varchar(100)
+);
+
 
 CREATE TABLE antecedentes_gineco_obstetricos (
 	id_antecedente_gineco_obstetrico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -564,9 +565,9 @@ CREATE TABLE consulta_externa (
     id_subespecialidad INT,
     id_historia_clinica INT,
     descripcion TEXT,
-	feed_subeid_subespecialidad TEXT,
-    puntaje_subeid_subespecialidad VARCHAR(2),
-    FOREIGN KEY (id_subespecialidad) REFERENCES subeid_subespecialidad(id_subespecialidad),
+	feed_subespecialidad TEXT,
+    puntaje_subespecialidad VARCHAR(2),
+    FOREIGN KEY (id_subespecialidad) REFERENCES subespecialidad(id_subespecialidad),
     FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
 

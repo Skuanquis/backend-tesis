@@ -91,6 +91,16 @@ const eliminarAccion = (req, res) => {
     });
 };
 
+const obtenerMensajes = (req, res) => {
+    const id_historia_clinica = req.params.id
+   simulacionModel.obtenerMensajes(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
 module.exports = {
     comenzarSimulacion,
     marcarSimulacionIncompleta,
@@ -98,5 +108,6 @@ module.exports = {
     obtenerTiempoSimulacion,
     registrarAccion,
     obtenerAcciones,
-    eliminarAccion  
+    eliminarAccion,
+    obtenerMensajes
 }

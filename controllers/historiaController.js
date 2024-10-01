@@ -379,7 +379,7 @@ const getAnamnesisTegumentario = (req, res) => {
 }
 
 const getDiagnosticosDiferencialesPorHistoriaClinica = (req, res) => {
-    const id_historia_clinica = req.params.id; // Obtener el id_historia_clinica desde los parámetros de la URL
+    const id_historia_clinica = req.params.id;
     historiaModel.getDiagnosticosDiferencialesPorHistoriaClinica(id_historia_clinica, (err, results) => {
         if (err) {
             return res.status(500).send({ error: 'Error al obtener los diagnósticos diferenciales' });
@@ -395,6 +395,27 @@ const obtenerMedicamentosSuministrados = (req, res) => {
         res.status(200).json(result);
     });
 };
+
+const obtenerSubespecialidades = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    historiaModel.obtenerSubespecialidades(id_historia_clinica, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.status(200).json(result);
+    });
+};
+
+const obtenerImagenologiaPorHistoriaClinica = (req, res) => {
+    const id_historia_clinica = req.params.id;
+    historiaModel.obtenerImagenologiaPorHistoriaClinica(id_historia_clinica, (err, results) => {
+        if (err) {
+            return res.status(500).send({ error: 'Error al obtener los diagnósticos diferenciales' });
+        }
+        res.status(200).json(results);
+    });
+};
+
 
 module.exports = {
     getListaHistoriasClinicas,
@@ -434,5 +455,8 @@ module.exports = {
     getAnamnesisEndocrino,
     getAnamnesisCardiovascular,
     getDiagnosticosDiferencialesPorHistoriaClinica,
-    obtenerMedicamentosSuministrados
+    obtenerMedicamentosSuministrados,
+    obtenerSubespecialidades,
+    obtenerImagenologiaPorHistoriaClinica
+
 };
