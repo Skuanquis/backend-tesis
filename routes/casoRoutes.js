@@ -191,5 +191,11 @@ const upload = multer({ storage: storage });
 
 router.post('/upload_imagen', upload.single('imagen'), casoController.cargarImagen);
 
+router.get('/traspaso/:id_historia_clinica', casoController.obtenerTraspaso);
 
+router.put('/traspaso/:id_historia_clinica', casoController.actualizarTraspaso);
+
+router.put('/diagnostico-final/:id_historia_clinica', casoController.actualizarDiagnosticoFinal);
+
+router.get('/traspaso-rubrica/:id_historia_clinica', casoController.obtenerTraspasoRubrica);
 module.exports = router;

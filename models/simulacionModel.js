@@ -31,13 +31,13 @@ const marcarSimulacionIncompleta = (id_realiza_simulacion, callback) => {
 
 const finalizarSimulacion = (id_realiza_simulacion, tiempo_empleado, callback) => {
     const sql = `UPDATE realiza_simulación 
-                 SET estado = 'finalizado', fecha_fin = CURRENT_TIMESTAMP 
+                 SET estado = 'finalizado', fecha_fin = CURRENT_TIMESTAMP, tiempo_empleado = ?
                  WHERE id_realiza_simulacion = ?;`;
-    db.query(sql, [id_realiza_simulacion], callback);
+    db.query(sql, [tiempo_empleado, id_realiza_simulacion], callback);
 };
 
 const obtenerTiempoSimulacion = (id_realiza_simulacion, callback) => {
-    const sql = `SELECT TIMESTAMPDIFF(SECOND, fecha_inicio, fecha_fin) AS tiempo_empleado 
+    const sql = `SELECT tiempo_empleado 
                  FROM realiza_simulación 
                  WHERE id_realiza_simulacion = ?;`;
     db.query(sql, [id_realiza_simulacion], (err, results) => {
@@ -94,6 +94,18 @@ const obtenerMensajes = (id_caso_clinico, callback) => {
                     cc.id_caso_clinico = ?;`;
     db.query(sql, [id_caso_clinico], callback);
 }
+
+const enviarDiagnosticoFinal = (id_realiza_simulacion, data, callback) => {
+    const sql = `UPDATE 
+                    realiza_simulación
+                SET 
+                    diagnostico_final = ?
+                WHERE 
+                    id_realiza_simulacion = ?;
+    `;
+    db.query(sql, [data.diagnostico_final, id_realiza_simulacion], callback);
+};
+
 module.exports = {
     comenzarSimulacion,
     marcarSimulacionIncompleta,
@@ -102,5 +114,6 @@ module.exports = {
     registrarAccion,
     obtenerAcciones,
     eliminarAccion,
-    obtenerMensajes
+    obtenerMensajes,
+    enviarDiagnosticoFinal
 };

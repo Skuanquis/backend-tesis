@@ -19,4 +19,6 @@ router.delete('/accion/eliminar', simulacionController.eliminarAccion);
 
 router.get('/mensajes/:id', simulacionController.obtenerMensajes);
 
+router.put('/enviar-diagnostico/:id_realiza_simulacion', simulacionController.enviarDiagnosticoFinal);
+
 module.exports = router;

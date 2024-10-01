@@ -101,6 +101,14 @@ const obtenerMensajes = (req, res) => {
     })
 }
 
+const enviarDiagnosticoFinal = (req, res) => {
+    const { id_realiza_simulacion } = req.params;
+    simulacionModel.enviarDiagnosticoFinal(id_realiza_simulacion, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Diagnostico final actualizado correctamente' });
+    });
+};
+
 module.exports = {
     comenzarSimulacion,
     marcarSimulacionIncompleta,
@@ -109,5 +117,6 @@ module.exports = {
     registrarAccion,
     obtenerAcciones,
     eliminarAccion,
-    obtenerMensajes
+    obtenerMensajes,
+    enviarDiagnosticoFinal
 }

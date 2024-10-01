@@ -734,6 +734,42 @@ const cargarImagen = (req, res) => {
     res.json({ path: filePath });
 };
 
+const obtenerTraspaso = (req, res) => {
+    const id_historia_clinica = req.params.id_historia_clinica
+    casoModel.obtenerTraspaso(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const actualizarTraspaso = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarTraspaso(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Traspaso actualizado correctamente' });
+    });
+};
+
+const actualizarDiagnosticoFinal = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarDiagnosticoFinal(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Diagnostico final actualizado correctamente' });
+    });
+};
+
+const obtenerTraspasoRubrica = (req, res) => {
+    const id_historia_clinica = req.params.id_historia_clinica
+    casoModel.obtenerTraspasoRubrica(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
 
 
 module.exports = {
@@ -823,5 +859,9 @@ module.exports = {
     obtenerImagenesPorHistoriaClinica,
     actualizarImagenes,
     cargarImagen,
+    obtenerTraspaso,
+    actualizarTraspaso,
+    actualizarDiagnosticoFinal,
+    obtenerTraspasoRubrica
 
 };

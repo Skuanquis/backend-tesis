@@ -36,6 +36,7 @@ CREATE TABLE caso_clinico (
     puntaje INT NULL,
     tiempo VARCHAR(10),
     estado VARCHAR(20),
+    diagnostico VARCHAR(256),
     FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
     FOREIGN KEY (id_categoria_simulacion) REFERENCES categoria_simulacion(id_categoria_simulacion)
 );
@@ -612,6 +613,7 @@ CREATE TABLE realiza_simulación (
     fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_fin TIMESTAMP NULL,
     estado VARCHAR(20),
+    diagnostico_final VARCHAR(256),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
     FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion)
 );

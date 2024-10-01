@@ -51,6 +51,7 @@ const obtenerCasoClinicoPorId = (id_caso_clinico, callback) => {
                     cc.puntaje, 
                     cc.tiempo, 
                     cc.estado, 
+                    cc.diagnostico,
                     p.nombre, 
                     p.paterno, 
                     p.materno, 
@@ -1120,6 +1121,86 @@ function executeTasks(tasks, finalCallback) {
     next();
 }
 
+const obtenerTraspaso = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            t.opcion_uno,
+            t.puntaje_opcion_uno,
+            t.feed_opcion_uno,
+            t.opcion_dos,
+            t.puntaje_opcion_dos,
+            t.feed_opcion_dos,
+            t.opcion_tres,
+            t.puntaje_opcion_tres,
+            t.feed_opcion_tres
+        FROM 
+            traspaso t
+        WHERE 
+            t.id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarTraspaso = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    traspaso
+                SET 
+                    puntaje_opcion_uno = ?,
+                    feed_opcion_uno = ?,
+                    puntaje_opcion_dos = ?,
+                    feed_opcion_dos = ?,
+                    puntaje_opcion_tres = ?,
+                    feed_opcion_tres = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_opcion_uno, data.feed_opcion_uno ,data.puntaje_opcion_dos, data.feed_opcion_dos ,data.puntaje_opcion_tres, data.feed_opcion_tres ,id_historia_clinica], callback);
+};
+
+const actualizarDiagnosticoFinal = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE
+                    caso_clinico
+                SET
+                    diagnostico = ?
+                WHERE
+                    id_caso_clinico = ?;
+    `;
+    db.query(sql, [data.diagnostico, id_historia_clinica], callback);
+};
+
+const obtenerTraspasoRubrica = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                t.opcion_uno,
+                t.puntaje_opcion_uno,
+                vp_uno.rubrica AS rubrica_opcion_uno,
+                t.feed_opcion_uno,
+                t.opcion_dos,
+                t.puntaje_opcion_dos,
+                vp_dos.rubrica AS rubrica_opcion_dos,
+                t.feed_opcion_dos,
+                t.opcion_tres,
+                t.puntaje_opcion_tres,
+                vp_tres.rubrica AS rubrica_opcion_tres,
+                t.feed_opcion_tres
+            FROM 
+                traspaso t
+            LEFT JOIN 
+                valor_puntaje vp_uno 
+                ON vp_uno.id_historia_clinica = t.id_historia_clinica 
+                AND vp_uno.codigo = t.puntaje_opcion_uno
+            LEFT JOIN 
+                valor_puntaje vp_dos 
+                ON vp_dos.id_historia_clinica = t.id_historia_clinica 
+                AND vp_dos.codigo = t.puntaje_opcion_dos
+            LEFT JOIN 
+                valor_puntaje vp_tres 
+                ON vp_tres.id_historia_clinica = t.id_historia_clinica 
+                AND vp_tres.codigo = t.puntaje_opcion_tres
+            WHERE 
+                t.id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
 module.exports = {
     obtenerCasosClinicos,
     cambiarEstadoCaso,
@@ -1206,4 +1287,8 @@ module.exports = {
     obtenerCategoriasImagenologia,
     obtenerImagenesPorHistoriaClinica,
     actualizarImagenes,
+    obtenerTraspaso,
+    actualizarTraspaso,
+    actualizarDiagnosticoFinal,
+    obtenerTraspasoRubrica
 };
