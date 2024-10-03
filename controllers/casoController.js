@@ -289,7 +289,7 @@ const obtenerExamenFisicoSegmentario = (req, res) => {
 
 const actualizarExamenFisicoSegmentario = (req, res) => {
     const { id_historia_clinica } = req.params;
-    console.log("modelo: ",req.body)
+    //console.log("modelo: ",req.body)
     casoModel.actualizarExamenFisicoSegmentario(id_historia_clinica, req.body, (err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json({ message: 'Examen físico segmentario actualizado correctamente' });
@@ -730,7 +730,7 @@ const cargarImagen = (req, res) => {
     if (!file) {
         return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
     }
-    const filePath = `/uploads/${file.filename}`;
+    const filePath = `http://localhost:3000/uploads/${file.filename}`;
     res.json({ path: filePath });
 };
 
@@ -770,7 +770,128 @@ const obtenerTraspasoRubrica = (req, res) => {
     })
 }
 
+const actualizarPuntajeExamen = (req, res) => {
+    //console.log(req.body)
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeExamen(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje examen actualizado correctamente' });
+    });
+};
 
+const actualizarPuntajeDiferencial = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeDiferencial(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje diferencial actualizado correctamente' });
+    });
+};
+
+const actualizarPuntajeLaboratorio = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeLaboratorio(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje laboratorio actualizado correctamente' });
+    });
+};
+
+const actualizarPuntajeIntervenir = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeIntervenir(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje intervenir actualizado correctamente' });
+    });
+};
+
+const actualizarPuntajeExterna = (req, res) => {
+    console.log(req.body)
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeExterna(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje externa actualizado correctamente' });
+    });
+};
+
+const actualizarPuntajeTraspaso = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeTraspaso(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje traspaso actualizado correctamente' });
+    });
+};
+
+const actualizarPuntajeAnamnesis = (req, res) => {
+    //console.log(req.body)
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarPuntajeAnamnesis(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Puntaje anamnesis actualizado correctamente' });
+    });
+};
+
+const obtenerPuntajeExamen = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeExamen(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result); // Devuelve el resultado de la consulta
+    });
+};
+
+const obtenerPuntajeDiferencial = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeDiferencial(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPuntajeLaboratorio = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeLaboratorio(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPuntajeIntervenir = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeIntervenir(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPuntajeExterna = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeExterna(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPuntajeTraspaso = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeTraspaso(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPuntajeAnamnesis = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeAnamnesis(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerPuntajeTotalHistoriaClinica = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerPuntajeTotalHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
 
 module.exports = {
     listarCasosClinicos,
@@ -862,6 +983,20 @@ module.exports = {
     obtenerTraspaso,
     actualizarTraspaso,
     actualizarDiagnosticoFinal,
-    obtenerTraspasoRubrica
-
+    obtenerTraspasoRubrica,
+    actualizarPuntajeAnamnesis,
+    actualizarPuntajeExamen,
+    actualizarPuntajeDiferencial,
+    actualizarPuntajeLaboratorio,
+    actualizarPuntajeIntervenir,
+    actualizarPuntajeExterna,
+    actualizarPuntajeTraspaso,
+    obtenerPuntajeAnamnesis,
+    obtenerPuntajeExamen,
+    obtenerPuntajeDiferencial,
+    obtenerPuntajeLaboratorio,
+    obtenerPuntajeIntervenir,
+    obtenerPuntajeExterna,
+    obtenerPuntajeTraspaso,
+    obtenerPuntajeTotalHistoriaClinica
 };

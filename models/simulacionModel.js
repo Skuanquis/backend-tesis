@@ -50,7 +50,7 @@ const obtenerTiempoSimulacion = (id_realiza_simulacion, callback) => {
 
 const registrarAccion = (id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, callback) => {
     //
-    console.log(id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion)
+    //console.log(id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion)
     const sql = `
         INSERT INTO accion_simulacion (id_simulacion, descripcion, tipo_accion, accion_time, puntaje, retroalimentacion) 
         VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, ?);

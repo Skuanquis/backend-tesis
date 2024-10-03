@@ -33,12 +33,16 @@ CREATE TABLE caso_clinico (
     id_categoria_simulacion INT,
     autor varchar(128) NULL,
     difucultad varchar(64) NULL,
-    puntaje INT NULL,
     tiempo VARCHAR(10),
     estado VARCHAR(20),
     diagnostico VARCHAR(256),
     FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
     FOREIGN KEY (id_categoria_simulacion) REFERENCES categoria_simulacion(id_categoria_simulacion)
+);
+
+CREATE TABLE puntaje_caso_clinico (
+    id_puntaje_caso_clinico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    
 );
 
 CREATE TABLE historia_clinica (
@@ -334,8 +338,8 @@ CREATE TABLE recuento_diferencial_hematico (
     monocitos_absoluto VARCHAR(10),
     recuento_plaquetas VARCHAR(10),
     recuento_reticulos VARCHAR(10),
-    feed_recueto_diferencial_hematico TEXT,
-    puntaje_recueto_diferencial_hematico VARCHAR(2),
+    feed_recuento_diferencial_hematico TEXT,
+    puntaje_recuento_diferencial_hematico VARCHAR(2),
     id_examen_hematologico INT,
 	FOREIGN KEY (id_examen_hematologico) REFERENCES examen_hematologico(id_examen_hematologico)
 );

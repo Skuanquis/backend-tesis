@@ -49,7 +49,7 @@ const getPacienteHistoria = (callback) => {
                 ON
                     c.id_categoria_simulacion = cs.id_categoria_simulacion
                 WHERE 
-                    c.estado = 'habilitado';
+                    c.estado = 'habilitado' AND cs.nombre NOT LIKE 'Urgencia%';
                 `;
     db.query(sql, callback);
 };

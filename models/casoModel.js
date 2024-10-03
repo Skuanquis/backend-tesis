@@ -1034,7 +1034,7 @@ const obtenerImagenesPorHistoriaClinica = (id_historia_clinica, callback) => {
 };
 
 const actualizarImagenes = (id_historia_clinica, imagenesData, callback) => {
-    console.log("modelo: ",imagenesData)
+    //console.log("modelo: ",imagenesData)
     db.beginTransaction(err => {
         if (err) return callback(err);
         const sqlGetExisting = 'SELECT id_imagenologia FROM imagenologia WHERE id_historia_clinica = ?';
@@ -1201,6 +1201,263 @@ const obtenerTraspasoRubrica = (id_historia_clinica, callback) => {
     db.query(sql, [id_historia_clinica], callback);
 };
 
+const actualizarPuntajeAnamnesis = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+            puntaje_anamnesis
+        SET 
+            puntaje_a = ?,
+            puntaje_b = ?,
+            puntaje_c = ?,
+            puntaje_d = ?,
+            puntaje_e = ?
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+
+const actualizarPuntajeExamen = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    puntaje_examen
+                SET 
+                    puntaje_a = ?,
+                    puntaje_b = ?,
+                    puntaje_c = ?,
+                    puntaje_d = ?,
+                    puntaje_e = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+
+const actualizarPuntajeDiferencial = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    puntaje_diferencial
+                SET 
+                    puntaje_a = ?,
+                    puntaje_b = ?,
+                    puntaje_c = ?,
+                    puntaje_d = ?,
+                    puntaje_e = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+const actualizarPuntajeLaboratorio = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    puntaje_laboratorio
+                SET 
+                    puntaje_a = ?,
+                    puntaje_b = ?,
+                    puntaje_c = ?,
+                    puntaje_d = ?,
+                    puntaje_e = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+const actualizarPuntajeIntervenir = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    puntaje_intervenir
+                SET 
+                    puntaje_a = ?,
+                    puntaje_b = ?,
+                    puntaje_c = ?,
+                    puntaje_d = ?,
+                    puntaje_e = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+const actualizarPuntajeExterna = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    puntaje_externa
+                SET 
+                    puntaje_a = ?,
+                    puntaje_b = ?,
+                    puntaje_c = ?,
+                    puntaje_d = ?,
+                    puntaje_e = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+const actualizarPuntajeTraspaso = (id_historia_clinica, data, callback) => {
+    const sql = `UPDATE 
+                    puntaje_traspaso
+                SET 
+                    puntaje_a = ?,
+                    puntaje_b = ?,
+                    puntaje_c = ?,
+                    puntaje_d = ?,
+                    puntaje_e = ?
+                WHERE 
+                    id_historia_clinica = ?;
+    `;
+    db.query(sql, [data.puntaje_a, data.puntaje_b, data.puntaje_c, data.puntaje_d, data.puntaje_e, id_historia_clinica], callback);
+};
+
+const obtenerPuntajeAnamnesis = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_anamnesis
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeExamen = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_examen
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeDiferencial = (id_historia_clinica, callback) => {
+    const sql = `SELECT
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_diferencial
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeLaboratorio = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_laboratorio
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeIntervenir = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_intervenir
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeExterna = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_externa
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeTraspaso = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+                    puntaje_a,
+                    puntaje_b,
+                    puntaje_c,
+                    puntaje_d,
+                    puntaje_e
+        FROM 
+            puntaje_traspaso
+        WHERE 
+            id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const obtenerPuntajeTotalHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `WITH historia AS (
+    SELECT id_historia_clinica 
+    FROM historia_clinica 
+    WHERE id_historia_clinica = ?
+    )
+    SELECT 
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_anamnesis pa JOIN historia h ON pa.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_examen pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_diferencial pd JOIN historia h ON pd.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_laboratorio pl JOIN historia h ON pl.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_intervenir pi JOIN historia h ON pi.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_externa pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_a), 0) FROM puntaje_traspaso pt JOIN historia h ON pt.id_historia_clinica = h.id_historia_clinica) AS total_puntaje_a,
+
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_anamnesis pa JOIN historia h ON pa.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_examen pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_diferencial pd JOIN historia h ON pd.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_laboratorio pl JOIN historia h ON pl.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_intervenir pi JOIN historia h ON pi.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_externa pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_b), 0) FROM puntaje_traspaso pt JOIN historia h ON pt.id_historia_clinica = h.id_historia_clinica) AS total_puntaje_b,
+
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_anamnesis pa JOIN historia h ON pa.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_examen pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_diferencial pd JOIN historia h ON pd.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_laboratorio pl JOIN historia h ON pl.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_intervenir pi JOIN historia h ON pi.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_externa pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_c), 0) FROM puntaje_traspaso pt JOIN historia h ON pt.id_historia_clinica = h.id_historia_clinica) AS total_puntaje_c,
+
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_anamnesis pa JOIN historia h ON pa.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_examen pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_diferencial pd JOIN historia h ON pd.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_laboratorio pl JOIN historia h ON pl.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_intervenir pi JOIN historia h ON pi.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_externa pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_d), 0) FROM puntaje_traspaso pt JOIN historia h ON pt.id_historia_clinica = h.id_historia_clinica) AS total_puntaje_d,
+
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_anamnesis pa JOIN historia h ON pa.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_examen pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_diferencial pd JOIN historia h ON pd.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_laboratorio pl JOIN historia h ON pl.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_intervenir pi JOIN historia h ON pi.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_externa pe JOIN historia h ON pe.id_historia_clinica = h.id_historia_clinica) +
+        (SELECT IFNULL(SUM(puntaje_e), 0) FROM puntaje_traspaso pt JOIN historia h ON pt.id_historia_clinica = h.id_historia_clinica) AS total_puntaje_e;
+        `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+
 module.exports = {
     obtenerCasosClinicos,
     cambiarEstadoCaso,
@@ -1290,5 +1547,20 @@ module.exports = {
     obtenerTraspaso,
     actualizarTraspaso,
     actualizarDiagnosticoFinal,
-    obtenerTraspasoRubrica
+    obtenerTraspasoRubrica,
+    actualizarPuntajeAnamnesis,
+    actualizarPuntajeExamen,
+    actualizarPuntajeDiferencial,
+    actualizarPuntajeLaboratorio,
+    actualizarPuntajeIntervenir,
+    actualizarPuntajeExterna,
+    actualizarPuntajeTraspaso,
+    obtenerPuntajeAnamnesis,
+    obtenerPuntajeExamen,
+    obtenerPuntajeDiferencial,
+    obtenerPuntajeLaboratorio,
+    obtenerPuntajeIntervenir,
+    obtenerPuntajeExterna,
+    obtenerPuntajeTraspaso,
+    obtenerPuntajeTotalHistoriaClinica 
 };

@@ -198,4 +198,35 @@ router.put('/traspaso/:id_historia_clinica', casoController.actualizarTraspaso);
 router.put('/diagnostico-final/:id_historia_clinica', casoController.actualizarDiagnosticoFinal);
 
 router.get('/traspaso-rubrica/:id_historia_clinica', casoController.obtenerTraspasoRubrica);
+
+router.put('/anamnesis-puntaje/:id_historia_clinica', casoController.actualizarPuntajeAnamnesis);
+
+router.put('/examen-puntaje/:id_historia_clinica', casoController.actualizarPuntajeExamen);
+
+router.put('/diferencial-puntaje/:id_historia_clinica', casoController.actualizarPuntajeDiferencial);
+
+router.put('/laboratorio-puntaje/:id_historia_clinica', casoController.actualizarPuntajeLaboratorio);
+
+router.put('/intervenir-puntaje/:id_historia_clinica', casoController.actualizarPuntajeIntervenir);
+
+router.put('/externa-puntaje/:id_historia_clinica', casoController.actualizarPuntajeExterna );
+
+router.put('/traspaso-puntaje/:id_historia_clinica', casoController.actualizarPuntajeTraspaso);
+
+router.get('/anamnesis-puntaje/:id_historia_clinica', casoController.obtenerPuntajeAnamnesis);
+
+router.get('/examen-puntaje/:id_historia_clinica', casoController.obtenerPuntajeExamen);
+
+router.get('/diferencial-puntaje/:id_historia_clinica', casoController.obtenerPuntajeDiferencial);
+
+router.get('/laboratorio-puntaje/:id_historia_clinica', casoController.obtenerPuntajeLaboratorio);
+
+router.get('/intervenir-puntaje/:id_historia_clinica', casoController.obtenerPuntajeIntervenir);
+
+router.get('/externa-puntaje/:id_historia_clinica', casoController.obtenerPuntajeExterna );
+
+router.get('/traspaso-puntaje/:id_historia_clinica', casoController.obtenerPuntajeTraspaso);
+
+router.get('/puntaje-total/:id_historia_clinica', casoController.obtenerPuntajeTotalHistoriaClinica);
+
 module.exports = router;
