@@ -35,15 +35,12 @@ CREATE TABLE caso_clinico (
     difucultad varchar(64) NULL,
     tiempo VARCHAR(10),
     estado VARCHAR(20),
-    diagnostico VARCHAR(256),
+    diagnostico VARCHAR(256) 
     FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
     FOREIGN KEY (id_categoria_simulacion) REFERENCES categoria_simulacion(id_categoria_simulacion)
 );
 
-CREATE TABLE puntaje_caso_clinico (
-    id_puntaje_caso_clinico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    
-);
+
 
 CREATE TABLE historia_clinica (
   id_historia_clinica int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -126,33 +123,43 @@ CREATE TABLE anamnesis_sistemas(
     tegumentario TEXT,
     feed_tegumentario TEXT,
     puntaje_tegumentario VARCHAR(2),
+    img_tegumentario VARCHAR(200),
     cardiovascular TEXT,
     feed_cardiovascular TEXT,
     puntaje_cardiovascular VARCHAR(2),
+    img_cardiovascular VARCHAR(200),
     gastrointestinal TEXT,
     feed_gastrointestinal TEXT,
     puntaje_gastrointestinal VARCHAR(2),
+    img_gastrointestinal VARCHAR(200),
     genitourinario TEXT,
     feed_genitourinario TEXT,
     puntaje_genitourinario VARCHAR(2),
+    img_genitourinario VARCHAR(200),
     respiratorio TEXT,
     feed_respiratorio TEXT,
     puntaje_respiratorio VARCHAR(2),
+    img_repiratorio VARCHAR(200),
     neurologico TEXT,
     feed_neurologico TEXT,
     puntaje_neurologico VARCHAR(2),
+    img_neurologico VARCHAR(200),
     locomotor TEXT,
     feed_locomotor TEXT,
     puntaje_locomotor VARCHAR(2),
+    img_locomotor VARCHAR(200),
     endocrino TEXT,
     feed_endocrino TEXT,
     puntaje_endocrino VARCHAR(2),
+    img_endocrino VARCHAR(200),
     hematico TEXT,
     feed_hematico TEXT,
     puntaje_hematico VARCHAR(2),
+    img_hematico VARCHAR(200),
     psiquiatrico TEXT,
     feed_psiquiatrico TEXT,
     puntaje_psiquiatrico VARCHAR(2),
+    img_psiquiatrico VARCHAR(200),
     FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
 
@@ -178,30 +185,39 @@ CREATE TABLE examen_fisico_segmentario (
 	cabeza TEXT,
     feed_cabeza TEXT,
     puntaje_cabeza VARCHAR(2),
+    img_cabeza VARCHAR(200),
 	cuello TEXT,
     feed_cuello TEXT,
     puntaje_cuello VARCHAR(2),
+    img_cuello VARCHAR(200),
 	torax TEXT,
     feed_torax  TEXT,
     puntaje_torax  VARCHAR(2),
+    img_torax VARCHAR(200),
 	corazon TEXT,
     feed_corazon TEXT,
     puntaje_corazon VARCHAR(2),
+    img_corazon VARCHAR(200),
 	mamas TEXT,
     feed_mamas TEXT,
     puntaje_mamas VARCHAR(2),
+    img_mamas VARCHAR(200),
 	abdomen TEXT,
     feed_abdomen TEXT,
     puntaje_abdomen VARCHAR(2),
+    img_abdomes VARCHAR(200),
 	genitourinario TEXT,
     feed_genitourinario TEXT,
     puntaje_genitourinario VARCHAR(2),
+    img_genitourinario VARCHAR(200),
 	extremidades TEXT,
     feed_extremidades TEXT,
     puntaje_extremidades VARCHAR(2),
+    img_extremidades VARCHAR(200),
 	neurologico VARCHAR(512),
     feed_neurologico TEXT,
     puntaje_neurologico VARCHAR(2),
+    img_neurologico VARCHAR(200),
 	id_historia_clinica INT,
 	FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
@@ -464,15 +480,6 @@ CREATE TABLE examen_circulatorio (
 	FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
 
-CREATE TABLE examen_piel (
-    id_examen_piel INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_historia_clinica INT,
-	descripcion TEXT,
-    feed_examen_piel TEXT,
-    puntaje_examen_piel VARCHAR(2),
-	FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
-);
-
 CREATE TABLE examen_psicologico (
     id_examen_psicologico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     id_historia_clinica INT,
@@ -628,7 +635,7 @@ CREATE TABLE accion_simulacion (
     descripcion TEXT,
     tipo_accion VARCHAR(255), 
     accion_time TIMESTAMP,
-    puntaje INT, 
+    puntaje VARCHAR(2), 
     retroalimentacion TEXT, 
     FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion)
 );
@@ -641,5 +648,324 @@ CREATE TABLE mensajes_simulacion (
     descripcion VARCHAR(100),
     tiempo VARCHAR(10),
     FOREIGN KEY (id_caso_clinico) REFERENCES caso_clinico(id_caso_clinico)
+);
+
+CREATE TABLE puntaje_anamnesis (
+    id_puntaje_anamnesis INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE puntaje_examen (
+    id_puntaje_examen INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE puntaje_diferencial (
+    id_puntaje_diferencial INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE puntaje_laboratorio (
+    id_puntaje_laboratorio INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE puntaje_intervenir (
+    id_puntaje_intervenir INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE puntaje_externa (
+    id_puntaje_externa INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE puntaje_traspaso (
+    id_puntaje_traspaso INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    puntaje_a int,
+    puntaje_b INT,
+    puntaje_c INT,
+    puntaje_d INT,
+    puntaje_e INT
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_alergias (
+    id_laboratorio_alergias INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    intolerancia_alimenticia VARCHAR(50),
+    ige_total VARCHAR(50),
+    pediatricos VARCHAR(50),
+    respiratorios VARCHAR(50),
+    alimentarios VARCHAR(50),
+    citologia_nasal VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE laboratorio_embarazo (
+    id_laboratorio_embarazo INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    hcg_orina VARCHAR(50),
+    hcg_sangre VARCHAR(50),
+    hcg_cuantitativo VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_ortomolegulares (
+    id_laboratorio_ortomolegulares INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    mda VARCHAR(50),
+    vitamina_c VARCHAR(50),
+    indicam VARCHAR(50),
+    adrenal VARCHAR(50),
+    zinc VARCHAR(50),
+    ph_saliva VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE laboratorio_hierro (
+    id_laboratorio_hierro INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    hierro_serico VARCHAR(50),
+    ferritina VARCHAR(50),
+    tibc VARCHAR(50),
+    saturacion VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+CREATE TABLE laboratorio_heces (
+    id_laboratorio_heces INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    parasitologico VARCHAR(50),
+    seriado VARCHAR(50),
+    concentrado VARCHAR(50),
+    sangre_oculta VARCHAR(50),
+    moco_fecal VARCHAR(50),
+    graham VARCHAR(50),
+    rotavirus VARCHAR(50),
+    adenavirus VARCHAR(50),
+    grasa VARCHAR(50),
+    intolerancia VARCHAR(50),
+    ph_azucares VARCHAR(50),
+    helicobacter VARCHAR(50),
+    giardia VARCHAR(50),
+    ameba VARCHAR(50),
+    coproflora VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+CREATE TABLE laboratorio_inmunologia (
+    id_laboratorio_inmunologia INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    widal VARCHAR(50),
+    rpr VARCHAR(50),
+    vdrl VARCHAR(50),
+    latex VARCHAR(50),
+    anti_ccp VARCHAR(50),
+    proteina_c VARCHAR(50),
+    asto VARCHAR(50),
+    chagas VARCHAR(50),
+    hai VARCHAR(50),
+    toxoplasmosis VARCHAR(50),
+    chlamydia VARCHAR(50),
+    pylori VARCHAR(50),
+    hepatitis_a VARCHAR(50),
+    hepatitis_b_hbs VARCHAR(50),
+    hepatitis_b_hbc VARCHAR(50),
+    hepatitis_c VARCHAR(50),
+    citomegalovirus VARCHAR(50),
+    mononucleolosis VARCHAR(50),
+    herpes VARCHAR(50),
+    hiv VARCHAR(50),
+    complemento_c3 VARCHAR(50),
+    complemento_c4 VARCHAR(50),
+    anti_dna VARCHAR(50),
+    ana VARCHAR(50),
+    anticardiolipinas VARCHAR(50),
+    antifosfolipidos VARCHAR(50),
+    perfil VARCHAR(50),
+    p_anca VARCHAR(50),
+    c_anca VARCHAR(50),
+    il VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE laboratorio_gastroenterologia (
+    id_laboratorio_gastroenterologia INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    elastasa VARCHAR(50),
+    calprotectina VARCHAR(50),
+    difficle VARCHAR(50),
+    antigliadina VARCHAR(50),
+    antitrasglutaminasa VARCHAR(50),
+    antiendomsio VARCHAR(50),
+    antimitocondriales VARCHAR(50),
+    antitripsina VARCHAR(50),
+    betaina VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE laboratorio_liquidos (
+    id_laboratorio_liquidos INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    espermograma VARCHAR(50),
+    lcr VARCHAR(50),
+    pleural VARCHAR(50),
+    ascitico VARCHAR(50),
+    sinovial VARCHAR(50),
+    nasal VARCHAR(50)
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_microscopia_optica (
+    id_laboratorio_microscopia_optica INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    hlb VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_enzimas (
+    id_laboratorio_enzimas INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    catalasa VARCHAR(50),
+    glutation VARCHAR(50),
+    superoxido VARCHAR(50),
+    mielope VARCHAR(50)
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_tumoral (
+    id_laboratorio_tumoral INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    psa_ultrasensible VARCHAR(50),
+    psa_total VARCHAR(50),
+    psa_libre VARCHAR(50),
+    cea VARCHAR(50),
+    afp VARCHAR(50),
+    ca125 VARCHAR(50),
+    ca153 VARCHAR(50),
+    ca199 VARCHAR(50),
+    tiroglobulina VARCHAR(50),
+    b2microglobulina VARCHAR(50),   
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_hormonas (
+    id_laboratorio_hormonas INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    t3 VARCHAR(50),
+    t3l VARCHAR(50),
+    t3r VARCHAR(50),
+    t4 VARCHAR(50),
+    t4l VARCHAR(50),
+    pth VARCHAR(50),
+    acth VARCHAR(50),
+    tsh_ultra VARCHAR(50),
+    h_crecimiento VARCHAR(50),
+    tsh_neonatal VARCHAR(50),
+    atpo VARCHAR(50),
+    atg VARCHAR(50),
+    estradiol VARCHAR(50),
+    estrona VARCHAR(50),
+    lh VARCHAR(50),
+    fsh VARCHAR(50),
+    estrogenos VARCHAR(50),
+    antimulleriana VARCHAR(50),
+    progesterona VARCHAR(50),
+    testosterona VARCHAR(50),
+    testosterona_libre VARCHAR(50),
+    prolactina VARCHAR(50),
+    shbg VARCHAR(50),
+    dheas VARCHAR(50),
+    dhea VARCHAR(50),
+    cortisol VARCHAR(50),
+    am VARCHAR(50),
+    pm VARCHAR(50),
+    insulina VARCHAR(50),
+    post_carga VARCHAR(50),
+    peptido_c VARCHAR(50),
+    indice_homa VARCHAR(50),
+    grelina VARCHAR(50),
+    leptina VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_neurotransmisores (
+    id_laboratorio_neurotransmisores INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    dopamina VARCHAR(50),
+    gaba VARCHAR(50),
+    serotonina VARCHAR(50),
+    norepinefrina VARCHAR(50),
+    epinefrina VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_vitaminas (
+    id_laboratorio_vitaminas INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    b6 VARCHAR(50),
+    b12 VARCHAR(50),
+    acido_folico VARCHAR(50),
+    d VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+
+CREATE TABLE laboratorio_microbiologia (
+    id_laboratorio_microbiologia INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_historia_clinica INT,
+    VARCHAR(50),
+    VARCHAR(50),
+    VARCHAR(50),
+    VARCHAR(50),
+    VARCHAR(50),
+    VARCHAR(50),
+    VARCHAR(50),
+    VARCHAR(50),
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
 

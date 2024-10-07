@@ -29,6 +29,16 @@ router.get('/examen-fisico-segmentario-extremidades/:id', historiaController.get
 
 router.get('/examen-fisico-segmentario-neurologico/:id', historiaController.getExamenFisicoSegmentarioNeurologico);
 
+router.get('/examen-fisico-segmentario-piel/:id', historiaController.getExamenFisicoSegmentarioPiel);
+
+router.get('/examen-fisico-circulatorio/:id', historiaController.getExamenCirculatorio);
+
+router.get('/examen-fisico-respiratorio/:id', historiaController.getExamenRespiratorio);
+
+router.get('/examen-fisico-via-aerea/:id', historiaController.getExamenViaAerea);
+
+router.get('/examen-fisico-psicologico/:id', historiaController.getExamenPsicologico);
+
 router.get('/examen-obstetrico/:id', historiaController.getExamenObstetrico);
 
 router.get('/laboratorio-fisico-orina/:id', historiaController.getExamenFisicoOrina);

@@ -122,3 +122,26 @@ INSERT INTO diagnostico VALUES (31,4,"Coma Hiperosmolar", "");
 INSERT INTO diagnostico VALUES (32,4,"Hipertiroidismo", "");
 INSERT INTO diagnostico VALUES (33,4,"Hipoglucemia", "");
 INSERT INTO diagnostico VALUES (34,4,"Hiponatremia", "");
+
+
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_tegumentario;   
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_cardiovascular; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_endocrino; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_gastrointestinal; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_genitourinario; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_respiratorio; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_neurologico; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_locomotor; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_hematico; 
+ALTER TABLE anamnesis_sistemas DROP COLUMN img_neurologico; 
+
+
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_cabeza VARCHAR(200);   
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_cuello VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_corazon VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_torax VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_mamas VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_abdomen VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_genitourinario VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_extremidades VARCHAR(200); 
+ALTER TABLE examen_fisico_segmentario ADD COLUMN img_neurologico VARCHAR(200);

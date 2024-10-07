@@ -6,11 +6,11 @@ const getListaPacientes = (callback) => {
                     paterno, 
                     materno, 
                     nombre, 
-                    fecha_nacimiento,
                     sexo,
                     peso,
                     talla,
-                    TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) AS edad
+                    edad,
+                    ocupacion
                 FROM 
                     paciente;`;
     db.query(sql, callback);
@@ -22,10 +22,10 @@ const getPacienteHistoria = (callback) => {
                     p.paterno, 
                     p.materno, 
                     p.nombre, 
-                    p.fecha_nacimiento,
                     p.peso,
                     p.talla, 
-                    TIMESTAMPDIFF(YEAR, p.fecha_nacimiento, CURDATE()) AS edad,
+                    p.edad,
+                    p.ocupacion,
                     h.descripcion,
                     h.id_historia_clinica,
                     c.id_caso_clinico,
@@ -79,10 +79,9 @@ const obtenerPacientesFiltrados = (categoriaId, dificultad, callback) => {
                     p.paterno, 
                     p.materno, 
                     p.nombre, 
-                    p.fecha_nacimiento,
                     p.peso,
                     p.talla, 
-                    TIMESTAMPDIFF(YEAR, p.fecha_nacimiento, CURDATE()) AS edad,
+                    p.edad,
                     h.descripcion,
                     h.id_historia_clinica,
                     c.id_caso_clinico,

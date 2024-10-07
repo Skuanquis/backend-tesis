@@ -1,4 +1,6 @@
 const casoModel = require('../models/casoModel');
+const fs = require('fs');
+const path = require('path');
 
 const listarCasosClinicos = (req, res) => {
     casoModel.obtenerCasosClinicos((err, resultados) => {
@@ -150,8 +152,12 @@ const obtenerPaciente = (req, res) => {
 
 const actualizarPaciente = (req, res) => {
     const { id_paciente } = req.params;
+    //console.log(req.body)
     casoModel.actualizarPaciente(id_paciente, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err){
+            console.log(err)
+            return res.status(500).json({ error: err.message });
+        }
         res.status(200).json({ message: 'Paciente actualizado correctamente' });
     });
 };
@@ -205,6 +211,22 @@ const actualizarAntecedentesFamiliares = (req, res) => {
     });
 };
 
+const obtenerAntecedentesGinecoObstetricos = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerAntecedentesGinecoObstetricos(id_historia_clinica, (err, antecedentes) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(antecedentes);
+    });
+};
+
+const actualizarAntecedentesGinecoObstetricos = (req, res) => {
+    const { id } = req.params;
+    casoModel.actualizarAntecedentesGinecoObstetricos(id, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Antecedentes gineco-obstetricos actualizados correctamente' });
+    });
+};
+
 const obtenerAnamnesisSistemas = (req, res) => {
     const { id_historia_clinica } = req.params;
     casoModel.obtenerAnamnesisSistemas(id_historia_clinica, (err, anamnesis) => {
@@ -217,7 +239,10 @@ const actualizarAnamnesisSistemas = (req, res) => {
     const { id } = req.params;
     //console.log("puntaje controller: ", req.body)
     casoModel.actualizarAnamnesisSistemas(id, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err){
+            console.log(err)
+            return res.status(500).json({ error: err.message });
+        }
         res.status(200).json({ message: 'Anamnesis por sistemas actualizada correctamente' });
     });
 };
@@ -271,9 +296,19 @@ const obtenerExamenFisicoGeneral = (req, res) => {
 };
 
 const actualizarExamenFisicoGeneral = (req, res) => {
-    const { id_examen_fisico_general } = req.params;
-    //console.log("controller: ", req.body)
-    casoModel.actualizarExamenFisicoGeneral(id_examen_fisico_general, req.body, (err) => {
+    const { id_historia_clinica } = req.params;
+    let peso = req.body.peso;
+    let talla = req.body.talla;
+    if (talla && talla !== 0) {
+        let imc = (peso / (talla * talla)).toFixed(2);
+        //console.log("IMC calculado y redondeado: ", imc);
+        req.body.imc = imc;
+    } else {
+        req.body.imc = null;
+        //console.log("Talla inválida, no se puede calcular el IMC.");
+    }
+    //console.log(req.body.imc)
+    casoModel.actualizarExamenFisicoGeneral(id_historia_clinica, req.body, (err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json({ message: 'Examen físico general actualizado correctamente' });
     });
@@ -293,22 +328,6 @@ const actualizarExamenFisicoSegmentario = (req, res) => {
     casoModel.actualizarExamenFisicoSegmentario(id_historia_clinica, req.body, (err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(200).json({ message: 'Examen físico segmentario actualizado correctamente' });
-    });
-};
-
-const obtenerExamenPiel = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.obtenerExamenPiel(id_historia_clinica, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarExamenPiel = (req, res) => {
-    const { id_examen_piel } = req.params;
-    casoModel.actualizarExamenPiel(id_examen_piel, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Examen de piel actualizado correctamente' });
     });
 };
 
@@ -726,12 +745,55 @@ const actualizarImagenes = (req, res) => {
 };
 
 const cargarImagen = (req, res) => {
-    const file = req.file;
+    const file = req.files.imagen ? req.files.imagen[0] : null;
+    const sistema = req.body.sistema;
+    //console.log(sistema);
+
     if (!file) {
         return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
     }
-    const filePath = `http://localhost:3000/uploads/${file.filename}`;
-    res.json({ path: filePath });
+
+    const uploadPath = `public/uploads/${sistema}`;
+    fs.mkdirSync(uploadPath, { recursive: true });
+
+    const oldPath = file.path;
+    const newPath = path.join(uploadPath, file.filename);
+
+    fs.rename(oldPath, newPath, function (err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error al mover el archivo' });
+        }
+        const ruta = `http://localhost:3000/uploads/${sistema}/${file.filename}`;
+        res.json({ path: ruta });
+    });
+};
+
+const cargarImagenCategoria = (req, res) => {
+    const file = req.files.imagen ? req.files.imagen[0] : null;
+    const id_categoria_imagenologia = req.body.id_categoria_imagenologia;
+
+    if (!file) {
+        return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
+    }
+
+    if (!id_categoria_imagenologia) {
+        return res.status(400).json({ error: 'No se ha proporcionado el ID de la categoría de imagenología' });
+    }
+
+    const uploadPath = `public/uploads/${id_categoria_imagenologia}`;
+    fs.mkdirSync(uploadPath, { recursive: true });
+
+    const oldPath = file.path;
+    const newPath = path.join(uploadPath, file.filename);
+
+    fs.rename(oldPath, newPath, function (err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error al mover el archivo' });
+        }
+        const serverUrl = 'http://localhost:3000'; // Puedes obtener esto de una variable de entorno
+        const ruta = `${serverUrl}/uploads/${id_categoria_imagenologia}/${file.filename}`;
+        res.json({ path: ruta });
+    });
 };
 
 const obtenerTraspaso = (req, res) => {
@@ -804,7 +866,7 @@ const actualizarPuntajeIntervenir = (req, res) => {
 };
 
 const actualizarPuntajeExterna = (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const { id_historia_clinica } = req.params;
     casoModel.actualizarPuntajeExterna(id_historia_clinica, req.body, (err) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -893,6 +955,15 @@ const obtenerPuntajeTotalHistoriaClinica = (req, res) => {
     });
 };
 
+const obtenerPuntajeAccionSimulacion = (req, res) => {
+    const { id_simulacion } = req.params;
+    casoModel.obtenerPuntajeAccionSimulacion(id_simulacion, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+
 module.exports = {
     listarCasosClinicos,
     cambiarEstadoCaso,
@@ -926,8 +997,6 @@ module.exports = {
     actualizarExamenFisicoGeneral,
     obtenerExamenFisicoSegmentario,
     actualizarExamenFisicoSegmentario,
-    obtenerExamenPiel,
-    actualizarExamenPiel,
     obtenerExamenCirculatorio,
     actualizarExamenCirculatorio,
     obtenerExamenRespiratorio,
@@ -951,6 +1020,8 @@ module.exports = {
     obtenerSubespecialidades,
     obtenerSubespecialidadesPorHistoriaClinica,
     actualizarSubespecialidades,
+    obtenerAntecedentesGinecoObstetricos,
+    actualizarAntecedentesGinecoObstetricos,
 
     obtenerExamenFisicoOrina, 
     actualizarExamenFisicoOrina,
@@ -980,6 +1051,7 @@ module.exports = {
     obtenerImagenesPorHistoriaClinica,
     actualizarImagenes,
     cargarImagen,
+    cargarImagenCategoria,
     obtenerTraspaso,
     actualizarTraspaso,
     actualizarDiagnosticoFinal,
@@ -998,5 +1070,6 @@ module.exports = {
     obtenerPuntajeIntervenir,
     obtenerPuntajeExterna,
     obtenerPuntajeTraspaso,
-    obtenerPuntajeTotalHistoriaClinica
+    obtenerPuntajeTotalHistoriaClinica,
+    obtenerPuntajeAccionSimulacion
 };

@@ -12,6 +12,7 @@ const getListaPacientes = (req, res) =>{
 const getPacienteHistoria = (req, res) =>{
     pacienteModel.getPacienteHistoria((err, pacientes) => {
         if (err) {
+            console.log(err)
             return res.status(500).send({ error:'Error al cargar los pacientes'});
         }
         res.status(200).send(pacientes);

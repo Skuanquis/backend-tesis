@@ -20,10 +20,11 @@ const getInfoHistoriaFemenino = (id_historia_clinica, callback) => {
                     p.paterno,
                     p.materno,
                     p.nombre,
-                    YEAR(CURDATE()) - YEAR(p.fecha_nacimiento) AS edad, 
+                    p.edad, 
                     p.peso,
                     p.talla,
                     p.sexo,
+                    p.ocupacion,
                     hc.id_historia_clinica,
                     hc.descripcion,
                     hc.historia_enfermedad_actual,
@@ -86,10 +87,11 @@ const getInfoHistoriaMasculino = (id_historia_clinica, callback) => {
                     p.paterno,
                     p.materno,
                     p.nombre,
-                    YEAR(CURDATE()) - YEAR(p.fecha_nacimiento) AS edad,
+                    p.edad,
                     p.peso,
                     p.talla,
                     p.sexo,
+                    p.ocupacion,
                     hc.id_historia_clinica,
                     hc.descripcion,
                     hc.historia_enfermedad_actual,
@@ -176,7 +178,8 @@ const getExamenFisicoSegmentario = (id_historia_clinica, callback) => {
             e.abdomen,
             e.genitourinario,
             e.extremidades,
-            e.neurologico
+            e.neurologico,
+            e.piel
         FROM 
             examen_fisico_segmentario e
         JOIN 
@@ -193,6 +196,7 @@ const getExamenFisicoSegmentarioCabeza = (id_historia_clinica, callback) => {
             e.cabeza,
             e.feed_cabeza,
             e.puntaje_cabeza,
+            e.img_cabeza,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -212,6 +216,7 @@ const getExamenFisicoSegmentarioCuello = (id_historia_clinica, callback) => {
             e.cuello,
             e.feed_cuello,
             e.puntaje_cuello,
+            e.img_cuello,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -231,6 +236,7 @@ const getExamenFisicoSegmentarioTorax = (id_historia_clinica, callback) => {
             e.torax,
             e.feed_torax,
             e.puntaje_torax,
+            e.img_torax,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -250,6 +256,7 @@ const getExamenFisicoSegmentarioCorazon = (id_historia_clinica, callback) => {
             e.corazon,
             e.feed_corazon,
             e.puntaje_corazon,
+            e.img_corazon,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -269,6 +276,7 @@ const getExamenFisicoSegmentarioMamas = (id_historia_clinica, callback) => {
             e.mamas,
             e.feed_mamas,
             e.puntaje_mamas,
+            e.img_mamas,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -288,6 +296,7 @@ const getExamenFisicoSegmentarioAbdomen = (id_historia_clinica, callback) => {
             e.abdomen,
             e.feed_abdomen,
             e.puntaje_abdomen,
+            e.img_abdomen,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -307,6 +316,7 @@ const getExamenFisicoSegmentarioGenitourinario = (id_historia_clinica, callback)
             e.genitourinario,
             e.feed_genitourinario,
             e.puntaje_genitourinario,
+            e.img_genitourinario,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -326,6 +336,7 @@ const getExamenFisicoSegmentarioExtremidades = (id_historia_clinica, callback) =
             e.extremidades,
             e.feed_extremidades,
             e.puntaje_extremidades,
+            e.img_extremidades,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -345,6 +356,7 @@ const getExamenFisicoSegmentarioNeurologico = (id_historia_clinica, callback) =>
             e.neurologico,
             e.feed_neurologico,
             e.puntaje_neurologico,
+            e.img_neurologico,
             vp.rubrica
         FROM 
             examen_fisico_segmentario e
@@ -353,6 +365,26 @@ const getExamenFisicoSegmentarioNeurologico = (id_historia_clinica, callback) =>
         LEFT JOIN 
             valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
                              AND e.puntaje_neurologico = vp.codigo
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `;
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getExamenFisicoSegmentarioPiel = (id_historia_clinica, callback) => {
+    const sql = `SELECT 
+            e.piel,
+            e.feed_piel,
+            e.puntaje_piel,
+            e.img_piel,
+            vp.rubrica
+        FROM 
+            examen_fisico_segmentario e
+        JOIN 
+            historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_piel = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
@@ -385,6 +417,78 @@ const getExamenObstetrico = (id_historia_clinica, callback) => {
         LEFT JOIN 
             valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
                              AND e.puntaje_examen_obstetrico = vp.codigo
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `;
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getExamenCirculatorio = (id_historia_clinica, callback) => {
+    const sql = `SELECT e.descripcion, 
+            e.feed_examen_circulatorio, 
+            e.puntaje_examen_circulatorio,
+            vp.rubrica
+        FROM 
+            examen_circulatorio e
+        JOIN 
+            historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_examen_circulatorio = vp.codigo
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `;
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getExamenRespiratorio = (id_historia_clinica, callback) => {
+    const sql = `SELECT e.descripcion, 
+            e.feed_examen_respiratorio, 
+            e.puntaje_examen_respiratorio,
+            vp.rubrica
+        FROM 
+            examen_respiratorio e
+        JOIN 
+            historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_examen_respiratorio = vp.codigo
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `;
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getExamenPsicologico = (id_historia_clinica, callback) => {
+    const sql = `SELECT e.descripcion, 
+            e.feed_examen_psicologico, 
+            e.puntaje_examen_psicologico,
+            vp.rubrica
+        FROM 
+            examen_psicologico e
+        JOIN 
+            historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_examen_psicologico = vp.codigo
+        WHERE 
+            hc.id_historia_clinica = ?;
+        `;
+    db.query(sql, [id_historia_clinica], callback)
+}
+
+const getExamenViaAerea = (id_historia_clinica, callback) => {
+    const sql = `SELECT e.descripcion, 
+            e.feed_examen_via_aerea, 
+            e.puntaje_examen_via_aerea,
+            vp.rubrica
+        FROM 
+            examen_via_aerea e
+        JOIN 
+            historia_clinica hc ON e.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                             AND e.puntaje_examen_via_aerea = vp.codigo
         WHERE 
             hc.id_historia_clinica = ?;
         `;
@@ -1098,6 +1202,11 @@ module.exports = {
     getExamenFisicoSegmentarioGenitourinario,
     getExamenFisicoSegmentarioExtremidades,
     getExamenFisicoSegmentarioNeurologico,
+    getExamenFisicoSegmentarioPiel,
+    getExamenCirculatorio,
+    getExamenRespiratorio,
+    getExamenViaAerea,
+    getExamenPsicologico,
     getExamenObstetrico,
     getExamenFisicoOrina,
     getExamenSedimentoUrinario,

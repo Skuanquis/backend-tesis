@@ -3,6 +3,7 @@ const router = express.Router();
 const casoController = require('../controllers/casoController');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs')
 
 router.get('/casos', casoController.listarCasosClinicos);
 
@@ -46,6 +47,10 @@ router.get('/antecedentes_familiares/:id_historia_clinica', casoController.obten
 
 router.put('/antecedentes_familiares/:id', casoController.actualizarAntecedentesFamiliares);
 
+router.get('/antecedentes_gineco_obstetricos/:id_historia_clinica', casoController.obtenerAntecedentesGinecoObstetricos);
+
+router.put('/antecedentes_gineco_obstetricos/:id', casoController.actualizarAntecedentesGinecoObstetricos);
+
 router.get('/anamnesis_sistemas/:id_historia_clinica', casoController.obtenerAnamnesisSistemas);
 
 router.put('/anamnesis_sistemas/:id', casoController.actualizarAnamnesisSistemas);
@@ -62,15 +67,11 @@ router.put('/motivos_consulta/:id', casoController.actualizarMotivoConsulta);
 
 router.get('/examen_fisico_general/:id_historia_clinica', casoController.obtenerExamenFisicoGeneral);
 
-router.put('/examen_fisico_general/:id_examen_fisico_general', casoController.actualizarExamenFisicoGeneral);
+router.put('/examen_fisico_general/:id_historia_clinica', casoController.actualizarExamenFisicoGeneral);
 
 router.get('/examen_fisico_segmentario/:id_historia_clinica', casoController.obtenerExamenFisicoSegmentario);
 
 router.put('/examen_fisico_segmentario/:id_historia_clinica', casoController.actualizarExamenFisicoSegmentario);
-
-router.get('/examen_piel/:id_historia_clinica', casoController.obtenerExamenPiel);
-
-router.put('/examen_piel/:id_examen_piel', casoController.actualizarExamenPiel);
 
 router.get('/examen_circulatorio/:id_historia_clinica', casoController.obtenerExamenCirculatorio);
 
@@ -178,7 +179,14 @@ router.post('/imagenes/:id_historia_clinica', casoController.actualizarImagenes)
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'public/uploads/'); 
+        const uploadPath = 'public/uploads/tmp'; 
+        fs.mkdir(uploadPath, { recursive: true }, (err) => {
+            if (err) {
+                return cb(err);
+            } else {
+                cb(null, uploadPath);
+            }
+        });
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -186,10 +194,17 @@ const storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
+
 const upload = multer({ storage: storage });
 
+router.post('/upload_imagen', upload.fields([
+    { name: 'imagen', maxCount: 1 },
+    { name: 'sistema', maxCount: 1 }
+]), casoController.cargarImagen);
 
-router.post('/upload_imagen', upload.single('imagen'), casoController.cargarImagen);
+router.post('/upload_imagen_categoria', upload.fields([
+    { name: 'imagen', maxCount: 1 }
+]), casoController.cargarImagenCategoria);
 
 router.get('/traspaso/:id_historia_clinica', casoController.obtenerTraspaso);
 
@@ -228,5 +243,7 @@ router.get('/externa-puntaje/:id_historia_clinica', casoController.obtenerPuntaj
 router.get('/traspaso-puntaje/:id_historia_clinica', casoController.obtenerPuntajeTraspaso);
 
 router.get('/puntaje-total/:id_historia_clinica', casoController.obtenerPuntajeTotalHistoriaClinica);
+
+router.get('/puntaje-accion/:id_simulacion', casoController.obtenerPuntajeAccionSimulacion);
 
 module.exports = router;

@@ -148,6 +148,56 @@ const getExamenFisicoSegmentarioNeurologico = (req, res) => {
     })
 }
 
+const getExamenFisicoSegmentarioPiel = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getExamenFisicoSegmentarioPiel(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getExamenCirculatorio = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getExamenCirculatorio(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getExamenRespiratorio = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getExamenRespiratorio(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getExamenPsicologico = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getExamenPsicologico(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
+const getExamenViaAerea = (req, res) => {
+    const id_historia_clinica = req.params.id
+    historiaModel.getExamenViaAerea(id_historia_clinica, (err, examen) => {
+        if (err) {
+            return res.status(500).send({ error:'Error al obtener el examen físico general'})
+        }
+        res.status(200).send(examen);
+    })
+}
+
 const getExamenObstetrico = (req, res) => {
     const id_historia_clinica = req.params.id
     historiaModel.getExamenObstetrico(id_historia_clinica, (err, examen) => {
@@ -431,6 +481,11 @@ module.exports = {
     getExamenFisicoSegmentarioGenitourinario,
     getExamenFisicoSegmentarioExtremidades,
     getExamenFisicoSegmentarioNeurologico,
+    getExamenFisicoSegmentarioPiel,
+    getExamenCirculatorio,
+    getExamenRespiratorio,
+    getExamenViaAerea,
+    getExamenPsicologico,
     getExamenObstetrico,
     getExamenFisicoOrina,
     getExamenSedimentoUrinario,

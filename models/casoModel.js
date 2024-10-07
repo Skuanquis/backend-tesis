@@ -152,10 +152,12 @@ const obtenerPaciente = (id_historia_clinica, callback) => {
 
 const actualizarPaciente = (id_paciente, data, callback) => {
     const sql = `
-        UPDATE paciente 
-        SET nombre = ?, paterno = ?, materno = ?, fecha_nacimiento = ?, sexo = ?, peso = ?, talla = ?
-        WHERE id_paciente = ?`;
-    const values = [data.nombre, data.paterno, data.materno, data.fecha_nacimiento, data.sexo, data.peso, data.talla, id_paciente];
+        UPDATE paciente p
+        JOIN caso_clinico cc ON p.id_paciente = cc.id_paciente
+        JOIN historia_clinica hc ON hc.id_caso_clinico = cc.id_caso_clinico
+        SET p.nombre = ?, p.paterno = ?, p.materno = ?, p.edad = ?, p.sexo = ?, p.peso = ?, p.talla = ?, p.ocupacion = ?, hc.descripcion = ?
+        WHERE hc.id_historia_clinica = ?`;
+    const values = [data.nombre, data.paterno, data.materno, data.edad, data.sexo, data.peso, data.talla, data.ocupacion, data.descripcion, id_paciente];
     db.query(sql, values, callback);
 };
 
@@ -209,28 +211,42 @@ const actualizarAntecedentesFamiliares = (id_antecedentes_familiares, data, call
     db.query(sql, values, callback);
 };
 
+const obtenerAntecedentesGinecoObstetricos = (id_historia_clinica, callback) => {
+    const sql = `SELECT * FROM antecedentes_gineco_obstetricos WHERE id_historia_clinica = ?`;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+const actualizarAntecedentesGinecoObstetricos = (id_antecedentes_familiares, data, callback) => {
+    const sql = `
+        UPDATE antecedentes_gineco_obstetricos
+        SET menarca = ?, fum = ?, fpp = ?, gestaciones = ?, partos = ?, abortos = ?, cesarias = ?, cpn = ?
+        WHERE id_historia_clinica = ?`;
+    const values = [data.menarca, data.fum, data.fpp, data.gestaciones, data.partos, data.abortos, data.cesarias, data.cpn, id_antecedentes_familiares];
+    db.query(sql, values, callback);
+};
+
 const obtenerAnamnesisSistemas = (id_historia_clinica, callback) => {
     const sql = `SELECT * FROM anamnesis_sistemas WHERE id_historia_clinica = ?`;
     db.query(sql, [id_historia_clinica], callback);
 };
-
+ 
 const actualizarAnamnesisSistemas = (id_anamnesis_sistemas, data, callback) => {
     //console.log("puntaje: ", data)
     const sql = `
         UPDATE anamnesis_sistemas 
         SET tegumentario = ?, feed_tegumentario = ?, puntaje_tegumentario = ?, 
-            cardiovascular = ?, feed_cardiovascular = ?, puntaje_cardiovascular = ?, 
-            gastrointestinal = ?, feed_gastrointestinal = ?, puntaje_gastrointestinal = ?, 
-            genitourinario = ?, feed_genitourinario = ?, puntaje_genitourinario = ?, 
+            cardiovascular = ?, feed_cardiovascular = ?, puntaje_cardiovascular = ?,
+            gastrointestinal = ?, feed_gastrointestinal = ?, puntaje_gastrointestinal = ?,
+            genitourinario = ?, feed_genitourinario = ?, puntaje_genitourinario = ?,
             respiratorio = ?, feed_respiratorio = ?, puntaje_respiratorio = ?, 
             neurologico = ?, feed_neurologico = ?, puntaje_neurologico = ?, 
-            locomotor = ?, feed_locomotor = ?, puntaje_locomotor = ?, 
-            endocrino = ?, feed_endocrino = ?, puntaje_endocrino = ?, 
+            locomotor = ?, feed_locomotor = ?, puntaje_locomotor = ?,
+            endocrino = ?, feed_endocrino = ?, puntaje_endocrino = ?,
             hematico = ?, feed_hematico = ?, puntaje_hematico = ?, 
             psiquiatrico = ?, feed_psiquiatrico = ?, puntaje_psiquiatrico = ?
         WHERE id_anamnesis_sistemas = ?`;
     const values = [
-        data.tegumentario, data.feed_tegumentario, data.puntaje_tegumentario,
+        data.tegumentario, data.feed_tegumentario, data.puntaje_tegumentario, 
         data.cardiovascular, data.feed_cardiovascular, data.puntaje_cardiovascular,
         data.gastrointestinal, data.feed_gastrointestinal, data.puntaje_gastrointestinal,
         data.genitourinario, data.feed_genitourinario, data.puntaje_genitourinario,
@@ -239,7 +255,7 @@ const actualizarAnamnesisSistemas = (id_anamnesis_sistemas, data, callback) => {
         data.locomotor, data.feed_locomotor, data.puntaje_locomotor,
         data.endocrino, data.feed_endocrino, data.puntaje_endocrino,
         data.hematico, data.feed_hematico, data.puntaje_hematico,
-        data.psiquiatrico, data.feed_psiquiatrico, data.puntaje_psiquiatrico,
+        data.psiquiatrico, data.feed_psiquiatrico, data.puntaje_psiquiatrico, 
         id_anamnesis_sistemas
     ];
     db.query(sql, values, callback);
@@ -298,40 +314,29 @@ const actualizarExamenFisicoSegmentario = (id_historia_clinica, data, callback) 
 
     const sql = `
         UPDATE examen_fisico_segmentario 
-        SET cabeza = ?, feed_cabeza = ?, puntaje_cabeza = ?, cuello = ?, feed_cuello = ?, puntaje_cuello = ?, 
-            torax = ?, feed_torax = ?, puntaje_torax = ?, corazon = ?, feed_corazon = ?, puntaje_corazon = ?, 
-            mamas = ?, feed_mamas = ?, puntaje_mamas = ?, abdomen = ?, feed_abdomen = ?, puntaje_abdomen = ?, 
-            genitourinario = ?, feed_genitourinario = ?, puntaje_genitourinario = ?, extremidades = ?, 
-            feed_extremidades = ?, puntaje_extremidades = ?, neurologico = ?, feed_neurologico = ?, 
-            puntaje_neurologico = ? 
+        SET cabeza = ?, feed_cabeza = ?, puntaje_cabeza = ?, img_cabeza = ?, cuello = ?, feed_cuello = ?, puntaje_cuello = ?, img_cuello = ?, 
+            torax = ?, feed_torax = ?, puntaje_torax = ?, img_torax = ?, corazon = ?, feed_corazon = ?, puntaje_corazon = ?, img_corazon = ?, 
+            mamas = ?, feed_mamas = ?, puntaje_mamas = ?, img_mamas = ?, abdomen = ?, feed_abdomen = ?, puntaje_abdomen = ?, img_abdomen = ?, 
+            genitourinario = ?, feed_genitourinario = ?, puntaje_genitourinario = ?, img_genitourinario = ?, extremidades = ?, 
+            feed_extremidades = ?, puntaje_extremidades = ?, img_extremidades = ?, neurologico = ?, feed_neurologico = ?, 
+            puntaje_neurologico = ?, img_neurologico = ?, piel = ?, feed_piel = ?, 
+            puntaje_piel = ?, img_piel = ?
         WHERE id_historia_clinica = ?`;
     
     const values = [
-        data.cabeza, data.feed_cabeza, data.puntaje_cabeza, data.cuello, data.feed_cuello, data.puntaje_cuello,
-        data.torax, data.feed_torax, data.puntaje_torax, data.corazon, data.feed_corazon, data.puntaje_corazon,
-        data.mamas, data.feed_mamas, data.puntaje_mamas, data.abdomen, data.feed_abdomen, data.puntaje_abdomen,
-        data.genitourinario, data.feed_genitourinario, data.puntaje_genitourinario, data.extremidades,
-        data.feed_extremidades, data.puntaje_extremidades, data.neurologico, data.feed_neurologico,
-        data.puntaje_neurologico, id_historia_clinica
+        data.cabeza, data.feed_cabeza, data.puntaje_cabeza, data.img_cabeza, data.cuello, data.feed_cuello, data.puntaje_cuello, data.img_cuello,
+        data.torax, data.feed_torax, data.puntaje_torax, data.img_torax, data.corazon, data.feed_corazon, data.puntaje_corazon, data.img_corazon,
+        data.mamas, data.feed_mamas, data.puntaje_mamas, data.img_mamas, data.abdomen, data.feed_abdomen, data.puntaje_abdomen, data.img_abdomen,
+        data.genitourinario, data.feed_genitourinario, data.puntaje_genitourinario, data.img_genitourinario, data.extremidades,
+        data.feed_extremidades, data.puntaje_extremidades, data.img_extremidades, data.neurologico, data.feed_neurologico,
+        data.puntaje_neurologico, data.img_neurologico, data.piel, data.feed_piel,
+        data.puntaje_piel, data.img_piel, id_historia_clinica
     ];
     
     db.query(sql, values, callback);
     
 };
 
-const obtenerExamenPiel = (id_historia_clinica, callback) => {
-    const sql = `SELECT * FROM examen_piel WHERE id_historia_clinica = ?`;
-    db.query(sql, [id_historia_clinica], callback);
-};
-
-const actualizarExamenPiel = (id_historia_clinica, data, callback) => {
-    const sql = `
-        UPDATE examen_piel 
-        SET descripcion = ?, feed_examen_piel = ?, puntaje_examen_piel = ? 
-        WHERE id_historia_clinica = ?`;
-    const values = [data.descripcion, data.feed_examen_piel, data.puntaje_examen_piel, id_historia_clinica];
-    db.query(sql, values, callback);
-};
 
 const obtenerExamenCirculatorio = (id_historia_clinica, callback) => {
     const sql = `SELECT * FROM examen_circulatorio WHERE id_historia_clinica = ?`;
@@ -1457,6 +1462,28 @@ const obtenerPuntajeTotalHistoriaClinica = (id_historia_clinica, callback) => {
     db.query(sql, [id_historia_clinica], callback);
 };
 
+const obtenerPuntajeAccionSimulacion = (id_simulacion, callback) => {
+    const sql = `SELECT puntaje.puntaje, 
+                COALESCE(COUNT(accion_simulacion.puntaje), 0) AS cantidad
+            FROM ( 
+                SELECT 'A' AS puntaje
+                UNION ALL
+                SELECT 'B' AS puntaje
+                UNION ALL
+                SELECT 'C' AS puntaje
+                UNION ALL
+                SELECT 'D' AS puntaje
+                UNION ALL
+                SELECT 'E' AS puntaje
+            ) AS puntaje
+            LEFT JOIN accion_simulacion 
+                ON puntaje.puntaje = accion_simulacion.puntaje 
+                AND accion_simulacion.id_simulacion = ?
+            GROUP BY puntaje.puntaje;
+
+        `;
+    db.query(sql, [id_simulacion], callback);
+};
 
 module.exports = {
     obtenerCasosClinicos,
@@ -1491,8 +1518,6 @@ module.exports = {
     actualizarExamenFisicoGeneral,
     obtenerExamenFisicoSegmentario,
     actualizarExamenFisicoSegmentario,
-    obtenerExamenPiel,
-    actualizarExamenPiel,
     obtenerExamenCirculatorio,
     actualizarExamenCirculatorio,
     obtenerExamenRespiratorio,
@@ -1516,6 +1541,8 @@ module.exports = {
     obtenerSubespecialidades,
     obtenerSubespecialidadesPorHistoriaClinica,
     actualizarSubespecialidades,
+    obtenerAntecedentesGinecoObstetricos,
+    actualizarAntecedentesGinecoObstetricos,
     
     obtenerExamenFisicoOrina, 
     actualizarExamenFisicoOrina,
@@ -1562,5 +1589,6 @@ module.exports = {
     obtenerPuntajeIntervenir,
     obtenerPuntajeExterna,
     obtenerPuntajeTraspaso,
-    obtenerPuntajeTotalHistoriaClinica 
+    obtenerPuntajeTotalHistoriaClinica,
+    obtenerPuntajeAccionSimulacion 
 };
