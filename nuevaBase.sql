@@ -969,3 +969,343 @@ CREATE TABLE laboratorio_microbiologia (
     FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
 );
 
+
+
+CREATE TABLE categoria_analisis (
+    id_categoria_analisis INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_categoria VARCHAR(100)
+);
+
+CREATE TABLE subcategoria_analisis (
+    id_subcategoria_analisis INT PRIMARY KEY AUTO_INCREMENT,
+    id_categoria_analisis INT,
+    nombre_subcategoria VARCHAR(100),
+    FOREIGN KEY (id_categoria_analisis) REFERENCES categoria_analisis(id_categoria_analisis)
+);
+
+CREATE TABLE solicitud_analisis (
+    id_solicitud_analisis INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia_clinica INT,
+    id_categoria_analisis INT,  
+    puntaje_analisis VARCHAR(2),
+    feed_analsis TEXT,
+    FOREIGN KEY (id_categoria_analisis) REFERENCES categoria_analisis(id_categoria_analisis)
+    FOREIGN KEY (id_historia_clinica) REFERENCES historia_clinica(id_historia_clinica)
+);
+
+CREATE TABLE detalle_subanalisis (
+    id_detalle_subanalisis INT PRIMARY KEY AUTO_INCREMENT,
+    id_solicitud_analisis INT,  
+    id_subcategoria_analisis INT,  
+    resultado VARCHAR(50), 
+    FOREIGN KEY (id_solicitud_analisis) REFERENCES solicitud_analisis(id_solicitud_analisis),
+    FOREIGN KEY (id_subcategoria_analisis) REFERENCES subcategoria_analisis(id_subcategoria_analisis)
+);
+
+
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Hematologia");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Electrolitos");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Alergias");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Prueba de embarazo");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Orina");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Pruebas ortomoleculares");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Quimica sanguinea");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Perfil de hierro");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Perfil lipidico y cardiaco");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Perfil hepatico");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Heces Fecales");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Inmunologia");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Gastroenterologia");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Liquidos organicos");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Microscopia optica");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Enzimas antioxidantes");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Marcadores tumorales");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Hormonas");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Neurotransmisores");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Vitaminas");
+INSERT INTO categoria_analisis(nombre_categoria) VALUES("Microbiologia");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Hemograma automatizado VES");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Hematocrito HTO");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Hemoglobina HB");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Recuento de plaquetas");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Grupo sanguineo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Coombs directo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Coombs indirecto");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Celulas LE");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Tiempo de coagulacion");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Tiempo de protombina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Tiempo de sangria");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"APTT");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Fragilidad capilar");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Fibrinogeno");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Dimero D");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Gota gruesa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Recuento de reticulocitos");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(1,"Recuento de eosinofilos");
+
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Sodio");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Cloro");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Potasio");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Calcio");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Calcio Ionico");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Fosforo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(2,"Magnesio");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(3,"Intolerancia alimenticia");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(3,"IGE total");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(3,"PA pediatricos");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(3,"PA respiratorios");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(3,"PA alimenticios");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(3,"Citologia Nasal");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(4,"HCG en orina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(4,"HCG en sangre");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(4,"HCG cuantitativo");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"Parcial de orina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"Proteina de Bence Jones");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"Proteinuria de 24Hrs");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"Calciuria");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"BK de orina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"Microalbuminuria");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(5,"17-OH progesterona");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(6,"MDA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(6,"Test de vitamina C");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(6,"Test de indicam");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(6,"Test adrenal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(6,"Test de zinc");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(6,"pH en salidva");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Glucosa en ayunas");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Tolerancia a la glucosa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"HB glucosalida");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Urea");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"BUN");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Creatinina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Clearence de creatinina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Acido urico");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Proteinas totales");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Albumina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Globulina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Relacion A/G");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Lipidos totales");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Amilasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Lipasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Amonio");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(7,"Electroferesis de proteinas");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(8,"Hierro serico");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(8,"Ferritina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(8,"TIBC");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(8,"% Saturacion");
+
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Colesterol");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"HDL colesterol");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"LDL colesterol");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"VLDL colesterol");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Trigliceridos");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Riesgo cardiaco");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Apolipoproteina A-1");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Apolipoproteina B-100");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Homosistenia");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"PCR ultrasensible");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Troponina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"CPK total");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Mioblobina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"Deshidrogenasa lactica");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(9,"CPK mb");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(10,"Bilirrubinas");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(10,"GOT");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(10,"GPT");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(10,"Fosfatasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(10,"CGT");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(10,"Ceruloplasmina");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Parasitologico");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Parasitologico seriado");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Parasitologico concentrado");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Sangre oculta");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Citologia moco fecal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Test de Graham");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Rotavirus");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Adenavirus");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Grasa fecal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Prueba de intolerancia a la lactosa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"pH azucares reductores");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Helicobacter pylori");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Elisa para giardia");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Elisa para ameba");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(11,"Coproflora funcional");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Reaccion de Widal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"RPR");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"VDRL");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Proteina C reactiva");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"A.S.T.O.");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Chagas elisa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Toxoplasmosis elisa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Chlamydia elisa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"H Pylori elisa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Hepatitis A");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Hepatitis B Hbs");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Hepatitis B Hbc");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Hepatitis C");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Citomegalovirus");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Herpes");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"HIV");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Complemento C3");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Complemento C4");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Anti DNA elisa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Anricardiolipinas");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Antifosfolipidos");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"Perfil ENA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"P-ANCA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"C-ANCA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"IL-6");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"ANA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"ELISA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(12,"IFI");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Elastasa fecal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Calprotectina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"C. Difficle");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Antigliadina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Antitransglutaminasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Antiendomisio");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Antimitocondriales");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Antitripsina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(13,"Test de Betaina");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(14,"Espermograma");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(14,"LCR");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(14,"Liquido pleural");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(14,"Liquido ascitico");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(14,"Liquido sinovial");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(14,"Citologia nasal");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(15,"HLB");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(16,"Catalasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(16,"Glutation pbroxidasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(16,"Superoxido dismutasa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(16,"Mielope roxidasa");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"PSA ultrasensible");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"PSA total");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"PSA libre");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"CEA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"AFP");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"CA-125");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"CA-15-3");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"CA-19-9");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"Tiroglobulina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(17,"B-2 Microglobulina");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"T3");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"T3L");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"T3R");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"T4");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"T4L");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"PTH");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"ACTH");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"TSH ultra");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"H de crecimiento");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"TSH neonatal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"a-TPO");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"a-TG");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Estradiol");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Estrona");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"LH");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"FSH");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Estrogenos totales");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Antimullerina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Progesterona");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"170H Progesterona");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Testosterona");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Testosterona libre");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Prolactina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"SHBG");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"DHEA-S");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"DHEA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Cortisol");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"AM");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"PM");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Insulina basal");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Post carga");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Peptido C");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Indice homa");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Grelina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(18,"Leptina");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(19,"Dopamina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(19,"GABA");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(19,"Serotonina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(19,"Norepinefrina");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(19,"Epinefrina");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(20,"Vitamina B6");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(20,"Vitamina B12");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(20,"Vitamina D");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(20,"Acido folico");
+
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Tincion de gram");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Tincion de Ziehl Neelsen");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Baciloscopia seriada");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Secresion vaginal en fresco");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Secresion vaginal tincion de gram");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Secresion vaginal cultivo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Urocultivo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Exudado faringeo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Esputo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Hemocultivo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Seriado");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Micologico directo");
+INSERT INTO subcategoria_analisis(id_categoria_analisis, nombre_subcategoria) VALUES(21,"Cultivo para hongos");
+
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,1,"A","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,2,"B","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,3,"B","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,4,"C","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,5,"C","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,6,"C","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,7,"D","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,8,"D","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,9,"D","a");
+INSERT INTO solicitud_analisis(id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis) VALUES (1,10,"D","a");
+
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (1,1,"1");
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (2,2,"1");
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (3,3,"1");
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (4,4,"1");
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (5,5,"1");
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (6,6,"1");
+INSERT INTO detalle_subanalisis(id_solicitud_analisis, id_subcategoria_analisis, resultado) VALUES (7,7,"1");
+
+
+
+
+
+
+CREATE TABLE grupo (
+  id_grupo int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  nombre varchar(124) UNIQUE,
+  descripcion text,
+  codigo_acceso varchar(50),
+  id_usuario_medico int(11),
+  fecha_creacion date DEFAULT CURRENT_DATE,
+  FOREIGN KEY (id_usuario_medico) REFERENCES usuario(id_usuario)
+);
+
+CREATE TABLE grupo_estudiante (
+  id_grupo int(11) NOT NULL,
+  id_usuario_estudiante int(11) NOT NULL,
+  fecha_matriculacion date DEFAULT CURRENT_DATE,
+  PRIMARY KEY (id_grupo, id_usuario_estudiante),
+  FOREIGN KEY (id_grupo) REFERENCES grupo(id_grupo),
+  FOREIGN KEY (id_usuario_estudiante) REFERENCES usuario(id_usuario)
+);

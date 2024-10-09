@@ -8,6 +8,7 @@ const simulacionRoutes = require('./routes/simulacionRoutes');
 const configuracionRoutes = require('./routes/configuracionRoutes');
 const userRoutes = require('./routes/userRoutes');
 const casoRoutes = require('./routes/casoRoutes');  
+const grupoRoutes = require('./routes/grupoRoutes');  
 const path = require('path');
 
 
@@ -23,6 +24,7 @@ app.use('/api', pacienteRoutes);
 app.use('/api', historiaRoutes);
 app.use('/api', simulacionRoutes);
 app.use('/api', configuracionRoutes);
+app.use('/api', grupoRoutes);
 app.use('/api', casoRoutes);
 app.use('/api', userRoutes);
 

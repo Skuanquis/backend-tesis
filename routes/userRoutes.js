@@ -13,7 +13,7 @@ router.put('/perfil', authenticateToken, userController.updateUserProfile);
 
 router.put('/password', authenticateToken, userController.updateUserPassword); 
 
-router.post('/registrar-usuario', authenticateToken, userController.createUser); 
+router.post('/registrar-usuario', userController.createUser); 
 
 router.get('/usuarios', authenticateToken, userController.getUsuarios);
 
