@@ -21,4 +21,10 @@ router.get('/mensajes/:id', simulacionController.obtenerMensajes);
 
 router.put('/enviar-diagnostico/:id_realiza_simulacion', simulacionController.enviarDiagnosticoFinal);
 
+router.put('/realiza-simulacion/:id_simulacion', simulacionController.actualizarPuntajePorcentaje);
+
+router.get('/simulaciones/:id_usuario', simulacionController.obtenerSimulaciones);
+
+router.get('/info-simulaciones/:id_realiza_simulacion', simulacionController.obtenerDetallesSimulacionController);
+
 module.exports = router;

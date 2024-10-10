@@ -1,3 +1,4 @@
+const db = require('../db/db');
 const simulacionModel = require('../models/simulacionModel');
 
 const comenzarSimulacion = (req, res) => {
@@ -109,6 +110,70 @@ const enviarDiagnosticoFinal = (req, res) => {
     });
 };
 
+const actualizarPuntajePorcentaje = (req, res) => {
+    const { id_simulacion } = req.params;
+    const { puntaje_porcentaje } = req.body;
+
+    if (!puntaje_porcentaje || !id_simulacion) {
+        return res.status(400).json({ error: 'Se requiere el id_simulacion y el puntaje_porcentaje' });
+    }
+
+    simulacionModel.actualizarPuntajePorcentaje(id_simulacion, puntaje_porcentaje, (err) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error al actualizar el puntaje porcentaje' });
+        }
+        res.status(200).json({ message: 'Puntaje porcentaje actualizado exitosamente' });
+    });
+};
+
+const obtenerSimulaciones = (req, res) => {
+    const { id_usuario } = req.params;
+    const { id_grupo } = req.query; 
+    const sqlRol = `
+        SELECT r.name AS rol 
+        FROM usuario u 
+        JOIN rol r ON u.id_rol = r.id_rol 
+        WHERE u.id_usuario = ?
+    `;
+
+    db.query(sqlRol, [id_usuario], (err, results) => {
+        if (err) {
+            console.error('Error al obtener el rol del usuario:', err);
+            return res.status(500).send({ error: 'Error al obtener el rol del usuario' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send({ error: 'Usuario no encontrado' });
+        }
+
+        const rol = results[0].rol;
+        simulacionModel.obtenerSimulaciones(id_usuario, rol, id_grupo, (err, simulaciones) => {
+            if (err) {
+                console.error('Error al obtener las simulaciones:', err);
+                return res.status(500).send({ error: 'Error al obtener las simulaciones' });
+            }
+            res.status(200).send(simulaciones);
+        });
+    });
+};
+
+const obtenerDetallesSimulacionController = (req, res) => {
+    const { id_realiza_simulacion } = req.params;
+
+    simulacionModel.obtenerDetallesSimulacion(id_realiza_simulacion, (err, detalles) => {
+        if (err) {
+            console.error('Error al obtener los detalles de la simulación:', err);
+            // Determinar el tipo de error para una respuesta más precisa
+            if (err.message === 'Simulación no encontrada' || err.message.startsWith('Puntaje máximo no encontrado')) {
+                return res.status(404).json({ error: err.message });
+            }
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+
+        res.status(200).json(detalles);
+    });
+};
+
 module.exports = {
     comenzarSimulacion,
     marcarSimulacionIncompleta,
@@ -118,5 +183,8 @@ module.exports = {
     obtenerAcciones,
     eliminarAccion,
     obtenerMensajes,
-    enviarDiagnosticoFinal
+    enviarDiagnosticoFinal,
+    actualizarPuntajePorcentaje,
+    obtenerSimulaciones,
+    obtenerDetallesSimulacionController
 }

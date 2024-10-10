@@ -17,13 +17,16 @@ const obtenerGrupos = (id_usuario_medico, rol, callback) => {
             usuario u ON g.id_usuario_medico = u.id_usuario
     `;
     
-    if (rol !== "administrador") {
-        // Si el rol no es 1, agregar la condición para filtrar por el usuario médico
+    if (rol === "administrador") {
+        // Si es administrador, agregar la opción "Todos" en el frontend, por lo que se devuelven todos los grupos
+        db.query(sql, callback);
+    } else if (rol === "medico") {
+        // Si es médico, filtrar los grupos creados por él
         sql += ` WHERE g.id_usuario_medico = ?`;
         db.query(sql, [id_usuario_medico], callback);
     } else {
-        // Si el rol es 1, devolver todos los grupos sin filtro adicional
-        db.query(sql, callback);
+        // Si es estudiante, no devolver ningún grupo
+        callback(null, []); // Devolver una lista vacía para no mostrar ningún grupo
     }
 };
 
