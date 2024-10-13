@@ -64,6 +64,7 @@ const agregarDiagnostico = (id_categoria_diferencial, nombre, callback) => {
 };
 
 const agregarCategoriaConDiagnosticos = (categoria, diagnosticos, callback) => {
+    console.log("se añadio: ",categoria, diagnosticos)
     db.beginTransaction(err => {
         if (err) return callback(err);
 

@@ -121,6 +121,31 @@ const validarCodigoAcceso = (id_grupo, codigo_acceso, callback) => {
     db.query(sql, [id_grupo, codigo_acceso], callback);
 };
 
+const obtenerEstudiantesPorGrupo = (id_grupo, callback) => {
+    const sql = `
+        SELECT 
+            u.id_usuario, 
+            u.nombre AS nom, 
+            u.paterno AS apellido_paterno, 
+            u.materno AS apellido_materno, 
+            ge.fecha_matriculacion
+        FROM 
+            grupo_estudiante ge
+        JOIN 
+            usuario u ON ge.id_usuario_estudiante = u.id_usuario
+        WHERE 
+            ge.id_grupo = ?;
+    `;
+    db.query(sql, [id_grupo], (err, results) => {
+        if (err) {
+            console.error('Error en la consulta SQL:', err);
+            return callback(err, null);
+        }
+        callback(null, results);
+    });
+};
+
+
 module.exports = {
     obtenerGrupos,
     crearGrupo,
@@ -131,5 +156,6 @@ module.exports = {
     desvincularEstudiante,
     obtenerGruposMatriculados,
     obtenerGruposNoMatriculados,
-    validarCodigoAcceso
+    validarCodigoAcceso,
+    obtenerEstudiantesPorGrupo
 };

@@ -21,4 +21,6 @@ router.get('/no-matriculados/:id_usuario_estudiante', grupoController.obtenerGru
 
 router.post('/validar-codigo', grupoController.validarCodigoAcceso);
 
+router.get('/estudiantes/:id_grupo', grupoController.obtenerEstudiantesPorGrupo);
+
 module.exports = router;

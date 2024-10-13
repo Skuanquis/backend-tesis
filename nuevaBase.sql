@@ -16,29 +16,29 @@ CREATE TABLE rol (
   name varchar(50) DEFAULT NULL
 );
 
-CREATE TABLE paciente (
-  id_paciente int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  paterno varchar(50) DEFAULT NULL,
-  materno varchar(50) DEFAULT NULL,
-  nombre varchar(50) DEFAULT NULL,
-  fecha_nacimiento date DEFAULT NULL,
-  sexo varchar(10) DEFAULT NULL,
-  peso decimal(5,2) DEFAULT NULL,
-  talla decimal(4,2) DEFAULT NULL
-);
+    CREATE TABLE paciente (
+    id_paciente int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    paterno varchar(50) DEFAULT NULL,
+    materno varchar(50) DEFAULT NULL,
+    nombre varchar(50) DEFAULT NULL,
+    fecha_nacimiento date DEFAULT NULL,
+    sexo varchar(10) DEFAULT NULL,
+    peso decimal(5,2) DEFAULT NULL,
+    talla decimal(4,2) DEFAULT NULL
+    );
 
-CREATE TABLE caso_clinico (
-    id_caso_clinico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    id_paciente INT,
-    id_categoria_simulacion INT,
-    autor varchar(128) NULL,
-    difucultad varchar(64) NULL,
-    tiempo VARCHAR(10),
-    estado VARCHAR(20),
-    diagnostico VARCHAR(256) 
-    FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
-    FOREIGN KEY (id_categoria_simulacion) REFERENCES categoria_simulacion(id_categoria_simulacion)
-);
+    CREATE TABLE caso_clinico (
+        id_caso_clinico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id_paciente INT,
+        id_categoria_simulacion INT,
+        autor varchar(128) NULL,
+        difucultad varchar(64) NULL,
+        tiempo VARCHAR(10),
+        estado VARCHAR(20),
+        diagnostico VARCHAR(256) 
+        FOREIGN KEY (id_paciente) REFERENCES paciente(id_paciente),
+        FOREIGN KEY (id_categoria_simulacion) REFERENCES categoria_simulacion(id_categoria_simulacion)
+    );
 
 
 
@@ -625,6 +625,8 @@ CREATE TABLE realiza_simulación (
     fecha_fin TIMESTAMP NULL,
     estado VARCHAR(20),
     diagnostico_final VARCHAR(256),
+    tiempo_empleado VARCHAR(20),
+    puntaje_porcentaje VARCHAR(10)
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
     FOREIGN KEY (id_simulacion) REFERENCES simulacion(id_simulacion)
 );

@@ -104,6 +104,15 @@ const validarCodigoAcceso = (req, res) => {
     });
 };
 
+const obtenerEstudiantesPorGrupo = (req, res) => {
+    const { id_grupo } = req.params;
+    grupoModel.obtenerEstudiantesPorGrupo(id_grupo, (err, results) => {
+        if (err) {
+            return res.status(500).send({ error: 'Error al obtener los estudiantes del grupo' });
+        }
+        res.status(200).send(results);
+    });
+};
 
 module.exports = {
     obtenerGrupos,
@@ -114,5 +123,6 @@ module.exports = {
     desvincularEstudiante,
     obtenerGruposMatriculados,
     obtenerGruposNoMatriculados,
-    validarCodigoAcceso
+    validarCodigoAcceso,
+    obtenerEstudiantesPorGrupo
 };
