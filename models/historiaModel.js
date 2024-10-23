@@ -1067,6 +1067,99 @@ const obtenerMedicamentosSuministradosPorHistoriaClinica = (id_historia_clinica,
     });
 };
 
+const obtenerProcedimientosAsignadosPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT 
+            cp.nombre AS categoria, 
+            p.nombre AS procedimiento,
+            pa.feed_procedimiento_asignado,
+            pa.puntaje_procedimiento_asignado,
+            vp.rubrica
+        FROM 
+            procedimiento_asignado pa
+        JOIN 
+            procedimiento p ON pa.id_procedimiento = p.id_procedimiento
+        JOIN 
+            categoria_procedimiento cp ON p.id_categoria_procedimiento = cp.id_categoria_procedimiento
+        LEFT JOIN 
+            valor_puntaje vp ON pa.id_historia_clinica = vp.id_historia_clinica 
+                             AND pa.puntaje_procedimiento_asignado = vp.codigo
+        WHERE 
+            pa.id_historia_clinica = ?;
+    `;
+
+    db.query(sql, [id_historia_clinica], (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+        const response = results.reduce((acc, row) => {
+            if (!acc[row.categoria]) {
+                acc[row.categoria] = { procedimientos: [] };
+            }
+            acc[row.categoria].procedimientos.push({
+                nombre: row.procedimiento,
+                feed: row.feed_procedimiento_asignado,
+                rubrica: row.rubrica,
+                puntaje: row.puntaje_procedimiento_asignado
+            });
+            return acc;
+        }, {});
+        callback(null, response);
+    });
+};
+
+
+
+const obtenerAnalisisPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT 
+            ca.nombre_categoria AS categoria, 
+            sca.nombre_subcategoria AS subanalisis,
+            dsa.resultado AS resultado,
+            sa.feed_analsis AS feed, -- Aquí está el feed que ahora estará en la categoría
+            sa.puntaje_analisis AS puntaje,
+            vp.rubrica
+        FROM 
+            solicitud_analisis sa
+        JOIN 
+            categoria_analisis ca ON sa.id_categoria_analisis = ca.id_categoria_analisis
+        JOIN 
+            detalle_subanalisis dsa ON sa.id_solicitud_analisis = dsa.id_solicitud_analisis
+        JOIN 
+            subcategoria_analisis sca ON dsa.id_subcategoria_analisis = sca.id_subcategoria_analisis
+        LEFT JOIN 
+            valor_puntaje vp ON sa.id_historia_clinica = vp.id_historia_clinica 
+                            AND sa.puntaje_analisis = vp.codigo
+        WHERE 
+            sa.id_historia_clinica = ?;
+    `;
+
+    db.query(sql, [id_historia_clinica], (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+        const response = results.reduce((acc, row) => {
+            if (!acc[row.categoria]) {
+                acc[row.categoria] = { 
+                    puntaje: row.puntaje,
+                    rubrica: row.rubrica,
+                    feed: row.feed,
+                    subanalisis: []
+                };
+            }
+            acc[row.categoria].subanalisis.push({
+                nombre: row.subanalisis,
+                resultado: row.resultado
+            });
+            return acc;
+        }, {});
+
+        callback(null, response);
+    });
+};
+
+
+
 const obtenerSubespecialidades = (id_historia_clinica, callback) => {
     const sql = `
         SELECT 
@@ -1141,25 +1234,27 @@ const getAllCategoriasImagenologia = (callback) => {
     db.query(sql, callback);
   };
 
-const obtenerImagenologiaPorHistoriaClinica = (id_historia_clinica, callback) => {
+  const obtenerImagenologiaPorHistoriaClinica = (id_historia_clinica, callback) => {
     const sql = `
         SELECT 
             ci.nombre AS categoria, 
             i.nombre AS nombre_imagen,
-            i.path,
-            i.puntaje_imagenologia,
-            i.feed_imagenologia,
+            ei.path,
+            ei.puntaje_estudios_imagenologia AS puntaje,
+            ei.feed_estudios_imagenologia AS feed,
             vp.rubrica,
-            i.interpretacion
+            ei.interpretacion
         FROM 
-            imagenologia i
+            estudios_imagenologia ei
+        JOIN 
+            imagenologia i ON ei.id_imagenologia = i.id_imagenologia
         JOIN 
             categoria_imagenologia ci ON i.id_categoria_imagenologia = ci.id_categoria_imagenologia
         LEFT JOIN 
-            valor_puntaje vp ON i.id_historia_clinica = vp.id_historia_clinica 
-                             AND i.puntaje_imagenologia = vp.codigo
+            valor_puntaje vp ON ei.id_historia_clinica = vp.id_historia_clinica 
+                             AND ei.puntaje_estudios_imagenologia = vp.codigo
         WHERE 
-            i.id_historia_clinica = ?;
+            ei.id_historia_clinica = ?;
     `;
     
     db.query(sql, [id_historia_clinica], (err, results) => {
@@ -1167,24 +1262,26 @@ const obtenerImagenologiaPorHistoriaClinica = (id_historia_clinica, callback) =>
             return callback(err, null);
         }
         
+        // Estructura la respuesta agrupando por categoría
         const response = results.reduce((acc, row) => {
             if (!acc[row.categoria]) {
-                acc[row.categoria] = {};
+                acc[row.categoria] = [];
             }
-            acc[row.categoria] = {
+            acc[row.categoria].push({
                 nombre: row.nombre_imagen,
                 path: row.path,
-                puntaje: row.puntaje_imagenologia,
-                feed: row.feed_imagenologia,
+                puntaje: row.puntaje,
+                feed: row.feed,
                 rubrica: row.rubrica,
                 interpretacion: row.interpretacion
-            };
+            });
             return acc;
         }, {});
 
         callback(null, response);
     });
 };
+
 
 
 module.exports = {
@@ -1237,5 +1334,7 @@ module.exports = {
     getImagenologiasByHistoria,
     getImagenologiaByCategoria,
     getAllCategoriasImagenologia,
-    obtenerImagenologiaPorHistoriaClinica
+    obtenerImagenologiaPorHistoriaClinica,
+    obtenerAnalisisPorHistoriaClinica,
+    obtenerProcedimientosAsignadosPorHistoriaClinica
 };

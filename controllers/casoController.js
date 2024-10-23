@@ -490,6 +490,37 @@ const actualizarMedicamentosSuministrados = (req, res) => {
     });
 };
 
+const obtenerCategoriasProcedimientos = (req, res) => {
+    casoModel.obtenerCategoriasProcedimientos((err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerProcedimientosPorCategoria = (req, res) => {
+    const { id_categoria_procedimiento } = req.params;
+    casoModel.obtenerProcedimientosPorCategoria(id_categoria_procedimiento, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const obtenerProcedimientosAsignadosPorHistoriaClinica = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerProcedimientosAsignadosPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+const actualizarProcedimientosAsignados = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.actualizarProcedimientosAsignados(id_historia_clinica, req.body, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json({ message: 'Procedimientos asignados actualizados correctamente' });
+    });
+};
+
 const obtenerSubespecialidades = (req, res) => {
     casoModel.obtenerSubespecialidades((err, subespecialidades) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -515,232 +546,65 @@ const actualizarSubespecialidades = (req, res) => {
     });
 };
 
-const obtenerExamenFisicoOrina = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.obtenerExamenFisicoOrina(id_historia_clinica, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarExamenFisicoOrina = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.actualizarExamenFisicoOrina(id_historia_clinica, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Examen físico de orina actualizado correctamente' });
-    });
-};
-
-const obtenerSedimentoUrinario = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.obtenerSedimentoUrinario(id_historia_clinica, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarSedimentoUrinario = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.actualizarSedimentoUrinario(id_historia_clinica, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Examen de sedimento urinario actualizado correctamente' });
-    });
-};
-
-const obtenerExamenQuimicoUrinario = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.obtenerExamenQuimicoUrinario(id_historia_clinica, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarExamenQuimicoUrinario = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.actualizarExamenQuimicoUrinario(id_historia_clinica, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Examen químico urinario actualizado correctamente' });
-    });
-};
-
-const obtenerExamenEspecialOrina = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.obtenerExamenEspecialOrina(id_historia_clinica, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarExamenEspecialOrina = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.actualizarExamenEspecialOrina(id_historia_clinica, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Examen especial de orina actualizado correctamente' });
-    });
-};
-
-const obtenerExamenHematologico = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.obtenerExamenHematologico(id_historia_clinica, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarExamenHematologico = (req, res) => {
-    const { id_historia_clinica } = req.params;
-    casoModel.actualizarExamenHematologico(id_historia_clinica, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Examen hematológico actualizado correctamente' });
-    });
-};
-
-const obtenerBiometriaHematica = (req, res) => {
-    const { id_examen_hematologico } = req.params;
-    casoModel.obtenerBiometriaHematica(id_examen_hematologico, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarBiometriaHematica = (req, res) => {
-    const { id_examen_hematologico } = req.params;
-    casoModel.actualizarBiometriaHematica(id_examen_hematologico, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Biometría hemática actualizada correctamente' });
-    });
-};
-
-const obtenerIndicesEritrocitarios = (req, res) => {
-    const { id_examen_hematologico } = req.params;
-    casoModel.obtenerIndicesEritrocitarios(id_examen_hematologico, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarIndicesEritrocitarios = (req, res) => {
-    const { id_examen_hematologico } = req.params;
-    casoModel.actualizarIndicesEritrocitarios(id_examen_hematologico, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Biometría hemática actualizada correctamente' });
-    });
-};
-
-const obtenerRecuentoDiferencialHematico = (req, res) => {
-    const { id_examen_hematologico } = req.params;
-    casoModel.obtenerRecuentoDiferencialHematico(id_examen_hematologico, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarRecuentoDiferencialHematico = (req, res) => {
-    const { id_examen_hematologico } = req.params;
-    casoModel.actualizarRecuentoDiferencialHematico(id_examen_hematologico, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Recuento diferencial hemático actualizado correctamente' });
-    });
-};
-
-const obtenerHemostasiaSanguinea = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.obtenerHemostasiaSanguinea(id_examen_sanguineo, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarHemostasiaSanguinea = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.actualizarHemostasiaSanguinea(id_examen_sanguineo, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Hemostasia sanguínea actualizada correctamente' });
-    });
-};
-
-const obtenerSerologiaSanguinea = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.obtenerSerologiaSanguinea(id_examen_sanguineo, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarSerologiaSanguinea = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.actualizarSerologiaSanguinea(id_examen_sanguineo, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Serología sanguínea actualizada correctamente' });
-    });
-};
-
-const obtenerElectrolitosSanguineos = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.obtenerElectrolitosSanguineos(id_examen_sanguineo, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarElectrolitosSanguineos = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.actualizarElectrolitosSanguineos(id_examen_sanguineo, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Electrolitos sanguíneos actualizados correctamente' });
-    });
-};
-
-const obtenerQuimicaSanguinea = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.obtenerQuimicaSanguinea(id_examen_sanguineo, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(result);
-    });
-};
-
-const actualizarQuimicaSanguinea = (req, res) => {
-    const { id_examen_sanguineo } = req.params;
-    casoModel.actualizarQuimicaSanguinea(id_examen_sanguineo, req.body, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Química sanguínea actualizada correctamente' });
-    });
-};
-
-const obtenerCategoriasImagenologia = (req, res) => {
-    casoModel.obtenerCategoriasImagenologia((err, data) => {
+const obtenerCategoriasConImagenologias = (req, res) => {
+    casoModel.obtenerCategoriasConImagenologias((err, data) => {
         if (err) {
-            res.status(500).json({ error: 'Error al obtener las categorías de imagenología' });
+            res.status(500).json({ error: 'Error al obtener las categorías con imagenologías' });
         } else {
             res.json(data);
         }
     });
 };
 
-const obtenerImagenesPorHistoriaClinica = (req, res) => {
-    //console.log(req.params.id_historia_clinica)
+const obtenerEstudiosImagenologiaPorHistoriaClinica = (req, res) => {
     const id_historia_clinica = req.params.id_historia_clinica;
-
-    casoModel.obtenerImagenesPorHistoriaClinica(id_historia_clinica, (err, data) => {
+    casoModel.obtenerEstudiosImagenologiaPorHistoriaClinica(id_historia_clinica, (err, data) => {
         if (err) {
-            res.status(500).json({ error: 'Error al obtener las imágenes' });
+            res.status(500).json({ error: 'Error al obtener los estudios de imagenología' });
         } else {
             res.json(data);
         }
     });
 };
 
-const actualizarImagenes = (req, res) => {
+const actualizarEstudiosImagenologia = (req, res) => {
     const id_historia_clinica = req.params.id_historia_clinica;
-    ///console.log(id_historia_clinica)
-    const imagenesData = req.body.imagenesData;
+    const estudiosData = req.body.estudiosData;
 
-    casoModel.actualizarImagenes(id_historia_clinica, imagenesData, (err) => {
+    casoModel.actualizarEstudiosImagenologia(id_historia_clinica, estudiosData, (err) => {
         if (err) {
-            res.status(500).json({ error: 'Error al actualizar las imágenes' });
+            res.status(500).json({ error: 'Error al actualizar los estudios de imagenología' });
         } else {
-            res.json({ message: 'Imágenes actualizadas correctamente' });
+            res.json({ message: 'Estudios de imagenología actualizados correctamente' });
         }
+    });
+};
+
+const cargarImagenCategoria = (req, res) => {
+    const file = req.files.imagen ? req.files.imagen[0] : null;
+    const id_imagenologia = req.body.id_imagenologia;
+
+    if (!file) {
+        return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
+    }
+
+    if (!id_imagenologia) {
+        return res.status(400).json({ error: 'No se ha proporcionado el ID de imagenología' });
+    }
+
+    const uploadPath = `public/uploads/${id_imagenologia}`;
+    fs.mkdirSync(uploadPath, { recursive: true });
+
+    const oldPath = file.path;
+    const newPath = path.join(uploadPath, file.filename);
+
+    fs.rename(oldPath, newPath, function (err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error al mover el archivo' });
+        }
+        const serverUrl = 'http://localhost:3000'; // Puedes obtener esto de una variable de entorno
+        const ruta = `${serverUrl}/uploads/${id_imagenologia}/${file.filename}`;
+        res.json({ path: ruta });
     });
 };
 
@@ -768,31 +632,39 @@ const cargarImagen = (req, res) => {
     });
 };
 
-const cargarImagenCategoria = (req, res) => {
-    const file = req.files.imagen ? req.files.imagen[0] : null;
-    const id_categoria_imagenologia = req.body.id_categoria_imagenologia;
+const obtenerCategoriasAnalisis = (req, res) => {
+    casoModel.obtenerCategoriasAnalisis((err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
 
-    if (!file) {
-        return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
-    }
+const obtenerSubcategoriasPorCategoria = (req, res) => {
+    const { id_categoria_analisis } = req.params;
+    casoModel.obtenerSubcategoriasPorCategoria(id_categoria_analisis, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
 
-    if (!id_categoria_imagenologia) {
-        return res.status(400).json({ error: 'No se ha proporcionado el ID de la categoría de imagenología' });
-    }
+const obtenerSolicitudesAnalisisPorHistoriaClinica = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    casoModel.obtenerSolicitudesAnalisisPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
 
-    const uploadPath = `public/uploads/${id_categoria_imagenologia}`;
-    fs.mkdirSync(uploadPath, { recursive: true });
-
-    const oldPath = file.path;
-    const newPath = path.join(uploadPath, file.filename);
-
-    fs.rename(oldPath, newPath, function (err) {
-        if (err) {
-            return res.status(500).json({ error: 'Error al mover el archivo' });
+const actualizarSolicitudesAnalisis = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    const data = req.body;
+    casoModel.actualizarSolicitudesAnalisis(id_historia_clinica, data, (err) => {
+        if (err){
+            console.log(err)
+            return res.status(500).json({ error: err.message });
+        }else{
+        res.status(200).json({ message: 'Solicitudes de análisis actualizadas correctamente' });
         }
-        const serverUrl = 'http://localhost:3000'; // Puedes obtener esto de una variable de entorno
-        const ruta = `${serverUrl}/uploads/${id_categoria_imagenologia}/${file.filename}`;
-        res.json({ path: ruta });
     });
 };
 
@@ -851,9 +723,10 @@ const actualizarPuntajeDiferencial = (req, res) => {
 
 const actualizarPuntajeLaboratorio = (req, res) => {
     const { id_historia_clinica } = req.params;
-    casoModel.actualizarPuntajeLaboratorio(id_historia_clinica, req.body, (err) => {
+    const data = req.body;
+    casoModel.actualizarPuntajeLaboratorio(id_historia_clinica, data, (err) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Puntaje laboratorio actualizado correctamente' });
+        res.status(200).json({ message: 'Puntaje de laboratorio actualizado correctamente' });
     });
 };
 
@@ -1023,33 +896,17 @@ module.exports = {
     obtenerAntecedentesGinecoObstetricos,
     actualizarAntecedentesGinecoObstetricos,
 
-    obtenerExamenFisicoOrina, 
-    actualizarExamenFisicoOrina,
-    obtenerSedimentoUrinario, 
-    actualizarSedimentoUrinario,
-    obtenerExamenQuimicoUrinario, 
-    actualizarExamenQuimicoUrinario,
-    obtenerExamenEspecialOrina,
-    actualizarExamenEspecialOrina,
-    obtenerExamenHematologico,
-    actualizarExamenHematologico,
-    obtenerIndicesEritrocitarios,
-    actualizarIndicesEritrocitarios,
-    obtenerRecuentoDiferencialHematico,
-    actualizarRecuentoDiferencialHematico,
-    obtenerHemostasiaSanguinea,
-    actualizarHemostasiaSanguinea,
-    obtenerSerologiaSanguinea,
-    actualizarSerologiaSanguinea,
-    obtenerElectrolitosSanguineos,
-    actualizarElectrolitosSanguineos,
-    obtenerQuimicaSanguinea,
-    actualizarQuimicaSanguinea,
-    obtenerBiometriaHematica,
-    actualizarBiometriaHematica,
-    obtenerCategoriasImagenologia,
-    obtenerImagenesPorHistoriaClinica,
-    actualizarImagenes,
+    obtenerCategoriasConImagenologias,
+    obtenerEstudiosImagenologiaPorHistoriaClinica,
+    actualizarEstudiosImagenologia, 
+    obtenerCategoriasProcedimientos,
+    obtenerProcedimientosPorCategoria,
+    obtenerProcedimientosAsignadosPorHistoriaClinica,
+    actualizarProcedimientosAsignados,
+    obtenerCategoriasAnalisis,
+    obtenerSubcategoriasPorCategoria,
+    obtenerSolicitudesAnalisisPorHistoriaClinica,
+    actualizarSolicitudesAnalisis,
     cargarImagen,
     cargarImagenCategoria,
     obtenerTraspaso,

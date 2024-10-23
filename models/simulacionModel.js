@@ -49,7 +49,6 @@ const obtenerTiempoSimulacion = (id_realiza_simulacion, callback) => {
 };
 
 const registrarAccion = (id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion, callback) => {
-    //
     //console.log(id_simulacion, descripcion, tipo_accion, puntaje, retroalimentacion)
     const sql = `
         INSERT INTO accion_simulacion (id_simulacion, descripcion, tipo_accion, accion_time, puntaje, retroalimentacion) 
@@ -262,6 +261,7 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
              * Función para procesar todas las secciones de manera secuencial.
              */
             const procesarSecciones = () => {
+                console.log("INDEXXXXXX: ", seccionIndex, secciones.length)
                 if (seccionIndex >= secciones.length) {
                     // Todas las secciones han sido procesadas
                     // Ahora calcular los puntajes obtenidos por sección y tipo
@@ -278,6 +278,8 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
                         const { descripcion, puntaje } = accion;
                         const detalleLower = descripcion.toLowerCase();
 
+                        console.log("INICIO:  ", accion)
+
                         let seccion = '';
 
                         if (detalleLower.includes('anamnesis')) {
@@ -286,25 +288,23 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
                             seccion = 'puntaje_examen';
                         } else if (detalleLower.includes('diagnostico') || detalleLower.includes('diferencial')) {
                             seccion = 'puntaje_diferencial';
-                        } else if (detalleLower.includes('laboratorio') || detalleLower.includes('solicito')) {
+                        } else if (detalleLower.includes('laboratorio') || detalleLower.includes('imagenologia')) {
                             seccion = 'puntaje_laboratorio';
-                        } else if (detalleLower.includes('intervenir') || detalleLower.includes('suministro')) {
+                        } else if (detalleLower.includes('el procedimiento') || detalleLower.includes('suministro')) {
                             seccion = 'puntaje_intervenir';
-                        } else if (detalleLower.includes('consulta externa') || detalleLower.includes('externa')) {
+                        } else if (detalleLower.includes('consulto') || detalleLower.includes('externa')) {
                             seccion = 'puntaje_externa';
                         }
 
                         if (seccion && puntajesObtenidosPorSeccion[seccion]) {
-                            // Determinar el tipo de puntaje basado en la letra del puntaje
                             const puntajeUpper = puntaje.toUpperCase();
-
+                            console.log("AQUIIII:  ", seccion, puntajesObtenidosPorSeccion[seccion])
                             if (['A', 'B', 'C', 'D', 'E'].includes(puntajeUpper)) {
                                 puntajesObtenidosPorSeccion[seccion][`puntaje_${puntajeUpper.toLowerCase()}`] += 1;
                             }
+                            console.log("DESPUESSS:  ",puntajesObtenidosPorSeccion[seccion])
                         }
                     });
-
-                    // Combinar puntajes obtenidos con los máximos
                     const puntajeSecciones = {};
 
                     Object.keys(puntajesMaximosPorSeccion).forEach(seccion => {
@@ -321,17 +321,12 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
                             puntaje_e_max: puntajesMaximosPorSeccion[seccion].puntaje_e
                         };
                     });
-
-                    // Verificar si el diagnóstico final es correcto
                     const diagnosticoCorrecto = simulacion.diagnostico_correcto ? simulacion.diagnostico_correcto.trim().toLowerCase() : '';
                     const diagnosticoFinal = simulacion.diagnostico_final ? simulacion.diagnostico_final.trim().toLowerCase() : '';
                     const diagnosticoAcertado = diagnosticoCorrecto === diagnosticoFinal;
-
-                    // Obtener la última acción realizada
                     const ultimaAccion = acciones.length > 0 ? acciones[acciones.length - 1] : null;
                     const ultimaAccionCorrecta = ultimaAccion && ultimaAccion.puntaje.toUpperCase() === 'A';
 
-                    // Preparar la respuesta con las nuevas propiedades
                     callback(null, {
                         simulacion,
                         acciones,
@@ -340,7 +335,6 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
                         ultimaAccionCorrecta
                     });
                 } else {
-                    // Procesar la siguiente sección
                     const seccionActual = secciones[seccionIndex];
                     obtenerPuntajeMaximo(seccionActual, (err) => {
                         if (err) {

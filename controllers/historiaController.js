@@ -446,6 +446,24 @@ const obtenerMedicamentosSuministrados = (req, res) => {
     });
 };
 
+
+const obtenerProcedimientosAsignados = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    historiaModel.obtenerProcedimientosAsignadosPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
+
+const obtenerAnalisisSuministrados = (req, res) => {
+    const { id_historia_clinica } = req.params;
+    historiaModel.obtenerAnalisisPorHistoriaClinica(id_historia_clinica, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(200).json(result);
+    });
+};
+
 const obtenerSubespecialidades = (req, res) => {
     const { id_historia_clinica } = req.params;
     historiaModel.obtenerSubespecialidades(id_historia_clinica, (err, result) => {
@@ -460,7 +478,7 @@ const obtenerImagenologiaPorHistoriaClinica = (req, res) => {
     const id_historia_clinica = req.params.id;
     historiaModel.obtenerImagenologiaPorHistoriaClinica(id_historia_clinica, (err, results) => {
         if (err) {
-            return res.status(500).send({ error: 'Error al obtener los diagnósticos diferenciales' });
+            return res.status(500).send({ error: 'Error al obtener los estudios de imagenología' });
         }
         res.status(200).json(results);
     });
@@ -512,6 +530,7 @@ module.exports = {
     getDiagnosticosDiferencialesPorHistoriaClinica,
     obtenerMedicamentosSuministrados,
     obtenerSubespecialidades,
-    obtenerImagenologiaPorHistoriaClinica
-
+    obtenerImagenologiaPorHistoriaClinica,
+    obtenerAnalisisSuministrados,
+    obtenerProcedimientosAsignados
 };

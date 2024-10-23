@@ -30,13 +30,35 @@ router.put('/subespecialidades/:id_subespecialidad', configuracionController.act
 
 router.delete('/subespecialidades/:id_subespecialidad', configuracionController.eliminarSubespecialidad);
 
-router.get('/categorias-imagenologia', configuracionController.obtenerCategoriasImagenologia);
+router.get('/configuracion-imagenologias', configuracionController.obtenerImagenologiasPorCategoria);
 
-router.post('/categorias-imagenologia', configuracionController.agregarCategoriaImagenologia);
+router.delete('/configuracion-imagenologias/:id_imagenologia', configuracionController.eliminarImagenologia);
 
-router.put('/categorias-imagenologia/:id_categoria_imagenologia', configuracionController.actualizarCategoriaImagenologia);
+router.put('/configuracion-imagenologias/:id_imagenologia', configuracionController.actualizarImagenologia);
 
-router.delete('/categorias-imagenologia/:id_categoria_imagenologia', configuracionController.eliminarCategoriaImagenologia);
+router.post('/configuracion-imagenologias', configuracionController.agregarImagenologia);
 
+router.post('/configuracion-imagenologias-con-categoria', configuracionController.agregarCategoriaConImagenologias);
+
+router.get('/configuracion-procedimientos', configuracionController.obtenerProcedimientosPorCategoria);
+
+router.delete('/configuracion-procedimientos/:id_procedimiento', configuracionController.eliminarProcedimiento);
+
+router.put('/configuracion-procedimientos/:id_procedimiento', configuracionController.actualizarProcedimiento);
+
+router.post('/configuracion-procedimientos', configuracionController.agregarProcedimiento);
+
+router.post('/configuracion-procedimientos-con-categoria', configuracionController.agregarCategoriaConProcedimientos);
+
+router.get('/configuracion-analisis', configuracionController.obtenerCategoriasConSubcategorias);
+
+router.delete('/configuracion-analisis/:id_subcategoria_analisis', configuracionController.eliminarSubcategoria);
+
+router.put('/configuracion-analisis/:id_subcategoria_analisis', configuracionController.actualizarSubcategoria);
+
+router.post('/configuracion-analisis', configuracionController.agregarSubcategoria);
+
+router.post('/configuracion-analisis-con-categoria', configuracionController.agregarCategoriaConSubcategorias);
+    
 
 module.exports = router;

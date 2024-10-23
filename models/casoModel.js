@@ -167,7 +167,6 @@ const obtenerAntecedentesPatologicos = (id_historia_clinica, callback) => {
 };
 
 const actualizarAntecedentesPatologicos = (id_antecedente_patologico, data, callback) => {
-    //console.log("patologicos: ", data)
     const sql = `
         UPDATE antecedentes_patologicos 
         SET alergias = ?, cirugias = ?, enfermedades_congenitas = ?, enfermedades_infancia = ?, 
@@ -420,7 +419,6 @@ const obtenerSignosVitales = (id_historia_clinica, callback) => {
 };
 
 const actualizarSignosVitales = (id_historia_clinica, data, callback) => {
-    //console.log(data)
     const sql = `
         UPDATE signos_vitales 
         SET frecuencia_cardiaca = ?, saturacion = ?, presion_sanguinea_sistole = ?, 
@@ -761,339 +759,121 @@ function executeTasks(tasks, finalCallback) {
     next();
 }
 
-const obtenerExamenFisicoOrina = (id_historia_clinica, callback) => {
+
+
+
+const obtenerCategoriasConImagenologias = (callback) => {
     const sql = `
-        SELECT efo.* 
-        FROM examen_fisico_orina efo 
-        JOIN examen_orina eo ON efo.id_examen_orina = eo.id_examen_orina 
-        WHERE eo.id_historia_clinica = ?`;
-    db.query(sql, [id_historia_clinica], callback);
+        SELECT ci.id_categoria_imagenologia, ci.nombre AS categoria_nombre,
+               i.id_imagenologia, i.nombre AS imagenologia_nombre, i.descripcion
+        FROM categoria_imagenologia ci
+        LEFT JOIN imagenologia i ON ci.id_categoria_imagenologia = i.id_categoria_imagenologia
+        ORDER BY ci.nombre, i.nombre
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return callback(err);
+
+        // Organizar los resultados en categorías con sus imagenologías
+        const categories = [];
+        const categoryMap = {};
+
+        results.forEach(row => {
+            let category = categoryMap[row.id_categoria_imagenologia];
+            if (!category) {
+                category = {
+                    id_categoria_imagenologia: row.id_categoria_imagenologia,
+                    nombre: row.categoria_nombre,
+                    imagenologias: []
+                };
+                categoryMap[row.id_categoria_imagenologia] = category;
+                categories.push(category);
+            }
+            if (row.id_imagenologia) {
+                category.imagenologias.push({
+                    id_imagenologia: row.id_imagenologia,
+                    nombre: row.imagenologia_nombre,
+                    descripcion: row.descripcion
+                });
+            }
+        });
+        callback(null, categories);
+    });
 };
 
-// Actualizar el examen físico de orina
-const actualizarExamenFisicoOrina = (id_historia_clinica, data, callback) => {
-    //console.log(data)
+// Obtener estudios de imagenología por historia clínica
+const obtenerEstudiosImagenologiaPorHistoriaClinica = (id_historia_clinica, callback) => {
     const sql = `
-        UPDATE examen_fisico_orina 
-        SET color = ?, aspecto = ?, volumen = ?, feed_examen_fisico_orina = ?, puntaje_examen_fisico_orina = ?
-        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
-    const values = [
-        data.color, data.aspecto, data.volumen, data.feed_examen_fisico_orina,
-        data.puntaje_examen_fisico_orina, id_historia_clinica
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerSedimentoUrinario = (id_historia_clinica, callback) => {
-    const sql = `
-        SELECT su.* 
-        FROM sedimento_urinario su 
-        JOIN examen_orina eo ON su.id_examen_orina = eo.id_examen_orina 
-        WHERE eo.id_historia_clinica = ?`;
-    db.query(sql, [id_historia_clinica], callback);
-};
-
-const actualizarSedimentoUrinario = (id_historia_clinica, data, callback) => {
-    //console.log(data)
-    const sql = `
-        UPDATE sedimento_urinario 
-        SET hematies = ?, leucocitos = ?, piocitos = ?, celulas_epiteliales = ?, celulas_renales = ?, 
-            cilindro_cereo = ?, cilindros_hialianos = ?, cilindros_granulosos = ?, cilindros_leucocitarios = ?, 
-            cilindros_eritrocitarios = ?, flora_bacteriana = ?, cristales = ?, filamento_mucoso = ?, hifas = ?, levaduras = ?, otros = ?, 
-            feed_examen_sedimento_urinario = ?, puntaje_examen_sedimento_urinario = ?
-        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
-    const values = [
-        data.hematies, data.leucocitos, data.piocitos, data.celulas_epiteliales, data.celulas_renales,
-        data.cilindro_cereo, data.cilindros_hialianos, data.cilindros_granulosos, data.cilindros_leucocitarios,
-        data.cilindros_eritrocitarios, data.flora_bacteriana, data.cristales, data.filamento_mucoso, data.hifas, data.levaduras, data.otros,
-        data.feed_examen_sedimento_urinario, data.puntaje_examen_sedimento_urinario, id_historia_clinica
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerExamenQuimicoUrinario = (id_historia_clinica, callback) => {
-    const sql = `
-        SELECT equ.* 
-        FROM examen_quimico_urinario equ 
-        JOIN examen_orina eo ON equ.id_examen_orina = eo.id_examen_orina 
-        WHERE eo.id_historia_clinica = ?`;
-    db.query(sql, [id_historia_clinica], callback);
-};
-
-const actualizarExamenQuimicoUrinario = (id_historia_clinica, data, callback) => {
-    const sql = `
-        UPDATE examen_quimico_urinario 
-        SET ph = ?, densidad = ?, proteinas = ?, sangre = ?, glucosa = ?, cetonas = ?, 
-            urobilinogeno = ?, bilirrubina = ?, pigmentos_biliares = ?, nitritos = ?, leucocitos = ?, 
-            feed_examen_quimico_urinario = ?, puntaje_examen_quimico_urinario = ?
-        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
-    const values = [
-        data.ph, data.densidad, data.proteinas, data.sangre, data.glucosa, data.cetonas, 
-        data.urobilinogeno, data.bilirrubina, data.pigmentos_biliares, data.nitritos, data.leucocitos, 
-        data.feed_examen_quimico_urinario, data.puntaje_examen_quimico_urinario, id_historia_clinica
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerExamenEspecialOrina = (id_historia_clinica, callback) => {
-    const sql = `
-        SELECT eeo.* 
-        FROM examenes_especiales_orina eeo 
-        JOIN examen_orina eo ON eeo.id_examen_orina = eo.id_examen_orina 
-        WHERE eo.id_historia_clinica = ?`;
-    db.query(sql, [id_historia_clinica], callback);
-};
-
-const actualizarExamenEspecialOrina = (id_historia_clinica, data, callback) => {
-    const sql = `
-        UPDATE examenes_especiales_orina 
-        SET proteurinaria = ?, creatinuria = ?, microalbuminuria = ?, clearence_creatinina = ?, 
-            feed_examen_especial_orina = ?, puntaje_examen_especial_orina = ?
-        WHERE id_examen_orina = (SELECT id_examen_orina FROM examen_orina WHERE id_historia_clinica = ?)`;
-    const values = [
-        data.proteurinaria, data.creatinuria, data.microalbuminuria, data.clearence_creatinina, 
-        data.feed_examen_especial_orina, data.puntaje_examen_especial_orina, id_historia_clinica
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerExamenHematologico = (id_historia_clinica, callback) => {
-    const sql = 'SELECT * FROM examen_hematologico WHERE id_historia_clinica = ?';
-    db.query(sql, [id_historia_clinica], callback);
-};
-
-const actualizarExamenHematologico = (id_historia_clinica, data, callback) => {
-    const sql = `
-        UPDATE examen_hematologico 
-        SET grupo_sanguineo = ?, factor_rh = ?, observaciones = ?, 
-            feed_examen_hematologico = ?, puntaje_examen_hematologico = ?
-        WHERE id_historia_clinica = ?`;
-    const values = [
-        data.grupo_sanguineo, data.factor_rh, data.observaciones, 
-        data.feed_examen_hematologico, data.puntaje_examen_hematologico, id_historia_clinica
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerBiometriaHematica = (id_examen_hematologico, callback) => {
-    const sql = 'SELECT * FROM biometria_hematica WHERE id_examen_hematologico = ?';
-    db.query(sql, [id_examen_hematologico], callback);
-};
-
-const actualizarBiometriaHematica = (id_examen_hematologico, data, callback) => {
-    const sql = `
-        UPDATE biometria_hematica 
-        SET globulos_rojos = ?, globulos_blancos = ?, hemoglobina = ?, hematocrito = ?, 
-            ves = ?, feed_examen_biometria_hematica = ?, puntaje_examen_biometria_hematica = ?
-        WHERE id_examen_hematologico = ?`;
-    const values = [
-        data.globulos_rojos, data.globulos_blancos, data.hemoglobina, data.hematocrito,
-        data.ves, data.feed_examen_biometria_hematica, data.puntaje_examen_biometria_hematica, id_examen_hematologico
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerIndicesEritrocitarios = (id_examen_hematologico, callback) => {
-    const sql = 'SELECT * FROM indices_eritrocitarios_hematico WHERE id_examen_hematologico = ?';
-    db.query(sql, [id_examen_hematologico], callback);
-};
-
-const actualizarIndicesEritrocitarios = (id_examen_hematologico, data, callback) => {
-    const sql = `
-        UPDATE indices_eritrocitarios_hematico 
-        SET vcm = ?, hbcm = ?, chbcm = ?, 
-            feed_indices_eritrocitarios = ?, puntaje_indices_eritrocitarios = ?
-        WHERE id_examen_hematologico = ?`;
-    const values = [
-        data.vcm, data.hbcm, data.chbcm, 
-        data.feed_indices_eritrocitarios, data.puntaje_indices_eritrocitarios, id_examen_hematologico
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerRecuentoDiferencialHematico = (id_examen_hematologico, callback) => {
-    const sql = 'SELECT * FROM recuento_diferencial_hematico WHERE id_examen_hematologico = ?';
-    db.query(sql, [id_examen_hematologico], callback);
-};
-
-const actualizarRecuentoDiferencialHematico = (id_examen_hematologico, data, callback) => {
-    const sql = `
-        UPDATE recuento_diferencial_hematico 
-        SET cayados_relativo = ?, cayados_absoluto = ?, linfocitos_relativo = ?, linfocitos_absoluto = ?, 
-            eosinofilos_relativo = ?, eosinofilos_absoluto = ?, basofilos_relativo = ?, basofilos_absoluto = ?, 
-            segmentados_relativo = ?, segmentados_absoluto = ?, monocitos_relativo = ?, monocitos_absoluto = ?, 
-            recuento_plaquetas = ?, recuento_reticulos = ?, feed_recuento_diferencial_hematico = ?, 
-            puntaje_recuento_diferencial_hematico = ?
-        WHERE id_examen_hematologico = ?`;
-    const values = [
-        data.cayados_relativo, data.cayados_absoluto, data.linfocitos_relativo, data.linfocitos_absoluto,
-        data.eosinofilos_relativo, data.eosinofilos_absoluto, data.basofilos_relativo, data.basofilos_absoluto,
-        data.segmentados_relativo, data.segmentados_absoluto, data.monocitos_relativo, data.monocitos_absoluto,
-        data.recuento_plaquetas, data.recuento_reticulos, data.feed_recuento_diferencial_hematico, 
-        data.puntaje_recuento_diferencial_hematico, id_examen_hematologico
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerHemostasiaSanguinea = (id_examen_sanguineo, callback) => {
-    const sql = 'SELECT * FROM hemostasia_sanguinea WHERE id_examen_sanguineo = ?';
-    db.query(sql, [id_examen_sanguineo], callback);
-};
-
-const actualizarHemostasiaSanguinea = (id_examen_sanguineo, data, callback) => {
-    const sql = `
-        UPDATE hemostasia_sanguinea 
-        SET tiempo_coagulacion = ?, tiempo_sangria = ?, tiempo_protrombina = ?, 
-            actividad_protrombinica = ?, inr = ?, tiempo_control = ?, 
-            tiempo_tromboplastina_parcial = ?, dimero_d = ?, fibrinogeno = ?, 
-            feed_hemostasia_sanguinea = ?, puntaje_hemostasia_sanguinea = ?
-        WHERE id_examen_sanguineo = ?`;
-    const values = [
-        data.tiempo_coagulacion, data.tiempo_sangria, data.tiempo_protrombina, 
-        data.actividad_protrombinica, data.inr, data.tiempo_control, 
-        data.tiempo_tromboplastina_parcial, data.dimero_d, data.fibrinogeno, 
-        data.feed_hemostasia_sanguinea, data.puntaje_hemostasia_sanguinea, id_examen_sanguineo
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerSerologiaSanguinea = (id_examen_sanguineo, callback) => {
-    const sql = 'SELECT * FROM serologia_sanguinea WHERE id_examen_sanguineo = ?';
-    db.query(sql, [id_examen_sanguineo], callback);
-};
-
-const actualizarSerologiaSanguinea = (id_examen_sanguineo, data, callback) => {
-    const sql = `
-        UPDATE serologia_sanguinea 
-        SET proteina_c = ?, factor_reumatico = ?, rpr_sifilis = ?, 
-            prueba_sifilis = ?, prueba_vih_sida = ?, prueba_hepatitis_b = ?, 
-            feed_serologia_sanguinea = ?, puntaje_serologia_sanguinea = ?
-        WHERE id_examen_sanguineo = ?`;
-    const values = [
-        data.proteina_c, data.factor_reumatico, data.rpr_sifilis, 
-        data.prueba_sifilis, data.prueba_vih_sida, data.prueba_hepatitis_b, 
-        data.feed_serologia_sanguinea, data.puntaje_serologia_sanguinea, id_examen_sanguineo
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerElectrolitosSanguineos = (id_examen_sanguineo, callback) => {
-    const sql = 'SELECT * FROM electrolitos_sanguineos WHERE id_examen_sanguineo = ?';
-    db.query(sql, [id_examen_sanguineo], callback);
-};
-
-const actualizarElectrolitosSanguineos = (id_examen_sanguineo, data, callback) => {
-    const sql = `
-        UPDATE electrolitos_sanguineos 
-        SET calcio = ?, sodio = ?, potasio = ?, cloro = ?, fosforo = ?, magnesio = ?, 
-            feed_electrolitos_sanguineos = ?, puntaje_electrolitos_sanguineos = ?
-        WHERE id_examen_sanguineo = ?`;
-    const values = [
-        data.calcio, data.sodio, data.potasio, data.cloro, data.fosforo, data.magnesio,
-        data.feed_electrolitos_sanguineos, data.puntaje_electrolitos_sanguineos, id_examen_sanguineo
-    ];
-    db.query(sql, values, callback);
-};
-
-const obtenerQuimicaSanguinea = (id_examen_sanguineo, callback) => {
-    const sql = 'SELECT * FROM quimica_sanguinea WHERE id_examen_sanguineo = ?';
-    db.query(sql, [id_examen_sanguineo], callback);
-};
-
-const actualizarQuimicaSanguinea = (id_examen_sanguineo, data, callback) => {
-    const sql = `
-        UPDATE quimica_sanguinea 
-        SET glicemia = ?, creatinina = ?, nitrogeno_ureico = ?, urea = ?, acido_urico = ?, 
-            bilirrubina_total = ?, bilirrubina_directa = ?, bilirrubina_indirecta = ?, transaminasa_gpt = ?, 
-            transaminasa_got = ?, lactato_deshidrogenasa = ?, fosfatasa_alcalina = ?, proteinas_totales = ?, 
-            albumina = ?, globulina = ?, relacion_alb_glo = ?, colesterol_total = ?, trigliceridos = ?, 
-            hdl_colesterol = ?, ldl_colesterol = ?, vldl_colesterol = ?, glicemia_rn = ?, 
-            hemoglobina_glicosilada = ?, feed_quimica_sanguinea = ?, puntaje_quimica_sanguinea = ?
-        WHERE id_examen_sanguineo = ?`;
-    const values = [
-        data.glicemia, data.creatinina, data.nitrogeno_ureico, data.urea, data.acido_urico,
-        data.bilirrubina_total, data.bilirrubina_directa, data.bilirrubina_indirecta, data.transaminasa_gpt,
-        data.transaminasa_got, data.lactato_deshidrogenasa, data.fosfatasa_alcalina, data.proteinas_totales,
-        data.albumina, data.globulina, data.relacion_alb_glo, data.colesterol_total, data.trigliceridos,
-        data.hdl_colesterol, data.ldl_colesterol, data.vldl_colesterol, data.glicemia_rn,
-        data.hemoglobina_glicosilada, data.feed_quimica_sanguinea, data.puntaje_quimica_sanguinea, id_examen_sanguineo
-    ];
-    db.query(sql, values, callback);
-};
-
-
-const obtenerCategoriasImagenologia = (callback) => {
-    const sql = 'SELECT * FROM categoria_imagenologia ORDER BY nombre';
-    db.query(sql, callback);
-};
-
-const obtenerImagenesPorHistoriaClinica = (id_historia_clinica, callback) => {
-    const sql = `
-        SELECT img.*, cat.nombre AS categoria_nombre
-        FROM imagenologia img
-        INNER JOIN categoria_imagenologia cat ON img.id_categoria_imagenologia = cat.id_categoria_imagenologia
-        WHERE img.id_historia_clinica = ?
-        ORDER BY cat.nombre
+        SELECT ei.*, i.nombre AS imagenologia_nombre, ci.nombre AS categoria_nombre
+        FROM estudios_imagenologia ei
+        INNER JOIN imagenologia i ON ei.id_imagenologia = i.id_imagenologia
+        INNER JOIN categoria_imagenologia ci ON i.id_categoria_imagenologia = ci.id_categoria_imagenologia
+        WHERE ei.id_historia_clinica = ?
+        ORDER BY ci.nombre, i.nombre
     `;
     db.query(sql, [id_historia_clinica], callback);
 };
 
-const actualizarImagenes = (id_historia_clinica, imagenesData, callback) => {
-    //console.log("modelo: ",imagenesData)
+// Actualizar estudios de imagenología
+const actualizarEstudiosImagenologia = (id_historia_clinica, estudiosData, callback) => {
     db.beginTransaction(err => {
         if (err) return callback(err);
-        const sqlGetExisting = 'SELECT id_imagenologia FROM imagenologia WHERE id_historia_clinica = ?';
+
+        const sqlGetExisting = 'SELECT id_estudios_imagenologia FROM estudios_imagenologia WHERE id_historia_clinica = ?';
         db.query(sqlGetExisting, [id_historia_clinica], (err, results) => {
             if (err) {
                 return db.rollback(() => callback(err));
             }
-            const existingIds = results.map(row => row.id_imagenologia);
-            const imagenesDataIds = imagenesData.map(img => img.id_imagenologia).filter(id => id);
+            const existingIds = results.map(row => row.id_estudios_imagenologia);
+            const estudiosDataIds = estudiosData.map(estudio => estudio.id_estudios_imagenologia).filter(id => id);
 
-            const idsToInsert = imagenesData.filter(img => !img.id_imagenologia);
-            const idsToUpdate = imagenesData.filter(img => img.id_imagenologia && existingIds.includes(img.id_imagenologia));
-            const idsToDelete = existingIds.filter(id => !imagenesDataIds.includes(id));
+            const idsToInsert = estudiosData.filter(estudio => !estudio.id_estudios_imagenologia);
+            const idsToUpdate = estudiosData.filter(estudio => estudio.id_estudios_imagenologia && existingIds.includes(estudio.id_estudios_imagenologia));
+            const idsToDelete = existingIds.filter(id => !estudiosDataIds.includes(id));
+
             const tasks = [];
             if (idsToDelete.length > 0) {
                 tasks.push(cb => {
-                    const sqlDelete = 'DELETE FROM imagenologia WHERE id_imagenologia IN (?)';
+                    const sqlDelete = 'DELETE FROM estudios_imagenologia WHERE id_estudios_imagenologia IN (?)';
                     db.query(sqlDelete, [idsToDelete], cb);
                 });
             }
-            idsToUpdate.forEach(img => {
+            idsToUpdate.forEach(estudio => {
                 tasks.push(cb => {
                     const sqlUpdate = `
-                            UPDATE imagenologia
-                            SET interpretacion = ?, feed_imagenologia = ?, puntaje_imagenologia = ?, path = ?, nombre = ?, id_categoria_imagenologia = ?
-                            WHERE id_imagenologia = ?
-                        `;
-                        const params = [
-                            img.interpretacion,
-                            img.feed_imagenologia,
-                            img.puntaje_imagenologia,
-                            img.path,
-                            img.nombre,
-                            img.id_categoria_imagenologia,
-                            img.id_imagenologia
-                        ];
+                        UPDATE estudios_imagenologia
+                        SET interpretacion = ?, feed_estudios_imagenologia = ?, puntaje_estudios_imagenologia = ?, path = ?, id_imagenologia = ?
+                        WHERE id_estudios_imagenologia = ?
+                    `;
+                    const params = [
+                        estudio.interpretacion,
+                        estudio.feed_estudios_imagenologia,
+                        estudio.puntaje_estudios_imagenologia,
+                        estudio.path,
+                        estudio.id_imagenologia,
+                        estudio.id_estudios_imagenologia
+                    ];
                     db.query(sqlUpdate, params, cb);
                 });
             });
-            idsToInsert.forEach(img => {
+            idsToInsert.forEach(estudio => {
                 tasks.push(cb => {
                     const sqlInsert = `
-                        INSERT INTO imagenologia (id_categoria_imagenologia, id_historia_clinica, interpretacion, path, feed_imagenologia, puntaje_imagenologia)
+                        INSERT INTO estudios_imagenologia (id_imagenologia, id_historia_clinica, interpretacion, path, feed_estudios_imagenologia, puntaje_estudios_imagenologia)
                         VALUES (?, ?, ?, ?, ?, ?)
                     `;
                     const params = [
-                        img.id_categoria_imagenologia,
+                        estudio.id_imagenologia,
                         id_historia_clinica,
-                        img.interpretacion,
-                        img.path,
-                        img.feed_imagenologia,
-                        img.puntaje_imagenologia
+                        estudio.interpretacion,
+                        estudio.path,
+                        estudio.feed_estudios_imagenologia,
+                        estudio.puntaje_estudios_imagenologia
                     ];
-                    db.query(sqlInsert, params, cb);
+                    db.query(sqlInsert, params, (err, result) => {
+                        if (err) return cb(err);
+                        estudio.id_estudios_imagenologia = result.insertId; // Actualiza el ID en el objeto
+                        cb();
+                    });
                 });
             });
 
@@ -1126,6 +906,122 @@ function executeTasks(tasks, finalCallback) {
     next();
 }
 
+const obtenerCategoriasProcedimientos = (callback) => {
+    const sql = 'SELECT * FROM categoria_procedimiento';
+    db.query(sql, callback);
+};
+
+// Obtener procedimientos por categoría
+const obtenerProcedimientosPorCategoria = (id_categoria_procedimiento, callback) => {
+    const sql = 'SELECT * FROM procedimiento WHERE id_categoria_procedimiento = ?';
+    db.query(sql, [id_categoria_procedimiento], callback);
+};
+
+// Obtener procedimientos asignados por historia clínica
+const obtenerProcedimientosAsignadosPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT pa.*, p.nombre, p.descripcion
+        FROM procedimiento_asignado pa
+        JOIN procedimiento p ON pa.id_procedimiento = p.id_procedimiento
+        WHERE pa.id_historia_clinica = ?
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+};
+
+// Actualizar procedimientos asignados
+const actualizarProcedimientosAsignados = (id_historia_clinica, data, callback) => {
+    const sqlSelect = `
+        SELECT id_procedimiento_asignado, id_procedimiento
+        FROM procedimiento_asignado
+        WHERE id_historia_clinica = ?
+    `;
+    db.query(sqlSelect, [id_historia_clinica], (err, results) => {
+        if (err) return callback(err);
+
+        const existingProcedimientos = results;
+        const existingIds = existingProcedimientos.map(p => p.id_procedimiento);
+        const newIds = data.map(p => p.id_procedimiento);
+        const idsToDelete = existingIds.filter(id => !newIds.includes(id));
+        const procsToInsert = data.filter(p => !existingIds.includes(p.id_procedimiento));
+        const procsToUpdate = data.filter(p => existingIds.includes(p.id_procedimiento));
+        db.beginTransaction(err => {
+            if (err) return callback(err);
+
+            let deletePromise = Promise.resolve();
+            if (idsToDelete.length > 0) {
+                const sqlDelete = `
+                    DELETE FROM procedimiento_asignado
+                    WHERE id_historia_clinica = ? AND id_procedimiento IN (?)
+                `;
+                deletePromise = new Promise((resolve, reject) => {
+                    db.query(sqlDelete, [id_historia_clinica, idsToDelete], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            let insertPromise = Promise.resolve();
+            if (procsToInsert.length > 0) {
+                const sqlInsert = `
+                    INSERT INTO procedimiento_asignado (id_procedimiento, id_historia_clinica, feed_procedimiento_asignado, puntaje_procedimiento_asignado)
+                    VALUES ?
+                `;
+                const values = procsToInsert.map(procedimiento => [
+                    procedimiento.id_procedimiento,
+                    id_historia_clinica,
+                    procedimiento.feed_procedimiento_asignado,
+                    procedimiento.puntaje_procedimiento_asignado,
+                ]);
+                insertPromise = new Promise((resolve, reject) => {
+                    db.query(sqlInsert, [values], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            }
+
+            let updatePromises = [];
+            procsToUpdate.forEach(procedimiento => {
+                const sqlUpdate = `
+                    UPDATE procedimiento_asignado
+                    SET feed_procedimiento_asignado = ?, puntaje_procedimiento_asignado = ?
+                    WHERE id_historia_clinica = ? AND id_procedimiento = ?
+                `;
+                updatePromises.push(new Promise((resolve, reject) => {
+                    db.query(sqlUpdate, [
+                        procedimiento.feed_procedimiento_asignado,
+                        procedimiento.puntaje_procedimiento_asignado,
+                        id_historia_clinica,
+                        procedimiento.id_procedimiento
+                    ], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                }));
+            });
+
+            Promise.all([deletePromise, insertPromise, ...updatePromises])
+                .then(() => {
+                    db.commit(err => {
+                        if (err) {
+                            return db.rollback(() => {
+                                callback(err);
+                            });
+                        }
+                        callback(null);
+                    });
+                })
+                .catch(err => {
+                    db.rollback(() => {
+                        callback(err);
+                    });
+                });
+        });
+    });
+};
+
+
 const obtenerTraspaso = (id_historia_clinica, callback) => {
     const sql = `SELECT 
             t.opcion_uno,
@@ -1136,7 +1032,10 @@ const obtenerTraspaso = (id_historia_clinica, callback) => {
             t.feed_opcion_dos,
             t.opcion_tres,
             t.puntaje_opcion_tres,
-            t.feed_opcion_tres
+            t.feed_opcion_tres,
+            t.opcion_cuatro,
+            t.puntaje_opcion_cuatro,
+            t.feed_opcion_cuatro
         FROM 
             traspaso t
         WHERE 
@@ -1154,11 +1053,13 @@ const actualizarTraspaso = (id_historia_clinica, data, callback) => {
                     puntaje_opcion_dos = ?,
                     feed_opcion_dos = ?,
                     puntaje_opcion_tres = ?,
-                    feed_opcion_tres = ?
+                    feed_opcion_tres = ?,
+                    puntaje_opcion_cuatro = ?,
+                    feed_opcion_cuatro = ?
                 WHERE 
                     id_historia_clinica = ?;
     `;
-    db.query(sql, [data.puntaje_opcion_uno, data.feed_opcion_uno ,data.puntaje_opcion_dos, data.feed_opcion_dos ,data.puntaje_opcion_tres, data.feed_opcion_tres ,id_historia_clinica], callback);
+    db.query(sql, [data.puntaje_opcion_uno, data.feed_opcion_uno ,data.puntaje_opcion_dos, data.feed_opcion_dos ,data.puntaje_opcion_tres, data.feed_opcion_tres,data.puntaje_opcion_cuatro, data.feed_opcion_cuatro, id_historia_clinica], callback);
 };
 
 const actualizarDiagnosticoFinal = (id_historia_clinica, data, callback) => {
@@ -1185,7 +1086,11 @@ const obtenerTraspasoRubrica = (id_historia_clinica, callback) => {
                 t.opcion_tres,
                 t.puntaje_opcion_tres,
                 vp_tres.rubrica AS rubrica_opcion_tres,
-                t.feed_opcion_tres
+                t.feed_opcion_tres,
+                t.opcion_cuatro,
+                t.puntaje_opcion_cuatro,
+                vp_cuatro.rubrica AS rubrica_opcion_cuatro,
+                t.feed_opcion_cuatro
             FROM 
                 traspaso t
             LEFT JOIN 
@@ -1200,11 +1105,322 @@ const obtenerTraspasoRubrica = (id_historia_clinica, callback) => {
                 valor_puntaje vp_tres 
                 ON vp_tres.id_historia_clinica = t.id_historia_clinica 
                 AND vp_tres.codigo = t.puntaje_opcion_tres
+            LEFT JOIN 
+                valor_puntaje vp_cuatro 
+                ON vp_cuatro.id_historia_clinica = t.id_historia_clinica 
+                AND vp_cuatro.codigo = t.puntaje_opcion_cuatro
             WHERE 
                 t.id_historia_clinica = ?;
     `;
     db.query(sql, [id_historia_clinica], callback);
 };
+
+const obtenerCategoriasAnalisis = (callback) => {
+    const sql = 'SELECT * FROM categoria_analisis';
+    db.query(sql, callback);
+};
+
+// Obtener subcategorías de análisis por categoría
+const obtenerSubcategoriasPorCategoria = (id_categoria_analisis, callback) => {
+    const sql = 'SELECT * FROM subcategoria_analisis WHERE id_categoria_analisis = ?';
+    db.query(sql, [id_categoria_analisis], callback);
+};
+
+const obtenerSolicitudesAnalisisPorHistoriaClinica = (id_historia_clinica, callback) => {
+    const sqlSolicitudes = `
+        SELECT sa.*, ca.nombre_categoria
+        FROM solicitud_analisis sa
+        JOIN categoria_analisis ca ON sa.id_categoria_analisis = ca.id_categoria_analisis
+        WHERE sa.id_historia_clinica = ?
+    `;
+    db.query(sqlSolicitudes, [id_historia_clinica], (err, solicitudes) => {
+        if (err) return callback(err);
+
+        if (solicitudes.length === 0) {
+            return callback(null, []);
+        }
+
+        const solicitudIds = solicitudes.map(s => s.id_solicitud_analisis);
+        const sqlDetalles = `
+            SELECT dsa.*, sca.nombre_subcategoria
+            FROM detalle_subanalisis dsa
+            JOIN subcategoria_analisis sca ON dsa.id_subcategoria_analisis = sca.id_subcategoria_analisis
+            WHERE dsa.id_solicitud_analisis IN (?)
+        `;
+        db.query(sqlDetalles, [solicitudIds], (err, detalles) => {
+            if (err) return callback(err);
+
+            // Mapear los detalles a las solicitudes correspondientes
+            solicitudes.forEach(solicitud => {
+                solicitud.detalles = detalles.filter(d => d.id_solicitud_analisis === solicitud.id_solicitud_analisis);
+            });
+
+            callback(null, solicitudes);
+        });
+    });
+};
+
+const actualizarSolicitudesAnalisis = (id_historia_clinica, data, callback) => {
+    db.beginTransaction(err => {
+        if (err) return callback(err);
+
+        // Obtener solicitudes existentes
+        const sqlFetchSolicitudes = `
+            SELECT id_solicitud_analisis, id_categoria_analisis
+            FROM solicitud_analisis
+            WHERE id_historia_clinica = ?
+        `;
+        db.query(sqlFetchSolicitudes, [id_historia_clinica], (err, existingSolicitudes) => {
+            if (err) {
+                return db.rollback(() => callback(err));
+            }
+
+            const existingSolicitudesMap = {};
+            existingSolicitudes.forEach(sa => {
+                existingSolicitudesMap[sa.id_categoria_analisis] = sa;
+            });
+
+            const solicitudesToKeep = [];
+            const solicitudesToDelete = [];
+
+            // Procesar solicitudes
+            processSolicitudes(0);
+
+            function processSolicitudes(index) {
+                if (index >= data.length) {
+                    // Después de procesar todas las solicitudes
+                    deleteUnwantedSolicitudes();
+                    return;
+                }
+
+                const solicitud = data[index];
+
+                if (solicitud.id_solicitud_analisis) {
+                    if (!solicitud.detalles || solicitud.detalles.length === 0) {
+                        // Si no hay detalles, marcar solicitud para eliminar
+                        solicitudesToDelete.push(solicitud.id_solicitud_analisis);
+                        processSolicitudes(index + 1);
+                    } else {
+                        // Actualizar solicitud existente
+                        const sqlUpdateSolicitud = `
+                            UPDATE solicitud_analisis
+                            SET puntaje_analisis = ?, feed_analsis = ?
+                            WHERE id_solicitud_analisis = ?
+                        `;
+                        db.query(sqlUpdateSolicitud, [
+                            solicitud.puntaje_analisis,
+                            solicitud.feed_analsis,
+                            solicitud.id_solicitud_analisis
+                        ], (err) => {
+                            if (err) {
+                                return db.rollback(() => callback(err));
+                            }
+
+                            solicitudesToKeep.push(solicitud.id_solicitud_analisis);
+
+                            // Procesar detalles
+                            procesarDetalles(solicitud, (err) => {
+                                if (err) {
+                                    return db.rollback(() => callback(err));
+                                }
+                                processSolicitudes(index + 1);
+                            });
+                        });
+                    }
+                } else {
+                    if (!solicitud.detalles || solicitud.detalles.length === 0) {
+                        // No hay nada que hacer si no hay detalles y es una solicitud nueva
+                        processSolicitudes(index + 1);
+                    } else {
+                        // Insertar nueva solicitud
+                        const sqlInsertSolicitud = `
+                            INSERT INTO solicitud_analisis (id_historia_clinica, id_categoria_analisis, puntaje_analisis, feed_analsis)
+                            VALUES (?, ?, ?, ?)
+                        `;
+                        db.query(sqlInsertSolicitud, [
+                            id_historia_clinica,
+                            solicitud.id_categoria_analisis,
+                            solicitud.puntaje_analisis,
+                            solicitud.feed_analsis
+                        ], (err, result) => {
+                            if (err) {
+                                return db.rollback(() => callback(err));
+                            }
+
+                            solicitud.id_solicitud_analisis = result.insertId;
+                            solicitudesToKeep.push(solicitud.id_solicitud_analisis);
+
+                            //console.log('Inserted solicitud_analisis with ID:', solicitud.id_solicitud_analisis);
+
+                            // Procesar detalles
+                            procesarDetalles(solicitud, (err) => {
+                                if (err) {
+                                    return db.rollback(() => callback(err));
+                                }
+                                processSolicitudes(index + 1);
+                            });
+                        });
+                    }
+                }
+            }
+
+            function deleteUnwantedSolicitudes() {
+                const idsToDelete = existingSolicitudes
+                    .filter(sa => !solicitudesToKeep.includes(sa.id_solicitud_analisis))
+                    .map(sa => sa.id_solicitud_analisis)
+                    .concat(solicitudesToDelete);
+
+                if (idsToDelete.length > 0) {
+                    db.query(
+                        `DELETE FROM detalle_subanalisis WHERE id_solicitud_analisis IN (?)`,
+                        [idsToDelete],
+                        (err) => {
+                            if (err) {
+                                return db.rollback(() => callback(err));
+                            }
+                            db.query(
+                                `DELETE FROM solicitud_analisis WHERE id_solicitud_analisis IN (?)`,
+                                [idsToDelete],
+                                (err) => {
+                                    if (err) {
+                                        return db.rollback(() => callback(err));
+                                    }
+                                    commitTransaction();
+                                }
+                            );
+                        }
+                    );
+                } else {
+                    commitTransaction();
+                }
+            }
+
+            function commitTransaction() {
+                db.commit((err) => {
+                    if (err) {
+                        return db.rollback(() => callback(err));
+                    }
+                    callback(null);
+                });
+            }
+
+            function procesarDetalles(solicitud, cb) {
+                const id_solicitud_analisis = solicitud.id_solicitud_analisis;
+
+                //console.log('Processing detalles for id_solicitud_analisis:', id_solicitud_analisis);
+
+                // Obtener detalles existentes para esta solicitud
+                const sqlFetchDetalles = `
+                    SELECT id_detalle_subanalisis, id_subcategoria_analisis
+                    FROM detalle_subanalisis
+                    WHERE id_solicitud_analisis = ?
+                `;
+                db.query(sqlFetchDetalles, [id_solicitud_analisis], (err, existingDetalles) => {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    const existingDetallesMap = {};
+                    existingDetalles.forEach(d => {
+                        existingDetallesMap[d.id_subcategoria_analisis] = d;
+                    });
+
+                    const detallesToKeepIds = [];
+                    const detallesToDeleteIds = [];
+
+                    processDetalles(0);
+
+                    function processDetalles(index) {
+                        if (index >= solicitud.detalles.length) {
+                            // Después de procesar todos los detalles
+                            deleteUnwantedDetalles();
+                            return;
+                        }
+
+                        const detalle = solicitud.detalles[index];
+
+                        if (detalle.id_detalle_subanalisis) {
+                            // Actualizar detalle existente
+                            const sqlUpdateDetalle = `
+                                UPDATE detalle_subanalisis
+                                SET resultado = ?
+                                WHERE id_detalle_subanalisis = ?
+                            `;
+                            db.query(sqlUpdateDetalle, [
+                                detalle.resultado,
+                                detalle.id_detalle_subanalisis
+                            ], (err) => {
+                                if (err) {
+                                    return cb(err);
+                                }
+                                detallesToKeepIds.push(detalle.id_detalle_subanalisis);
+                                processDetalles(index + 1);
+                            });
+                        } else {
+                            // Insertar nuevo detalle
+                            const sqlInsertDetalle = `
+                                INSERT INTO detalle_subanalisis (id_solicitud_analisis, id_subcategoria_analisis, resultado)
+                                VALUES (?, ?, ?)
+                            `;
+                            db.query(sqlInsertDetalle, [
+                                id_solicitud_analisis,
+                                detalle.id_subcategoria_analisis,
+                                detalle.resultado
+                            ], (err, result) => {
+                                if (err) {
+                                    return cb(err);
+                                }
+                                detalle.id_detalle_subanalisis = result.insertId;
+                                detallesToKeepIds.push(detalle.id_detalle_subanalisis);
+
+                                //console.log('Inserted detalle_subanalisis with ID:', detalle.id_detalle_subanalisis);
+
+                                processDetalles(index + 1);
+                            });
+                        }
+                    }
+
+                    function deleteUnwantedDetalles() {
+                        const existingDetalleIds = existingDetalles.map(d => d.id_detalle_subanalisis);
+                        const detallesToDeleteIdsLocal = existingDetalleIds.filter(id => !detallesToKeepIds.includes(id));
+
+                        if (detallesToDeleteIdsLocal.length > 0) {
+                            db.query(
+                                `DELETE FROM detalle_subanalisis WHERE id_detalle_subanalisis IN (?)`,
+                                [detallesToDeleteIdsLocal],
+                                (err) => {
+                                    if (err) {
+                                        return cb(err);
+                                    }
+                                    cb(null);
+                                }
+                            );
+                        } else {
+                            cb(null);
+                        }
+                    }
+                });
+            }
+
+        });
+    });
+};
+
+
+
+function executeTasks(tasks, finalCallback) {
+    let index = 0;
+
+    function next(err) {
+        if (err || index === tasks.length) {
+            return finalCallback(err);
+        }
+        const task = tasks[index++];
+        task(next);
+    }
+
+    next();
+}
 
 const actualizarPuntajeAnamnesis = (id_historia_clinica, data, callback) => {
     const sql = `UPDATE 
@@ -1544,33 +1760,18 @@ module.exports = {
     obtenerAntecedentesGinecoObstetricos,
     actualizarAntecedentesGinecoObstetricos,
     
-    obtenerExamenFisicoOrina, 
-    actualizarExamenFisicoOrina,
-    obtenerSedimentoUrinario, 
-    actualizarSedimentoUrinario,
-    obtenerExamenQuimicoUrinario, 
-    actualizarExamenQuimicoUrinario,
-    obtenerExamenEspecialOrina,
-    actualizarExamenEspecialOrina,
-    obtenerExamenHematologico,
-    actualizarExamenHematologico,
-    obtenerIndicesEritrocitarios,
-    actualizarIndicesEritrocitarios,
-    obtenerRecuentoDiferencialHematico,
-    actualizarRecuentoDiferencialHematico,
-    obtenerHemostasiaSanguinea,
-    actualizarHemostasiaSanguinea,
-    obtenerSerologiaSanguinea,
-    actualizarSerologiaSanguinea,
-    obtenerElectrolitosSanguineos,
-    actualizarElectrolitosSanguineos,
-    obtenerQuimicaSanguinea,
-    actualizarQuimicaSanguinea,
-    obtenerBiometriaHematica,
-    actualizarBiometriaHematica,
-    obtenerCategoriasImagenologia,
-    obtenerImagenesPorHistoriaClinica,
-    actualizarImagenes,
+    
+    obtenerCategoriasConImagenologias,
+    obtenerEstudiosImagenologiaPorHistoriaClinica,
+    actualizarEstudiosImagenologia, 
+    obtenerCategoriasProcedimientos,
+    obtenerProcedimientosPorCategoria,
+    obtenerProcedimientosAsignadosPorHistoriaClinica,
+    actualizarProcedimientosAsignados,
+    obtenerCategoriasAnalisis,
+    obtenerSubcategoriasPorCategoria,
+    obtenerSolicitudesAnalisisPorHistoriaClinica,
+    actualizarSolicitudesAnalisis,
     obtenerTraspaso,
     actualizarTraspaso,
     actualizarDiagnosticoFinal,

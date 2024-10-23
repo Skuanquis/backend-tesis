@@ -113,69 +113,34 @@ router.get('/medicamentos_suministrados/:id_historia_clinica', casoController.ob
 
 router.put('/medicamentos_suministrados/:id_historia_clinica', casoController.actualizarMedicamentosSuministrados);
 
+router.get('/categoria_procedimiento', casoController.obtenerCategoriasProcedimientos);
+
+router.get('/procedimiento/:id_categoria_procedimiento', casoController.obtenerProcedimientosPorCategoria);
+
+router.get('/procedimientos_asignados/:id_historia_clinica', casoController.obtenerProcedimientosAsignadosPorHistoriaClinica);
+
+router.put('/procedimientos_asignados/:id_historia_clinica', casoController.actualizarProcedimientosAsignados);
+
+router.get('/categoria_analisis', casoController.obtenerCategoriasAnalisis);
+
+router.get('/subcategoria_analisis/:id_categoria_analisis', casoController.obtenerSubcategoriasPorCategoria);
+
+router.get('/solicitudes_analisis/:id_historia_clinica', casoController.obtenerSolicitudesAnalisisPorHistoriaClinica);
+
+router.post('/solicitudes_analisis/:id_historia_clinica', casoController.actualizarSolicitudesAnalisis);
+
 router.get('/subespecialidades', casoController.obtenerSubespecialidades);
 
 router.get('/consulta_externa/historia_clinica/:id_historia_clinica', casoController.obtenerSubespecialidadesPorHistoriaClinica);
 
 router.post('/consulta_externa/historia_clinica/:id_historia_clinica', casoController.actualizarSubespecialidades);
 
-router.get('/examen_fisico_orina/:id_historia_clinica', casoController.obtenerExamenFisicoOrina);
+router.get('/categorias_con_imagenologias', casoController.obtenerCategoriasConImagenologias);
 
-router.put('/examen_fisico_orina/:id_historia_clinica', casoController.actualizarExamenFisicoOrina);
+router.get('/estudios_imagenologia/:id_historia_clinica', casoController.obtenerEstudiosImagenologiaPorHistoriaClinica);
 
-router.get('/examen_fisico_orina/:id_historia_clinica', casoController.obtenerExamenFisicoOrina);
+router.post('/estudios_imagenologia/:id_historia_clinica', casoController.actualizarEstudiosImagenologia);
 
-router.put('/examen_fisico_orina/:id_historia_clinica', casoController.actualizarExamenFisicoOrina);
-
-router.get('/sedimento_urinario/:id_historia_clinica', casoController.obtenerSedimentoUrinario);
-
-router.put('/sedimento_urinario/:id_historia_clinica', casoController.actualizarSedimentoUrinario);
-
-router.get('/examen_quimico_urinario/:id_historia_clinica', casoController.obtenerExamenQuimicoUrinario);
-
-router.put('/examen_quimico_urinario/:id_historia_clinica', casoController.actualizarExamenQuimicoUrinario);
-
-router.get('/examen_especial_orina/:id_historia_clinica', casoController.obtenerExamenEspecialOrina);
-
-router.put('/examen_especial_orina/:id_historia_clinica', casoController.actualizarExamenEspecialOrina);
-
-router.get('/examen_hematologico/:id_historia_clinica', casoController.obtenerExamenHematologico);
-
-router.put('/examen_hematologico/:id_historia_clinica', casoController.actualizarExamenHematologico);
-
-router.get('/biometria_hematica/:id_examen_hematologico', casoController.obtenerBiometriaHematica);
-
-router.put('/biometria_hematica/:id_examen_hematologico', casoController.actualizarBiometriaHematica);
-
-router.get('/indices_eritrocitarios/:id_examen_hematologico', casoController.obtenerIndicesEritrocitarios);
-
-router.put('/indices_eritrocitarios/:id_examen_hematologico', casoController.actualizarIndicesEritrocitarios);
-
-router.get('/recuento_diferencial_hematico/:id_examen_hematologico', casoController.obtenerRecuentoDiferencialHematico);
-
-router.put('/recuento_diferencial_hematico/:id_examen_hematologico', casoController.actualizarRecuentoDiferencialHematico);
-
-router.get('/hemostasia_sanguinea/:id_examen_sanguineo', casoController.obtenerHemostasiaSanguinea);
-
-router.put('/hemostasia_sanguinea/:id_examen_sanguineo', casoController.actualizarHemostasiaSanguinea);
-
-router.get('/serologia_sanguinea/:id_examen_sanguineo', casoController.obtenerSerologiaSanguinea);
-
-router.put('/serologia_sanguinea/:id_examen_sanguineo', casoController.actualizarSerologiaSanguinea);
-
-router.get('/electrolitos_sanguineos/:id_examen_sanguineo', casoController.obtenerElectrolitosSanguineos);
-
-router.put('/electrolitos_sanguineos/:id_examen_sanguineo', casoController.actualizarElectrolitosSanguineos);
-
-router.get('/quimica_sanguinea/:id_examen_sanguineo', casoController.obtenerQuimicaSanguinea);
-
-router.put('/quimica_sanguinea/:id_examen_sanguineo', casoController.actualizarQuimicaSanguinea);
-
-router.get('/categorias_imagenologia', casoController.obtenerCategoriasImagenologia);
-
-router.get('/imagenes/:id_historia_clinica', casoController.obtenerImagenesPorHistoriaClinica);
-
-router.post('/imagenes/:id_historia_clinica', casoController.actualizarImagenes);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

@@ -246,45 +246,272 @@ const eliminarSubespecialidad = (id_subespecialidad, callback) => {
     });
 };
 
-const obtenerCategoriasImagenologia = (callback) => {
-    const sql = `SELECT * FROM categoria_imagenologia ORDER BY nombre`;
+const obtenerImagenologiasPorCategoria = (callback) => {
+    const sql = `
+        SELECT 
+            ci.id_categoria_imagenologia,
+            ci.nombre AS categoria,
+            i.id_imagenologia,
+            i.nombre AS imagenologia,
+            i.descripcion AS descripcion
+        FROM 
+            imagenologia i
+        JOIN 
+            categoria_imagenologia ci ON i.id_categoria_imagenologia = ci.id_categoria_imagenologia
+        ORDER BY 
+            ci.nombre;
+    `;
     db.query(sql, (err, results) => {
         if (err) return callback(err, null);
-        callback(null, results);
+        const categorias = {};
+        results.forEach(row => {
+            const { id_categoria_imagenologia, categoria, imagenologia, descripcion, id_imagenologia } = row;
+            if (!categorias[categoria]) {
+                categorias[categoria] = {
+                    id_categoria_imagenologia,
+                    imagenologias: []
+                };
+            }
+            categorias[categoria].imagenologias.push({ id_imagenologia, imagenologia, descripcion });
+        });
+        callback(null, categorias);
     });
 };
 
-const agregarCategoriaImagenologia = (nombre, callback) => {
-    if (!nombre) {
-        return callback(new Error("El nombre de la categoría no puede ser nulo"));
-    }
-    const sql = `INSERT INTO categoria_imagenologia (nombre) VALUES (?)`;
-    db.query(sql, [nombre], (err, result) => {
-        if (err) return callback(err);
-        callback(null, result);
-    });
-};
-
-const actualizarCategoriaImagenologia = (id_categoria_imagenologia, nombre, callback) => {
-    if (!nombre) {
-        return callback(new Error("El nombre de la categoría no puede ser nulo"));
-    }
-    const sql = `UPDATE categoria_imagenologia SET nombre = ? WHERE id_categoria_imagenologia = ?`;
-    db.query(sql, [nombre, id_categoria_imagenologia], callback);
-};
-
-const eliminarCategoriaImagenologia = (id_categoria_imagenologia, callback) => {
-    const sql = `DELETE FROM categoria_imagenologia WHERE id_categoria_imagenologia = ?`;
-    db.query(sql, [id_categoria_imagenologia], (err, result) => {
+const eliminarImagenologia = (id_imagenologia, callback) => {
+    const sql = `DELETE FROM imagenologia WHERE id_imagenologia = ?`;
+    db.query(sql, [id_imagenologia], (err, result) => {
         if (err) {
             if (err.code === 'ER_ROW_IS_REFERENCED_2' || err.errno === 1451) {
-                return callback(new Error('No se puede eliminar la categoría porque está siendo utilizada en otros registros.'));
+                return callback(new Error('No se puede eliminar la imagenología porque está siendo utilizada en otros registros.'));
             }
             return callback(err);
         }
         callback(null, result);
     });
 };
+
+const actualizarImagenologia = (id_imagenologia, nombre, callback) => {
+    if (!nombre) {
+        return callback(new Error("El nombre de la imagenología no puede ser nulo"));
+    }
+    const sql = `UPDATE imagenologia SET nombre = ? WHERE id_imagenologia = ?`;
+    db.query(sql, [nombre, id_imagenologia], callback);
+};
+
+const agregarImagenologia = (id_categoria_imagenologia, nombre, callback) => {
+    if (!nombre) {
+        return callback(new Error("El nombre de la imagenología no puede ser nulo"));
+    }
+    const sql = `INSERT INTO imagenologia (id_categoria_imagenologia, nombre) VALUES (?, ?)`;
+    db.query(sql, [id_categoria_imagenologia, nombre], (err, result) => {
+        if (err) return callback(err);
+        callback(null, result);
+    });
+};
+
+const agregarCategoriaConImagenologias = (categoria, imagenologias, callback) => {
+    db.beginTransaction(err => {
+        if (err) return callback(err);
+        const sqlCategoria = `INSERT INTO categoria_imagenologia (nombre) VALUES (?)`;
+        db.query(sqlCategoria, [categoria], (err, result) => {
+            if (err) {
+                return db.rollback(() => {
+                    callback(err);
+                });
+            }
+            const id_categoria_imagenologia = result.insertId;
+            const sqlImagenologia = `INSERT INTO imagenologia (id_categoria_imagenologia, nombre) VALUES ?`;
+            const imagenologiasData = imagenologias.map(i => [id_categoria_imagenologia, i]);
+
+            db.query(sqlImagenologia, [imagenologiasData], (err, result) => {
+                if (err) {
+                    return db.rollback(() => {
+                        callback(err);
+                    });
+                }
+                const ids_imagenologias = [];
+                for (let i = 0; i < result.affectedRows; i++) {
+                    ids_imagenologias.push(result.insertId + i);
+                }
+                db.commit(err => {
+                    if (err) {
+                        return db.rollback(() => {
+                            callback(err);
+                        });
+                    }
+                    callback(null, { id_categoria_imagenologia, ids_imagenologias });
+                });
+            });
+        });
+    });
+};
+
+const obtenerProcedimientosPorCategoria = (callback) => {
+    const sql = `
+        SELECT 
+            cp.id_categoria_procedimiento,
+            cp.nombre AS categoria,
+            p.id_procedimiento,
+            p.nombre AS procedimiento,
+            p.descripcion AS descripcion
+        FROM 
+            procedimiento p
+        JOIN 
+            categoria_procedimiento cp ON p.id_categoria_procedimiento = cp.id_categoria_procedimiento
+        ORDER BY 
+            cp.nombre;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return callback(err, null);
+        const categorias = {};
+        results.forEach(row => {
+            const { id_categoria_procedimiento, categoria, procedimiento, descripcion, id_procedimiento } = row;
+            if (!categorias[categoria]) {
+                categorias[categoria] = {
+                    id_categoria_procedimiento,
+                    procedimientos: []
+                };
+            }
+            categorias[categoria].procedimientos.push({ id_procedimiento, procedimiento, descripcion });
+        });
+        callback(null, categorias);
+    });
+};
+
+const eliminarProcedimiento = (id_procedimiento, callback) => {
+    const sql = `DELETE FROM procedimiento WHERE id_procedimiento = ?`;
+    db.query(sql, [id_procedimiento], (err, result) => {
+        if (err) {
+            if (err.code === 'ER_ROW_IS_REFERENCED_2' || err.errno === 1451) {
+                return callback(new Error('No se puede eliminar el procedimiento porque está siendo utilizado en otros registros.'));
+            }
+            return callback(err);
+        }
+        callback(null, result);
+    });
+};
+
+const actualizarProcedimiento = (id_procedimiento, nombre, callback) => {
+    const sql = `UPDATE procedimiento SET nombre = ? WHERE id_procedimiento = ?`;
+    db.query(sql, [nombre, id_procedimiento], callback);
+};
+
+const agregarProcedimiento = (id_categoria_procedimiento, nombre, callback) => {
+    const sql = `INSERT INTO procedimiento (id_categoria_procedimiento, nombre) VALUES (?, ?)`;
+    db.query(sql, [id_categoria_procedimiento, nombre], callback);
+};
+
+const agregarCategoriaConProcedimientos = (categoria, procedimientos, callback) => {
+    db.beginTransaction(err => {
+        if (err) return callback(err);
+        const sqlCategoria = `INSERT INTO categoria_procedimiento (nombre) VALUES (?)`;
+        db.query(sqlCategoria, [categoria], (err, result) => {
+            if (err) return db.rollback(() => callback(err));
+            const id_categoria_procedimiento = result.insertId;
+            const sqlProcedimientos = `INSERT INTO procedimiento (id_categoria_procedimiento, nombre) VALUES ?`;
+            const procedimientosData = procedimientos.map(p => [id_categoria_procedimiento, p]);
+            db.query(sqlProcedimientos, [procedimientosData], (err, result) => {
+                if (err) return db.rollback(() => callback(err));
+                db.commit(err => {
+                    if (err) return db.rollback(() => callback(err));
+                    callback(null, { id_categoria_procedimiento, result });
+                });
+            });
+        });
+    });
+};
+
+const obtenerCategoriasConSubcategorias = (callback) => {
+    const sql = `
+        SELECT 
+            ca.id_categoria_analisis,
+            ca.nombre_categoria,
+            sa.id_subcategoria_analisis,
+            sa.nombre_subcategoria
+        FROM 
+            categoria_analisis ca
+        LEFT JOIN 
+            subcategoria_analisis sa ON ca.id_categoria_analisis = sa.id_categoria_analisis
+        ORDER BY 
+            ca.nombre_categoria;
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return callback(err, null);
+
+        const categorias = {};
+        results.forEach(row => {
+            const { id_categoria_analisis, nombre_categoria, id_subcategoria_analisis, nombre_subcategoria } = row;
+            if (!categorias[nombre_categoria]) {
+                categorias[nombre_categoria] = {
+                    id_categoria_analisis,
+                    subcategorias: []
+                };
+            }
+            if (id_subcategoria_analisis) {
+                categorias[nombre_categoria].subcategorias.push({ id_subcategoria_analisis, nombre_subcategoria });
+            }
+        });
+        callback(null, categorias);
+    });
+};
+
+// Eliminar subcategoría
+const eliminarSubcategoria = (id_subcategoria_analisis, callback) => {
+    const sql = `DELETE FROM subcategoria_analisis WHERE id_subcategoria_analisis = ?`;
+    db.query(sql, [id_subcategoria_analisis], callback);
+};
+
+// Actualizar subcategoría
+const actualizarSubcategoria = (id_subcategoria_analisis, nombre_subcategoria, callback) => {
+    const sql = `UPDATE subcategoria_analisis SET nombre_subcategoria = ? WHERE id_subcategoria_analisis = ?`;
+    db.query(sql, [nombre_subcategoria, id_subcategoria_analisis], callback);
+};
+
+// Agregar subcategoría
+const agregarSubcategoria = (id_categoria_analisis, nombre_subcategoria, callback) => {
+    const sql = `INSERT INTO subcategoria_analisis (id_categoria_analisis, nombre_subcategoria) VALUES (?, ?)`;
+    db.query(sql, [id_categoria_analisis, nombre_subcategoria], (err, result) => {
+        if (err) return callback(err);
+        callback(null, result);
+    });
+};
+
+// Agregar categoría con subcategorías
+const agregarCategoriaConSubcategorias = (categoria, subcategorias, callback) => {
+    db.beginTransaction(err => {
+        if (err) return callback(err);
+
+        const sqlCategoria = `INSERT INTO categoria_analisis (nombre_categoria) VALUES (?)`;
+        db.query(sqlCategoria, [categoria], (err, result) => {
+            if (err) {
+                return db.rollback(() => {
+                    callback(err);
+                });
+            }
+            const id_categoria_analisis = result.insertId;
+            const sqlSubcategoria = `INSERT INTO subcategoria_analisis (id_categoria_analisis, nombre_subcategoria) VALUES ?`;
+            const subcategoriasData = subcategorias.map(s => [id_categoria_analisis, s]);
+
+            db.query(sqlSubcategoria, [subcategoriasData], (err, result) => {
+                if (err) {
+                    return db.rollback(() => {
+                        callback(err);
+                    });
+                }
+                db.commit(err => {
+                    if (err) {
+                        return db.rollback(() => {
+                            callback(err);
+                        });
+                    }
+                    callback(null, { id_categoria_analisis, result });
+                });
+            });
+        });
+    });
+};
+
 
 module.exports = {
     obtenerDiagnosticosPorCategoria,
@@ -301,8 +528,19 @@ module.exports = {
     agregarSubespecialidad,
     actualizarSubespecialidad,
     eliminarSubespecialidad,
-    obtenerCategoriasImagenologia,
-    agregarCategoriaImagenologia,
-    actualizarCategoriaImagenologia,
-    eliminarCategoriaImagenologia
+    obtenerImagenologiasPorCategoria,
+    eliminarImagenologia,
+    actualizarImagenologia,
+    agregarImagenologia,
+    agregarCategoriaConImagenologias,
+    obtenerProcedimientosPorCategoria,
+    eliminarProcedimiento,
+    actualizarProcedimiento,
+    agregarProcedimiento,
+    agregarCategoriaConProcedimientos,
+    obtenerCategoriasConSubcategorias,
+    eliminarSubcategoria,
+    actualizarSubcategoria,
+    agregarSubcategoria,
+    agregarCategoriaConSubcategorias
 };

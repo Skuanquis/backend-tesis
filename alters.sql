@@ -145,3 +145,7 @@ ALTER TABLE examen_fisico_segmentario ADD COLUMN img_abdomen VARCHAR(200);
 ALTER TABLE examen_fisico_segmentario ADD COLUMN img_genitourinario VARCHAR(200); 
 ALTER TABLE examen_fisico_segmentario ADD COLUMN img_extremidades VARCHAR(200); 
 ALTER TABLE examen_fisico_segmentario ADD COLUMN img_neurologico VARCHAR(200);
+
+ALTER TABLE traspaso ADD COLUMN opcion_cuatro TEXT;
+ALTER TABLE traspaso ADD COLUMN feed_opcion_cuatro TEXT;
+ALTER TABLE traspaso ADD COLUMN puntaje_opcion_cuatro VARCHAR(2);
