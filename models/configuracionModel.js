@@ -45,7 +45,7 @@ const eliminarDiagnostico = (id_diagnostico, callback) => {
     });
 };
 const actualizarDiagnostico = (id_diagnostico, nombre, callback) => {
-    console.log("Actualizando diagnóstico:", { id_diagnostico, nombre });
+    //console.log("Actualizando diagnóstico:", { id_diagnostico, nombre });
 
     if (!nombre) {
         console.error("El nombre no puede ser nulo");
@@ -64,7 +64,7 @@ const agregarDiagnostico = (id_categoria_diferencial, nombre, callback) => {
 };
 
 const agregarCategoriaConDiagnosticos = (categoria, diagnosticos, callback) => {
-    console.log("se añadio: ",categoria, diagnosticos)
+    //console.log("se añadio: ",categoria, diagnosticos)
     db.beginTransaction(err => {
         if (err) return callback(err);
 
@@ -346,7 +346,6 @@ const agregarCategoriaConImagenologias = (categoria, imagenologias, callback) =>
         });
     });
 };
-
 const obtenerProcedimientosPorCategoria = (callback) => {
     const sql = `
         SELECT 
@@ -393,13 +392,22 @@ const eliminarProcedimiento = (id_procedimiento, callback) => {
 };
 
 const actualizarProcedimiento = (id_procedimiento, nombre, callback) => {
+    if (!nombre) {
+        return callback(new Error("El nombre del procedimiento no puede ser nulo"));
+    }
     const sql = `UPDATE procedimiento SET nombre = ? WHERE id_procedimiento = ?`;
     db.query(sql, [nombre, id_procedimiento], callback);
 };
 
 const agregarProcedimiento = (id_categoria_procedimiento, nombre, callback) => {
+    if (!nombre) {
+        return callback(new Error("El nombre del procedimiento no puede ser nulo"));
+    }
     const sql = `INSERT INTO procedimiento (id_categoria_procedimiento, nombre) VALUES (?, ?)`;
-    db.query(sql, [id_categoria_procedimiento, nombre], callback);
+    db.query(sql, [id_categoria_procedimiento, nombre], (err, result) => {
+        if (err) return callback(err);
+        callback(null, result);
+    });
 };
 
 const agregarCategoriaConProcedimientos = (categoria, procedimientos, callback) => {
@@ -407,15 +415,32 @@ const agregarCategoriaConProcedimientos = (categoria, procedimientos, callback) 
         if (err) return callback(err);
         const sqlCategoria = `INSERT INTO categoria_procedimiento (nombre) VALUES (?)`;
         db.query(sqlCategoria, [categoria], (err, result) => {
-            if (err) return db.rollback(() => callback(err));
+            if (err) {
+                return db.rollback(() => {
+                    callback(err);
+                });
+            }
             const id_categoria_procedimiento = result.insertId;
-            const sqlProcedimientos = `INSERT INTO procedimiento (id_categoria_procedimiento, nombre) VALUES ?`;
+            const sqlProcedimiento = `INSERT INTO procedimiento (id_categoria_procedimiento, nombre) VALUES ?`;
             const procedimientosData = procedimientos.map(p => [id_categoria_procedimiento, p]);
-            db.query(sqlProcedimientos, [procedimientosData], (err, result) => {
-                if (err) return db.rollback(() => callback(err));
+
+            db.query(sqlProcedimiento, [procedimientosData], (err, result) => {
+                if (err) {
+                    return db.rollback(() => {
+                        callback(err);
+                    });
+                }
+                const ids_procedimientos = [];
+                for (let i = 0; i < result.affectedRows; i++) {
+                    ids_procedimientos.push(result.insertId + i);
+                }
                 db.commit(err => {
-                    if (err) return db.rollback(() => callback(err));
-                    callback(null, { id_categoria_procedimiento, result });
+                    if (err) {
+                        return db.rollback(() => {
+                            callback(err);
+                        });
+                    }
+                    callback(null, { id_categoria_procedimiento, ids_procedimientos });
                 });
             });
         });

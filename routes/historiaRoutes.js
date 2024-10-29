@@ -97,4 +97,6 @@ router.get('/consulta-externa/:id_historia_clinica', historiaController.obtenerS
 
 router.get('/imagenologia/:id', historiaController.obtenerImagenologiaPorHistoriaClinica);
 
+router.get('/signos-vitales/:id', historiaController.getSignosVitales);
+
 module.exports = router;

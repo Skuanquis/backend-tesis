@@ -142,7 +142,7 @@ const eliminarMensaje = (id_mensajes_simulacion, callback) => {
 
 const obtenerPaciente = (id_historia_clinica, callback) => {
     const sql = `
-        SELECT p.*, hc.descripcion, hc.id_historia_clinica
+        SELECT p.*, hc.descripcion, hc.historia_enfermedad_actual, hc.id_historia_clinica
         FROM paciente p
         JOIN caso_clinico cc ON p.id_paciente = cc.id_paciente
         JOIN historia_clinica hc ON hc.id_caso_clinico = cc.id_caso_clinico
@@ -155,9 +155,9 @@ const actualizarPaciente = (id_paciente, data, callback) => {
         UPDATE paciente p
         JOIN caso_clinico cc ON p.id_paciente = cc.id_paciente
         JOIN historia_clinica hc ON hc.id_caso_clinico = cc.id_caso_clinico
-        SET p.nombre = ?, p.paterno = ?, p.materno = ?, p.edad = ?, p.sexo = ?, p.peso = ?, p.talla = ?, p.ocupacion = ?, hc.descripcion = ?
+        SET p.nombre = ?, p.paterno = ?, p.materno = ?, p.edad = ?, p.sexo = ?, p.peso = ?, p.talla = ?, p.ocupacion = ?, hc.descripcion = ?, hc.historia_enfermedad_actual = ?
         WHERE hc.id_historia_clinica = ?`;
-    const values = [data.nombre, data.paterno, data.materno, data.edad, data.sexo, data.peso, data.talla, data.ocupacion, data.descripcion, id_paciente];
+    const values = [data.nombre, data.paterno, data.materno, data.edad, data.sexo, data.peso, data.talla, data.ocupacion, data.descripcion, data.historia_enfermedad_actual, id_paciente];
     db.query(sql, values, callback);
 };
 

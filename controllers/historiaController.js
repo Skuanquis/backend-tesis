@@ -484,6 +484,17 @@ const obtenerImagenologiaPorHistoriaClinica = (req, res) => {
     });
 };
 
+const getSignosVitales = (req, res) => {
+    const id_historia_clinica = req.params.id;
+    historiaModel.getSignosVitales(id_historia_clinica, (err, signos) => {
+        if (err) {
+            return res.status(500).send({ error: 'Error al obtener los signos vitales' });
+        }
+        res.status(200).send(signos);
+    });
+}
+
+
 
 module.exports = {
     getListaHistoriasClinicas,
@@ -532,5 +543,6 @@ module.exports = {
     obtenerSubespecialidades,
     obtenerImagenologiaPorHistoriaClinica,
     obtenerAnalisisSuministrados,
-    obtenerProcedimientosAsignados
+    obtenerProcedimientosAsignados,
+    getSignosVitales
 };

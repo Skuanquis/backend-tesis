@@ -194,11 +194,10 @@ const agregarCategoriaConImagenologias = (req, res) => {
         res.status(200).json(result);
     });
 };
-
 const obtenerProcedimientosPorCategoria = (req, res) => {
-    configuracionModel.obtenerProcedimientosPorCategoria((err, results) => {
+    configuracionModel.obtenerProcedimientosPorCategoria((err, result) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json(results);
+        res.status(200).json(result);
     });
 };
 
@@ -206,7 +205,7 @@ const eliminarProcedimiento = (req, res) => {
     const { id_procedimiento } = req.params;
     configuracionModel.eliminarProcedimiento(id_procedimiento, (err) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Procedimiento eliminado correctamente' });
+        res.status(200).json({ message: "Procedimiento eliminado correctamente" });
     });
 };
 
@@ -215,7 +214,7 @@ const actualizarProcedimiento = (req, res) => {
     const { nombre } = req.body;
     configuracionModel.actualizarProcedimiento(id_procedimiento, nombre, (err) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Procedimiento actualizado correctamente' });
+        res.status(200).json({ message: "Procedimiento actualizado correctamente" });
     });
 };
 
@@ -223,7 +222,7 @@ const agregarProcedimiento = (req, res) => {
     const { id_categoria_procedimiento, nombre } = req.body;
     configuracionModel.agregarProcedimiento(id_categoria_procedimiento, nombre, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Procedimiento agregado correctamente', id: result.insertId });
+        res.status(200).json({ message: "Procedimiento agregado correctamente", id_procedimiento: result.insertId });
     });
 };
 
@@ -231,9 +230,10 @@ const agregarCategoriaConProcedimientos = (req, res) => {
     const { categoria, procedimientos } = req.body;
     configuracionModel.agregarCategoriaConProcedimientos(categoria, procedimientos, (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(200).json({ message: 'Categoría y procedimientos agregados correctamente', result });
+        res.status(200).json(result);
     });
 };
+
 
 const obtenerCategoriasConSubcategorias = (req, res) => {
     configuracionModel.obtenerCategoriasConSubcategorias((err, result) => {

@@ -261,7 +261,7 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
              * Función para procesar todas las secciones de manera secuencial.
              */
             const procesarSecciones = () => {
-                console.log("INDEXXXXXX: ", seccionIndex, secciones.length)
+                //console.log("INDEXXXXXX: ", seccionIndex, secciones.length)
                 if (seccionIndex >= secciones.length) {
                     // Todas las secciones han sido procesadas
                     // Ahora calcular los puntajes obtenidos por sección y tipo
@@ -278,7 +278,7 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
                         const { descripcion, puntaje } = accion;
                         const detalleLower = descripcion.toLowerCase();
 
-                        console.log("INICIO:  ", accion)
+                        //console.log("INICIO:  ", accion)
 
                         let seccion = '';
 
@@ -298,11 +298,11 @@ const obtenerDetallesSimulacion = (id_realiza_simulacion, callback) => {
 
                         if (seccion && puntajesObtenidosPorSeccion[seccion]) {
                             const puntajeUpper = puntaje.toUpperCase();
-                            console.log("AQUIIII:  ", seccion, puntajesObtenidosPorSeccion[seccion])
+                            //console.log("AQUIIII:  ", seccion, puntajesObtenidosPorSeccion[seccion])
                             if (['A', 'B', 'C', 'D', 'E'].includes(puntajeUpper)) {
                                 puntajesObtenidosPorSeccion[seccion][`puntaje_${puntajeUpper.toLowerCase()}`] += 1;
                             }
-                            console.log("DESPUESSS:  ",puntajesObtenidosPorSeccion[seccion])
+                            //console.log("DESPUESSS:  ",puntajesObtenidosPorSeccion[seccion])
                         }
                     });
                     const puntajeSecciones = {};

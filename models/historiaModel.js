@@ -1282,6 +1282,31 @@ const getAllCategoriasImagenologia = (callback) => {
     });
 };
 
+const getSignosVitales = (id_historia_clinica, callback) => {
+    const sql = `
+        SELECT 
+            sv.frecuencia_cardiaca, 
+            sv.saturacion, 
+            sv.presion_sanguinea_sistole, 
+            sv.presion_sanguinea_distole, 
+            sv.temperatura,
+            sv.feed_signos_vitales, 
+            sv.puntaje_signos_vitales,
+            vp.rubrica
+        FROM 
+            signos_vitales sv
+        JOIN 
+            historia_clinica hc ON sv.id_historia_clinica = hc.id_historia_clinica
+        LEFT JOIN 
+            valor_puntaje vp ON hc.id_historia_clinica = vp.id_historia_clinica 
+                           AND sv.puntaje_signos_vitales = vp.codigo
+        WHERE 
+            hc.id_historia_clinica = ?;
+    `;
+    db.query(sql, [id_historia_clinica], callback);
+}
+
+
 
 
 module.exports = {
@@ -1336,5 +1361,6 @@ module.exports = {
     getAllCategoriasImagenologia,
     obtenerImagenologiaPorHistoriaClinica,
     obtenerAnalisisPorHistoriaClinica,
-    obtenerProcedimientosAsignadosPorHistoriaClinica
+    obtenerProcedimientosAsignadosPorHistoriaClinica,
+    getSignosVitales 
 };
